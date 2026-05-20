@@ -108,31 +108,40 @@
     height: 100%;
     object-fit: contain;
     background: #000;
-    /* lighten: cada pixel = el más claro entre video y fondo.
-       El negro del video siempre "pierde" contra cualquier color del fondo
-       de la página → desaparece sin necesidad de un padre con background sólido.
-       Más robusto que screen para contenedores con transform/opacity. */
-    mix-blend-mode: lighten;
+    mix-blend-mode: screen;
   }
 
   /* ============================================
      LOGO CON TILT 3D (responde al giroscopio)
-     - El padre tiene perspective para crear el contexto 3D
-     - overflow visible para que la rotación NO recorte el logo
-     - Sin background propio: el blend del video va contra el fondo
-       de la página directamente
+     - Aplicamos perspective al ancestro
+     - El TILT se aplica al CONTENEDOR (.logo-mark/.final-mark/.loading-orb)
+       no al video. Razón: cuando el video se inclina, su fondo negro
+       (necesario para el blend) se ve como un plano oscuro.
+       Inclinando el contenedor completo, el video Y su fondo rotan
+       juntos manteniendo el blend mode intacto.
      ============================================ */
   .logo-mark,
   .final-mark,
   .loading-orb {
     perspective: 800px;
     transform-style: preserve-3d;
-    overflow: visible;
   }
 
+  /* El video NO recibe tilt — solo blend mode normal */
   .logo-mark .logo-video,
   .final-mark .logo-video,
   .loading-orb .logo-video {
+    will-change: transform;
+  }
+
+  /* Wrapper interno que recibe el tilt del giroscopio.
+     CRÍTICO: necesita background propio para que el mix-blend-mode
+     del video tenga "superficie contra la cual mezclar". Sin esto,
+     el blend operaría contra fondo transparente → mostraría el negro. */
+  .tilt-inner {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
     transition: transform 0.18s ease-out;
     transform-origin: center center;
     will-change: transform;
@@ -147,6 +156,7 @@
     width: 160px; height: 160px;
     margin: 0 auto 16px;
     position: relative;
+    background: var(--bg);
     opacity: 0;
     transform: translateY(20px) scale(0.85);
     transition: opacity 0.8s var(--ease-out-back), transform 0.8s var(--ease-out-back);
@@ -232,6 +242,7 @@
   .loading-orb {
     width: 140px; height: 140px;
     margin-bottom: 20px;
+    background: var(--bg);
     position: relative;
   }
 
@@ -894,6 +905,7 @@
   .final-mark {
     width: 200px; height: 200px;
     margin: 0 auto 16px;
+    background: var(--bg);
     opacity: 0;
     transform: scale(0.8);
     transition: opacity 1s ease, transform 1s var(--ease-out-back);
@@ -1286,6 +1298,188 @@
 </style>
 </head>
 <body>
+
+<!-- ============================================
+     PANEL DE TEST BLEND MODES (?test en la URL)
+     - Solo se activa si la URL contiene ?test
+     - Útil para diagnóstico en mobile sin subir otro archivo
+     ============================================ -->
+<style>
+  #blend-test-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0c0c0e;
+    color: white;
+    overflow-y: auto;
+    padding: 16px;
+    z-index: 9999;
+    font-family: system-ui, sans-serif;
+  }
+  #blend-test-panel.active { display: block; }
+  #blend-test-panel h2 {
+    font-size: 13px;
+    color: #88C63A;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 16px 0 6px;
+  }
+  #blend-test-panel .bt-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+  }
+  #blend-test-panel .bt-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  #blend-test-panel .bt-box {
+    width: 90px; height: 90px;
+    border: 1px dashed rgba(255,255,255,0.2);
+    position: relative;
+    flex-shrink: 0;
+  }
+  #blend-test-panel .bt-info {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    flex: 1;
+  }
+  #blend-test-panel .bt-info strong {
+    color: white;
+    display: block;
+    margin-bottom: 2px;
+  }
+  #blend-test-panel video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  #blend-test-panel .bt1 video { /* sin blend */ }
+  #blend-test-panel .bt2 video { mix-blend-mode: screen; }
+  #blend-test-panel .bt3 { background: #0c0c0e; }
+  #blend-test-panel .bt3 video { background: #000; mix-blend-mode: screen; }
+  #blend-test-panel .bt4 { background: #0c0c0e; opacity: 1; }
+  #blend-test-panel .bt4 video { background: #000; mix-blend-mode: screen; }
+  #blend-test-panel .bt5 { background: #0c0c0e; transform: scale(1); }
+  #blend-test-panel .bt5 video { background: #000; mix-blend-mode: screen; }
+  #blend-test-panel .bt6 { background: #0c0c0e; }
+  #blend-test-panel .bt6 video { background: #000; mix-blend-mode: lighten; }
+  #blend-test-panel .bt7 video {
+    mix-blend-mode: screen;
+    transform: translateZ(0);
+    will-change: transform;
+    isolation: isolate;
+    backface-visibility: hidden;
+  }
+  #blend-test-panel .bt7-wrap {
+    background: #0c0c0e;
+    transform: translateZ(0);
+    isolation: isolate;
+  }
+  #blend-test-panel .bt8 video { /* sin blend, control */ }
+  #blend-test-panel .close-btn {
+    position: fixed;
+    top: 12px; right: 12px;
+    background: rgba(132, 194, 55, 0.2);
+    border: 1px solid #88C63A;
+    color: #88C63A;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    z-index: 10000;
+    cursor: pointer;
+  }
+</style>
+
+<div id="blend-test-panel">
+  <button class="close-btn" onclick="document.getElementById('blend-test-panel').classList.remove('active')">Cerrar ×</button>
+
+  <h2>Diagnóstico blend modes</h2>
+  <p class="bt-label">Dime cuáles muestran cuadrado y cuáles solo el logo verde.</p>
+
+  <div class="bt-row">
+    <div class="bt-box bt1">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bt-info"><strong>1. Video puro</strong>Control: debería verse el cuadrado.</div>
+  </div>
+
+  <div class="bt-row">
+    <div class="bt-box bt2">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bt-info"><strong>2. screen, padre sin bg</strong>Test sin nada que mezclar.</div>
+  </div>
+
+  <div class="bt-row">
+    <div class="bt-box bt3">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bt-info"><strong>3. screen, padre CON bg</strong>Setup actual del teaser.</div>
+  </div>
+
+  <div class="bt-row">
+    <div class="bt-box bt4">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bt-info"><strong>4. screen + opacity:1</strong>Stacking context test.</div>
+  </div>
+
+  <div class="bt-row">
+    <div class="bt-box bt5">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bt-info"><strong>5. screen + transform</strong>Transform context test.</div>
+  </div>
+
+  <div class="bt-row">
+    <div class="bt-box bt6">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bt-info"><strong>6. lighten + bg</strong>Alternativa a screen.</div>
+  </div>
+
+  <div class="bt-row">
+    <div class="bt-box bt7-wrap">
+      <div class="bt7" style="width:100%;height:100%;">
+        <video autoplay muted loop playsinline preload="auto">
+          <source src="assets/logo_idle.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+    <div class="bt-info"><strong>7. FIX Android</strong>screen + translateZ + isolation. ⭐</div>
+  </div>
+
+  <div class="bt-row">
+    <div class="bt-box bt8">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bt-info"><strong>8. Sin blend</strong>Control: cuadrado completo.</div>
+  </div>
+</div>
+
+<script>
+  // Activa el panel de test si la URL tiene ?test
+  if (window.location.search.includes('test')) {
+    document.getElementById('blend-test-panel').classList.add('active');
+  }
+</script>
 
 <!-- ESCENA 1: PERFIL -->
 <div class="scene active" id="scene-profile">
@@ -2512,42 +2706,46 @@
   // El logo grande (perfil, loading, final) responde al ángulo del
   // teléfono. Se inclina sutilmente para dar sensación volumétrica.
   //
-  // Detalles técnicos:
-  // - Usamos el evento "deviceorientation" del navegador
-  // - beta = inclinación adelante/atrás (positivo si arriba inclinada hacia ti)
-  // - gamma = inclinación izquierda/derecha
-  // - Aplicamos rotateX/rotateY con perspectiva, dando efecto 3D leve
-  // - Suavizado low-pass: cada frame interpolamos al valor target
-  //   para evitar jitter del sensor
-  // - iOS 13+ requiere permiso explícito vía gesto del usuario
+  // Arquitectura clave: envolvemos cada video en un .tilt-inner.
+  // El tilt 3D se aplica al wrapper, NO al video.
+  // Razón: el video tiene background:#000 (necesario para mix-blend-mode:
+  // screen). Si inclináramos el video, su fondo negro se vería como
+  // un plano oscuro inclinado encima del logo. Inclinando el wrapper,
+  // el video + su fondo + el padre (que también es bg sólido) rotan
+  // juntos preservando el blend mode.
+
+  // Paso 1: wrappear cada video grande en un .tilt-inner
+  document.querySelectorAll(
+    '.logo-mark > video, .final-mark > video, .loading-orb > video'
+  ).forEach(video => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'tilt-inner';
+    video.parentNode.insertBefore(wrapper, video);
+    wrapper.appendChild(video);
+  });
 
   const TILT_CONFIG = {
-    maxTiltX: 12,        // grados máximos de rotación X (inclinación frontal)
-    maxTiltY: 12,        // grados máximos de rotación Y (inclinación lateral)
-    smoothing: 0.12,     // 0=sin smoothing, 1=instantáneo. 0.12 es muy suave
-    deadzone: 1.5,       // grados; ignoramos movimientos menores a esto
+    maxTiltX: 12,
+    maxTiltY: 12,
+    smoothing: 0.12,
+    deadzone: 1.5,
   };
 
-  // Targets (lo que queremos alcanzar) y current (donde estamos ahora)
   let tiltTarget = { x: 0, y: 0 };
   let tiltCurrent = { x: 0, y: 0 };
   let tiltActive = false;
-  let tiltCalibration = null; // primer valor lo usamos como "neutral"
+  let tiltCalibration = null;
 
-  // Devuelve los elementos a inclinar (todos los logos grandes)
+  // Ahora apuntamos a los wrappers, no a los videos
   function getTiltElements() {
     return document.querySelectorAll(
-      '.logo-mark .logo-video, .final-mark .logo-video, .loading-orb .logo-video'
+      '.logo-mark .tilt-inner, .final-mark .tilt-inner, .loading-orb .tilt-inner'
     );
   }
 
-  // Handler del evento del giroscopio
   function handleOrientation(event) {
     if (event.beta === null || event.gamma === null) return;
 
-    // Calibración: el primer valor recibido lo tomamos como "posición neutra"
-    // (el usuario probablemente está sosteniendo el teléfono normalmente).
-    // Después calculamos los offsets relativos a eso.
     if (!tiltCalibration) {
       tiltCalibration = { beta: event.beta, gamma: event.gamma };
       return;
@@ -2556,15 +2754,9 @@
     let deltaBeta = event.beta - tiltCalibration.beta;
     let deltaGamma = event.gamma - tiltCalibration.gamma;
 
-    // Aplicar deadzone (ignorar movimientos micro del sensor)
     if (Math.abs(deltaBeta) < TILT_CONFIG.deadzone) deltaBeta = 0;
     if (Math.abs(deltaGamma) < TILT_CONFIG.deadzone) deltaGamma = 0;
 
-    // Mapear el ángulo a una rotación leve del logo, con clamp
-    // Beta arriba/abajo → rotateX (eje horizontal del logo)
-    // Gamma izq/der → rotateY (eje vertical del logo)
-    // Nota: el signo del rotateX es invertido para que el logo
-    // "mire hacia donde inclinas el teléfono" (más intuitivo)
     const tiltX = Math.max(-TILT_CONFIG.maxTiltX,
                   Math.min(TILT_CONFIG.maxTiltX, -deltaBeta * 0.4));
     const tiltY = Math.max(-TILT_CONFIG.maxTiltY,
@@ -2574,8 +2766,6 @@
     tiltTarget.y = tiltY;
   }
 
-  // Loop de animación: interpola current hacia target cada frame
-  // Esto suaviza los saltos del sensor (low-pass filter)
   function tiltLoop() {
     if (!tiltActive) return;
 
@@ -2592,7 +2782,6 @@
     requestAnimationFrame(tiltLoop);
   }
 
-  // Arranca el sistema de tilt (asume permiso ya concedido)
   function startTilt() {
     if (tiltActive) return;
     tiltActive = true;
@@ -2600,36 +2789,25 @@
     requestAnimationFrame(tiltLoop);
   }
 
-  // Solicita permiso (necesario en iOS 13+) y arranca
   function requestTiltPermission() {
-    // iOS 13+: hay que pedir permiso explícito tras un gesto del usuario
     if (typeof DeviceOrientationEvent !== 'undefined' &&
         typeof DeviceOrientationEvent.requestPermission === 'function') {
       DeviceOrientationEvent.requestPermission()
         .then(state => {
           if (state === 'granted') startTilt();
-          // Si el usuario rechaza, no pasa nada: el logo queda estático.
-          // No insistimos para no ser invasivos.
         })
         .catch(() => {});
     } else if (typeof DeviceOrientationEvent !== 'undefined') {
-      // Android / browsers sin requestPermission → arranca directo
       startTilt();
     }
-    // Desktop sin DeviceOrientationEvent → no hace nada, logo estático
   }
 
-  // En iOS necesitamos un gesto del usuario para pedir permiso.
-  // Lo intentamos en el primer tap a un botón de perfil.
-  // En Android arranca solo al cargar la página.
   if (typeof DeviceOrientationEvent !== 'undefined') {
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      // iOS: enganchamos al primer tap de cualquier botón de perfil
       document.querySelectorAll('.profile-btn').forEach(btn => {
         btn.addEventListener('click', requestTiltPermission, { once: true });
       });
     } else {
-      // Android / otros: arranca sin pedir nada
       startTilt();
     }
   }
