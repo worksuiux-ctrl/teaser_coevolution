@@ -2685,7 +2685,8 @@
   // Replay: vuelve al inicio del flujo (selección de perfil)
   // Importante: limpia timers y resetea estado de todos los teasers
   // para que la próxima ronda arranque desde cero
-  document.getElementById('replay').addEventListener('click', () => {
+  document.getElementById('replay').addEventListener('click', (e) => {
+    console.log('[DEBUG] Replay clicked!', e);
     clearTeaserTimers();
     resetAllTeasers();
     showScene('profile');
