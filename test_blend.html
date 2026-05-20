@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Test blend modes</title>
+<style>
+  body {
+    margin: 0;
+    background: #0c0c0e;
+    color: white;
+    font-family: system-ui, sans-serif;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  h2 {
+    font-size: 14px;
+    color: #88C63A;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 24px 0 8px;
+  }
+
+  .label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+
+  .box {
+    width: 120px;
+    height: 120px;
+    border: 1px dashed rgba(255,255,255,0.2);
+    position: relative;
+  }
+
+  /* TEST 1: video sin blend, fondo del body se ve detrás */
+  .test1 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* TEST 2: video con screen blend, padre sin background */
+  .test2 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    mix-blend-mode: screen;
+  }
+
+  /* TEST 3: video con screen blend, padre con background */
+  .test3 {
+    background: #0c0c0e;
+  }
+  .test3 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+    mix-blend-mode: screen;
+  }
+
+  /* TEST 4: como test3 pero con opacity en el padre */
+  .test4 {
+    background: #0c0c0e;
+    opacity: 1;
+  }
+  .test4 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+    mix-blend-mode: screen;
+  }
+
+  /* TEST 5: como test4 pero con transform en el padre */
+  .test5 {
+    background: #0c0c0e;
+    transform: scale(1);
+  }
+  .test5 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+    mix-blend-mode: screen;
+  }
+
+  /* TEST 6: lighten en lugar de screen */
+  .test6 {
+    background: #0c0c0e;
+  }
+  .test6 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+    mix-blend-mode: lighten;
+  }
+
+  /* TEST 7: con filter: brightness para ver si oculta el negro */
+  .test7 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    filter: brightness(1.2);
+    mix-blend-mode: screen;
+  }
+
+  /* TEST 8: SIN nada, video puro */
+  .test8 video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .info {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    flex: 1;
+  }
+</style>
+</head>
+<body>
+
+<h2>Diagnóstico blend modes</h2>
+<p class="label">Cada caja muestra el logo de distinta forma. Anota cuáles muestran cuadrado negro y cuáles no.</p>
+
+<div class="row">
+  <div class="box test1">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>1. Video puro</strong><br>
+    Sin blend, sin nada. Debería verse cuadrado negro completo.
+  </div>
+</div>
+
+<div class="row">
+  <div class="box test2">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>2. screen, padre sin bg</strong><br>
+    Debería funcionar si el body se ve detrás.
+  </div>
+</div>
+
+<div class="row">
+  <div class="box test3">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>3. screen, padre CON bg</strong><br>
+    Este es el setup actual del teaser.
+  </div>
+</div>
+
+<div class="row">
+  <div class="box test4">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>4. screen + opacity:1 padre</strong><br>
+    Test stacking context.
+  </div>
+</div>
+
+<div class="row">
+  <div class="box test5">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>5. screen + transform padre</strong><br>
+    Test si transform rompe el blend.
+  </div>
+</div>
+
+<div class="row">
+  <div class="box test6">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>6. lighten + padre CON bg</strong><br>
+    Alternativa a screen.
+  </div>
+</div>
+
+<div class="row">
+  <div class="box test7">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>7. screen + filter brightness</strong><br>
+    Filter aumenta brillo.
+  </div>
+</div>
+
+<div class="row">
+  <div class="box test8">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/logo_idle.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="info">
+    <strong>8. Sin blend mode</strong><br>
+    Solo el video puro, como referencia visual.
+  </div>
+</div>
+
+<p class="label" style="margin-top: 30px;">
+  En el teléfono Android donde ves el problema: dime qué números muestran cuadro negro y cuáles muestran solo el logo verde sin cuadrado.
+</p>
+
+</body>
+</html>
