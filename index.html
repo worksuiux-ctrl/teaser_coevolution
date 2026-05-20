@@ -108,29 +108,32 @@
     height: 100%;
     object-fit: contain;
     background: #000;
-    mix-blend-mode: screen;
+    /* lighten: cada pixel = el más claro entre video y fondo.
+       El negro del video siempre "pierde" contra cualquier color del fondo
+       de la página → desaparece sin necesidad de un padre con background sólido.
+       Más robusto que screen para contenedores con transform/opacity. */
+    mix-blend-mode: lighten;
   }
 
   /* ============================================
      LOGO CON TILT 3D (responde al giroscopio)
-     - Solo aplica a los logos grandes (perfil, loading, final)
-     - El contenedor crea contexto 3D, el video se inclina dentro
-     - transition: easing leve para suavizar pequeños jitters
+     - El padre tiene perspective para crear el contexto 3D
+     - overflow visible para que la rotación NO recorte el logo
+     - Sin background propio: el blend del video va contra el fondo
+       de la página directamente
      ============================================ */
   .logo-mark,
   .final-mark,
   .loading-orb {
-    perspective: 600px;
+    perspective: 800px;
     transform-style: preserve-3d;
+    overflow: visible;
   }
 
   .logo-mark .logo-video,
   .final-mark .logo-video,
   .loading-orb .logo-video {
-    /* Transición sutil para suavizar el seguimiento del giroscopio.
-       150ms es el sweet spot: rápido para sentirse responsive,
-       lento para suavizar los picos del sensor. */
-    transition: transform 0.15s ease-out;
+    transition: transform 0.18s ease-out;
     transform-origin: center center;
     will-change: transform;
   }
@@ -144,12 +147,6 @@
     width: 160px; height: 160px;
     margin: 0 auto 16px;
     position: relative;
-    /* CRÍTICO para que mix-blend-mode: screen del video funcione:
-       el contenedor necesita un fondo sólido contra el cual mezclar.
-       Sin esto, el stacking context creado por opacity/transform
-       aísla el blend mode y el video se ve sobre "nada" → se ve
-       el cuadrado negro del MP4 */
-    background: var(--bg);
     opacity: 0;
     transform: translateY(20px) scale(0.85);
     transition: opacity 0.8s var(--ease-out-back), transform 0.8s var(--ease-out-back);
@@ -235,7 +232,6 @@
   .loading-orb {
     width: 140px; height: 140px;
     margin-bottom: 20px;
-    background: var(--bg); /* mismo fix */
     position: relative;
   }
 
@@ -898,7 +894,6 @@
   .final-mark {
     width: 200px; height: 200px;
     margin: 0 auto 16px;
-    background: var(--bg); /* mismo fix que .logo-mark */
     opacity: 0;
     transform: scale(0.8);
     transition: opacity 1s ease, transform 1s var(--ease-out-back);
