@@ -1271,6 +1271,23 @@
     transform: translateY(0);
   }
 
+  /* ============================================
+     PREFERS-REDUCED-MOTION
+     ============================================ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-delay: 0.01ms !important;
+    }
+    .scene,
+    .beat,
+    .stage,
+    .logo-mark,
+    .final-mark { opacity: 1 !important; transform: none !important; }
+  }
+
   @keyframes ctaPulse {
     0%, 100% { opacity: 0; }
     50% { opacity: 0.6; }
@@ -1573,7 +1590,7 @@
             <div class="mock-value success">+34%</div>
             <div class="mock-trend">↗ Adelantado a la meta</div>
             <div class="projection">
-              <svg class="projection-svg" viewBox="0 0 300 90" preserveAspectRatio="none">
+              <svg class="projection-svg" viewBox="0 0 300 90" preserveAspectRatio="xMidYMid meet">
                 <path class="conf-area" d="M 150 45 L 200 25 L 260 12 L 300 5 L 300 35 L 260 40 L 200 50 L 150 45 Z"/>
                 <path class="hist-line" d="M 0 60 L 30 56 L 60 52 L 90 54 L 120 48 L 150 45"/>
                 <path class="proj-line" d="M 150 45 L 200 28 L 260 14 L 300 7"/>
@@ -2433,6 +2450,7 @@
     const from = parseFloat(el.dataset.countFrom || 0);
     const to = parseFloat(el.dataset.countTo || 0);
     const duration = 1500;
+    el.textContent = Math.round(from); // inicializa sin salto visual
     const start = performance.now();
     function step(now) {
       const elapsed = now - start;
@@ -2523,6 +2541,14 @@
     // Cuánto queda el titular visible antes de pasar al siguiente beat
     holdTitle: 1500,
   };
+
+  // Si el usuario prefiere movimiento reducido, acelera los timings
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    TIMING.delayEnter = 50;
+    TIMING.showProblem = 600;
+    TIMING.showSolution = 600;
+    TIMING.holdTitle = 300;
+  }
 
   // Duración total de un beat (calculado automáticamente):
   //   delayEnter + showProblem + showSolution + holdTitle
@@ -2737,6 +2763,23 @@
   });
 
   // ============================================
+  // ============================================
+  // RESET ALL TEASERS — limpia estado para replay
+  // ============================================
+  function resetAllTeasers() {
+    ['manager', 'operator', 'tech'].forEach(type => {
+      const scene = scenes[type];
+      if (!scene) return;
+      scene.classList.remove('paused');
+      scene.querySelectorAll('.beat').forEach(b => b.classList.remove('active'));
+      scene.querySelectorAll('.progress-segment').forEach(s => s.classList.remove('active', 'done'));
+      scene.querySelectorAll('.stage').forEach(s => s.classList.remove('in', 'out'));
+      scene.querySelectorAll('.beat-headline-block').forEach(h => h.classList.remove('in'));
+    });
+    currentTeaserType = null;
+    isPaused = false;
+  }
+
   // RECUPERACIÓN DE VIDEOS EN BACKGROUND
   // - iOS Safari y Chrome móvil pausan videos cuando la pestaña
   //   pasa a background o cuando hay cambios de visibilidad
@@ -2784,7 +2827,7 @@
   // silenciosamente sin disparar visibilitychange.
   setInterval(() => {
     if (!document.hidden) ensureVideosPlaying();
-  }, 2000);
+  }, 8000);
 
 </script>
 
