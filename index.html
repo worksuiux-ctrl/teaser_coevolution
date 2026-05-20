@@ -111,41 +111,6 @@
     mix-blend-mode: screen;
   }
 
-  /* ============================================
-     LOGO CON TILT 3D (responde al giroscopio)
-     - Aplicamos perspective al ancestro
-     - El TILT se aplica al CONTENEDOR (.logo-mark/.final-mark/.loading-orb)
-       no al video. Razón: cuando el video se inclina, su fondo negro
-       (necesario para el blend) se ve como un plano oscuro.
-       Inclinando el contenedor completo, el video Y su fondo rotan
-       juntos manteniendo el blend mode intacto.
-     ============================================ */
-  .logo-mark,
-  .final-mark,
-  .loading-orb {
-    perspective: 800px;
-    transform-style: preserve-3d;
-  }
-
-  /* El video NO recibe tilt — solo blend mode normal */
-  .logo-mark .logo-video,
-  .final-mark .logo-video,
-  .loading-orb .logo-video {
-    will-change: transform;
-  }
-
-  /* Wrapper interno que recibe el tilt del giroscopio.
-     CRÍTICO: necesita background propio para que el mix-blend-mode
-     del video tenga "superficie contra la cual mezclar". Sin esto,
-     el blend operaría contra fondo transparente → mostraría el negro. */
-  .tilt-inner {
-    width: 100%;
-    height: 100%;
-    background: var(--bg);
-    transition: transform 0.18s ease-out;
-    transform-origin: center center;
-    will-change: transform;
-  }
 
   /* ============================================
      ESCENA 1: PERFIL
@@ -153,7 +118,7 @@
   #scene-profile { justify-content: center; text-align: center; }
 
   .logo-mark {
-    width: 160px; height: 160px;
+    width: 220px; height: 220px;
     margin: 0 auto 16px;
     position: relative;
     background: var(--bg);
@@ -240,7 +205,7 @@
   #scene-loading { justify-content: center; align-items: center; text-align: center; }
 
   .loading-orb {
-    width: 140px; height: 140px;
+    width: 200px; height: 200px;
     margin-bottom: 20px;
     background: var(--bg);
     position: relative;
@@ -903,7 +868,7 @@
   #scene-final { justify-content: center; align-items: center; text-align: center; }
 
   .final-mark {
-    width: 200px; height: 200px;
+    width: 260px; height: 260px;
     margin: 0 auto 16px;
     background: var(--bg);
     opacity: 0;
@@ -2700,158 +2665,6 @@
     if (!document.hidden) ensureVideosPlaying();
   }, 3000);
 
-  // ============================================
-  // GIROSCOPIO — tilt 3D del logo
-  // ============================================
-  // El logo grande (perfil, loading, final) responde al ángulo del
-  // teléfono. Se inclina sutilmente para dar sensación volumétrica.
-  //
-  // Arquitectura clave: envolvemos cada video en un .tilt-inner.
-  // El tilt 3D se aplica al wrapper, NO al video.
-  // Razón: el video tiene background:#000 (necesario para mix-blend-mode:
-  // screen). Si inclináramos el video, su fondo negro se vería como
-  // un plano oscuro inclinado encima del logo. Inclinando el wrapper,
-  // el video + su fondo + el padre (que también es bg sólido) rotan
-  // juntos preservando el blend mode.
-
-  // Paso 1: wrappear cada video grande en un .tilt-inner
-  document.querySelectorAll(
-    '.logo-mark > video, .final-mark > video, .loading-orb > video'
-  ).forEach(video => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'tilt-inner';
-    video.parentNode.insertBefore(wrapper, video);
-    wrapper.appendChild(video);
-  });
-
-  const TILT_CONFIG = {
-    maxTiltX: 12,
-    maxTiltY: 12,
-    smoothing: 0.12,
-    deadzone: 1.5,
-  };
-
-  let tiltTarget = { x: 0, y: 0 };
-  let tiltCurrent = { x: 0, y: 0 };
-  let tiltActive = false;
-  let tiltCalibration = null;
-
-  // Ahora apuntamos a los wrappers, no a los videos
-  function getTiltElements() {
-    return document.querySelectorAll(
-      '.logo-mark .tilt-inner, .final-mark .tilt-inner, .loading-orb .tilt-inner'
-    );
-  }
-
-  function handleOrientation(event) {
-    if (event.beta === null || event.gamma === null) return;
-
-    if (!tiltCalibration) {
-      tiltCalibration = { beta: event.beta, gamma: event.gamma };
-      return;
-    }
-
-    let deltaBeta = event.beta - tiltCalibration.beta;
-    let deltaGamma = event.gamma - tiltCalibration.gamma;
-
-    if (Math.abs(deltaBeta) < TILT_CONFIG.deadzone) deltaBeta = 0;
-    if (Math.abs(deltaGamma) < TILT_CONFIG.deadzone) deltaGamma = 0;
-
-    const tiltX = Math.max(-TILT_CONFIG.maxTiltX,
-                  Math.min(TILT_CONFIG.maxTiltX, -deltaBeta * 0.4));
-    const tiltY = Math.max(-TILT_CONFIG.maxTiltY,
-                  Math.min(TILT_CONFIG.maxTiltY, deltaGamma * 0.4));
-
-    tiltTarget.x = tiltX;
-    tiltTarget.y = tiltY;
-  }
-
-  function tiltLoop() {
-    if (!tiltActive) return;
-
-    tiltCurrent.x += (tiltTarget.x - tiltCurrent.x) * TILT_CONFIG.smoothing;
-    tiltCurrent.y += (tiltTarget.y - tiltCurrent.y) * TILT_CONFIG.smoothing;
-
-    const transform =
-      `rotateX(${tiltCurrent.x.toFixed(2)}deg) rotateY(${tiltCurrent.y.toFixed(2)}deg)`;
-
-    getTiltElements().forEach(el => {
-      el.style.transform = transform;
-    });
-
-    requestAnimationFrame(tiltLoop);
-  }
-
-  function startTilt() {
-    if (tiltActive) return;
-    tiltActive = true;
-    window.addEventListener('deviceorientation', handleOrientation);
-    requestAnimationFrame(tiltLoop);
-  }
-
-  function requestTiltPermission() {
-    if (typeof DeviceOrientationEvent !== 'undefined' &&
-        typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission()
-        .then(state => {
-          if (state === 'granted') startTilt();
-        })
-        .catch(() => {});
-    } else if (typeof DeviceOrientationEvent !== 'undefined') {
-      startTilt();
-    }
-  }
-
-  if (typeof DeviceOrientationEvent !== 'undefined') {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      document.querySelectorAll('.profile-btn').forEach(btn => {
-        btn.addEventListener('click', requestTiltPermission, { once: true });
-      });
-    } else {
-      startTilt();
-    }
-  }
-
-  // Reset completo de todo estado de teaser (beats, stages, headlines)
-  // Crítico antes de mostrar el perfil de nuevo, porque sino los
-  // beats activos siguen siendo "clickeables" en el fondo aunque
-  // estén invisibles.
-  function resetAllTeasers() {
-    ['manager', 'operator', 'tech'].forEach(type => {
-      const scene = scenes[type];
-      scene.classList.remove('paused');
-      scene.querySelectorAll('.beat').forEach(b => b.classList.remove('active'));
-      scene.querySelectorAll('.progress-segment').forEach(s => s.classList.remove('active', 'done'));
-      scene.querySelectorAll('.stage').forEach(s => s.classList.remove('in', 'out'));
-      scene.querySelectorAll('.beat-headline-block').forEach(h => h.classList.remove('in'));
-    });
-    currentTeaserType = null;
-    isPaused = false;
-  }
-
-  // Helper: fuerza el play de todos los videos del documento.
-  // Útil después de gestos del usuario porque algunos browsers
-  // pausan videos en background sin avisar.
-  function ensureVideosPlaying() {
-    document.querySelectorAll('video').forEach(v => {
-      if (v.paused) {
-        const p = v.play();
-        if (p && typeof p.catch === 'function') p.catch(() => {});
-      }
-    });
-  }
-
-  document.getElementById('replay').addEventListener('click', () => {
-    clearTeaserTimers();
-    resetAllTeasers();
-    showScene('profile');
-  });
-
-  // CTA primario: vibración haptica al tocar (igual que los botones de perfil)
-  // El navegador abre el link nativamente, no necesitamos preventDefault
-  document.getElementById('primary-cta').addEventListener('click', () => {
-    if (navigator.vibrate) navigator.vibrate([15, 30, 15]);
-  });
 </script>
 
 </body>
