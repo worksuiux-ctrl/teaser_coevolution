@@ -2620,6 +2620,26 @@
   }
 
   // ============================================
+  // BOTONES DE LA PANTALLA FINAL
+  // ============================================
+
+  // Replay: vuelve al inicio del flujo (selección de perfil)
+  // Importante: limpia timers y resetea estado de todos los teasers
+  // para que la próxima ronda arranque desde cero
+  document.getElementById('replay').addEventListener('click', () => {
+    clearTeaserTimers();
+    resetAllTeasers();
+    showScene('profile');
+  });
+
+  // CTA primario "Quiero ser parte": el navegador abre el link nativo
+  // (target="_blank" en el HTML), nosotros solo agregamos vibración
+  // haptic para reforzar el momento del compromiso
+  document.getElementById('primary-cta').addEventListener('click', () => {
+    if (navigator.vibrate) navigator.vibrate([15, 30, 15]);
+  });
+
+  // ============================================
   // GESTOS HOLD-TO-PAUSE
   // - Tocar y mantener: pausa
   // - Soltar: reanuda
@@ -2652,6 +2672,19 @@
   // - Al volver, los videos pueden quedar congelados en su último frame
   // - Este listener detecta cuando vuelve el foco y los reanuda
   // ============================================
+
+  // Helper: fuerza el play de todos los videos del documento que
+  // hayan quedado pausados por el browser sin avisar.
+  // El .catch() silencia errores esperables de políticas de autoplay.
+  function ensureVideosPlaying() {
+    document.querySelectorAll('video').forEach(v => {
+      if (v.paused) {
+        const p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      }
+    });
+  }
+
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       ensureVideosPlaying();
