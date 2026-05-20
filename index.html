@@ -4,6 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0c0c0e">
+
+<!-- ============================================
+     META TAGS PARA EXPERIENCIA FULLSCREEN-LIKE
+     ============================================
+     iOS Safari: cuando se agrega a Home Screen y se abre desde ahí,
+     se ve sin barra de URL ni de tabs. Estos metas configuran ese modo.
+
+     Android Chrome: la combinación de mobile-web-app-capable + theme-color
+     hace que la barra de status se tinte y el browser sea menos invasivo.
+-->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="COE Evolution">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="COE Evolution">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Prevenir que el browser interprete el contenido como app web (zoom, popups) -->
+<meta name="HandheldFriendly" content="true">
+<meta name="MobileOptimized" content="320">
 <title>COE Evolution</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -2359,11 +2379,50 @@
     });
   }
 
+  // ============================================
+  // FULLSCREEN (al iniciar el flujo)
+  // ============================================
+  // Cuando el usuario elige un perfil, intentamos entrar en pantalla
+  // completa real para experiencia más inmersiva.
+  //
+  // Compatibilidad:
+  // - Chrome Android: funciona perfecto, oculta toda la UI
+  // - Firefox Android: funciona
+  // - Safari iOS: NO soporta Fullscreen API en mobile (Apple la bloqueó)
+  //   En iOS la única forma de fullscreen real es PWA "Add to Home Screen"
+  // - Si falla por cualquier razón, no pasa nada (degrada silenciosamente)
+
+  function requestFullscreen() {
+    const el = document.documentElement;
+    // Probamos los distintos prefijos según el browser
+    const request =
+      el.requestFullscreen ||
+      el.webkitRequestFullscreen ||
+      el.mozRequestFullScreen ||
+      el.msRequestFullscreen;
+
+    if (request) {
+      try {
+        const result = request.call(el);
+        // Algunas implementaciones devuelven Promise, otras no
+        if (result && typeof result.catch === 'function') {
+          result.catch(() => {}); // silenciamos errores (usuario rechazó, etc.)
+        }
+      } catch (e) {
+        // Algunas situaciones (iframe, contexto inseguro) tiran throw síncrono
+        // No es crítico, simplemente no entramos en fullscreen
+      }
+    }
+  }
+
   // SELECCIÓN DE PERFIL
   document.querySelectorAll('.profile-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const profile = btn.dataset.profile;
       if (navigator.vibrate) navigator.vibrate(15);
+      // Intentamos entrar en pantalla completa (Android principalmente)
+      // En iOS Safari mobile esto no hace nada porque está bloqueado por Apple
+      requestFullscreen();
       showScene('loading');
       setTimeout(() => { runTeaser(profile); }, 1400);
     });
