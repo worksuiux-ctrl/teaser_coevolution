@@ -69,7 +69,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 32px;
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
@@ -77,66 +77,57 @@ body {
   display: none;
 }
 
-/* Logo animado */
-.logo-wrap {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  background: #000;
-  isolation: isolate;
+/* Hero */
+.hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }
 
-.logo-bg {
-  position: absolute;
-  inset: 0;
-  background: #000;
-  z-index: 0;
-}
-
-.logo-video {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  z-index: 1;
-}
-
-/* Títulos */
-.eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent-bright);
+.hero-title {
+  font-size: 40px;
   font-weight: 500;
-  text-align: center;
+  letter-spacing: 0.03em;
+  color: #88C63A;
+  text-shadow: 0 0 40px rgba(136,198,58,0.15);
 }
 
-.headline {
-  font-size: 26px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  text-align: center;
+.hero-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-bottom: 12px;
 }
 
-.subhead {
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  text-align: center;
-  margin-top: -8px;
+.hero-year {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: rgba(245,245,247,0.3);
+  margin-top: 6px;
+}
+
+.hero-sub {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #f5f5f7;
+  margin-top: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(136,198,58,0.15);
 }
 
 /* Formulario */
 .form-card {
   width: 100%;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 24px;
+  background: rgba(31, 31, 35, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -226,11 +217,11 @@ body {
 /* Botón submit */
 .submit-btn {
   width: 100%;
-  background: var(--accent);
+  background: linear-gradient(135deg, #88C63A 0%, #6BB329 100%);
   color: #0c0c0e;
   border: none;
   border-radius: 14px;
-  padding: 16px;
+  padding: 18px;
   font-size: 16px;
   font-weight: 600;
   font-family: inherit;
@@ -240,11 +231,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .submit-btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
   opacity: 0.9;
 }
 
@@ -291,7 +282,10 @@ body {
 .qr-section.visible { display: flex; }
 
 .qr-card {
-  background: white;
+  background: rgba(31, 31, 35, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
   padding: 20px;
   border-radius: 18px;
   display: flex;
@@ -314,11 +308,16 @@ body {
   height: 200px !important;
 }
 
+.qr-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
 .qr-label {
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #666;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -395,24 +394,34 @@ body {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Canvas de fondo 3D */
+#bgGrid {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body > * { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
+
+<canvas id="bgGrid"></canvas>
 
 <div class="container">
 
   <!-- FORMULARIO -->
   <div class="form-section" id="formSection">
-    <div class="logo-wrap">
-      <div class="logo-bg"></div>
-      <video class="logo-video" autoplay muted loop playsinline preload="auto">
-        <source src="/assets/logo_idle.mp4" type="video/mp4">
-      </video>
+    <div class="hero">
+      <img class="hero-icon" src="/assets/Icono%20coe.png" alt="COE">
+      <div class="hero-title">COE EVOLUTION</div>
+      <div class="hero-year">2026</div>
+      <div class="hero-sub">Invitación Especial e Intransferible</div>
     </div>
-
-    <div class="eyebrow">COE Evolution · 2026</div>
-    <h1 class="headline">Estás invitado</h1>
-    <p class="subhead">Confirma tu asistencia al evento que está transformando la banca.</p>
 
     <form class="form-card" id="form" novalidate>
       <div class="field-group">
@@ -442,14 +451,14 @@ body {
 
       <div class="check-field">
         <input type="checkbox" id="confirmado">
-        <label for="confirmado">Confirmo mi asistencia al evento COE Evolution</label>
+        <label for="confirmado">Confirmo mi asistencia</label>
       </div>
 
       <div class="error-msg" id="errorMsg"></div>
 
       <button class="submit-btn" id="submitBtn" type="submit">
         <span class="spinner"></span>
-        <span class="btn-text">Confirmar asistencia</span>
+        <span class="btn-text">Enviar</span>
       </button>
     </form>
   </div>
@@ -461,7 +470,9 @@ body {
 
     <div class="qr-card">
       <span class="qr-label">Tu código de acceso</span>
-      <div id="qrcode"></div>
+      <div class="qr-wrap">
+        <div id="qrcode"></div>
+      </div>
     </div>
 
     <p class="qr-hint">
@@ -478,7 +489,7 @@ body {
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
@@ -546,77 +557,112 @@ form.addEventListener('submit', async (e) => {
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
 
-      new QRCode(qrContainer, {
-        text: qrUrl,
-        width: 200,
-        height: 200,
-        colorDark: '#0c0c0e',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      });
+      // Generar matriz QR con qrcode-generator
+      const qr = qrcode(0, 'H');
+      qr.addData(qrUrl);
+      qr.make();
+      const modules = qr.getModuleCount();
 
-      // Generar PDF para descarga con fondo, logo y recuadro
-      requestAnimationFrame(() => {
-        const original = qrContainer.querySelector('canvas');
-        if (!original) return;
-        const s = 4;
-        const w = 200 * s, h = 300 * s;
-        const c = document.createElement('canvas');
-        c.width = w; c.height = h;
-        const ctx = c.getContext('2d');
+      // Canvas para pantalla (200×200 con CSS)
+      const size = 200;
+      const cell = size / (modules + 8);
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(0, 0, size, size);
+      ctx.fillStyle = '#88C63A';
+      const offset = 4 * cell;
+      for (let r = 0; r < modules; r++) {
+        for (let c = 0; c < modules; c++) {
+          if (qr.isDark(r, c)) {
+            const x = offset + c * cell;
+            const y = offset + r * cell;
+            const radius = cell * 0.42;
+            ctx.beginPath();
+            ctx.arc(x + cell / 2, y + cell / 2, radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+      qrContainer.appendChild(canvas);
 
-        ctx.fillStyle = '#0c0c0e';
-        ctx.fillRect(0, 0, w, h);
+      // Generar PDF
+      const s = 4;
+      const pw = 800, ph = 300 * s;
+      const pc = document.createElement('canvas');
+      pc.width = pw; pc.height = ph;
+      const pctx = pc.getContext('2d');
 
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#88C63A';
-        ctx.font = `bold ${20 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-        ctx.fillText('COE', w / 2, 42 * s);
-        ctx.fillStyle = '#f5f5f7';
-        ctx.font = `500 ${14 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-        ctx.fillText('Evolution', w / 2, 62 * s);
+      pctx.fillStyle = '#0c0c0e';
+      pctx.fillRect(0, 0, pw, ph);
 
-        const qrSize = 160 * s;
-        const qrX = (w - qrSize) / 2;
-        const qrY = 82 * s;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        const r = 14 * s;
-        ctx.moveTo(qrX + r, qrY);
-        ctx.lineTo(qrX + qrSize - r, qrY);
-        ctx.quadraticCurveTo(qrX + qrSize, qrY, qrX + qrSize, qrY + r);
-        ctx.lineTo(qrX + qrSize, qrY + qrSize - r);
-        ctx.quadraticCurveTo(qrX + qrSize, qrY + qrSize, qrX + qrSize - r, qrY + qrSize);
-        ctx.lineTo(qrX + r, qrY + qrSize);
-        ctx.quadraticCurveTo(qrX, qrY + qrSize, qrX, qrY + qrSize - r);
-        ctx.lineTo(qrX, qrY + r);
-        ctx.quadraticCurveTo(qrX, qrY, qrX + r, qrY);
-        ctx.closePath();
-        ctx.fill();
+      pctx.textAlign = 'center';
+      pctx.fillStyle = '#88C63A';
+      pctx.font = `bold ${20 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
+      pctx.fillText('COE', pw / 2, 42 * s);
+      pctx.fillStyle = '#f5f5f7';
+      pctx.font = `500 ${14 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
+      pctx.fillText('Evolution', pw / 2, 62 * s);
 
-        const pad = 10 * s;
-        ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(original, qrX + pad, qrY + pad, qrSize - pad * 2, qrSize - pad * 2);
+      // QR de alta resolución para el PDF
+      const pdfSize = 560;
+      const pdfCell = pdfSize / (modules + 8);
+      const pdfQr = document.createElement('canvas');
+      pdfQr.width = pdfQr.height = pdfSize;
+      const pqrCtx = pdfQr.getContext('2d');
+      pqrCtx.fillStyle = '#88C63A';
+      const pdfOffset = 4 * pdfCell;
+      for (let r = 0; r < modules; r++) {
+        for (let c = 0; c < modules; c++) {
+          if (qr.isDark(r, c)) {
+            const x = pdfOffset + c * pdfCell;
+            const y = pdfOffset + r * pdfCell;
+            const radius = pdfCell * 0.42;
+            pqrCtx.beginPath();
+            pqrCtx.arc(x + pdfCell / 2, y + pdfCell / 2, radius, 0, Math.PI * 2);
+            pqrCtx.fill();
+          }
+        }
+      }
 
-        ctx.fillStyle = 'rgba(245,245,247,0.55)';
-        ctx.font = `${9 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-        ctx.fillText('Código de acceso personal e intransferible', w / 2, 268 * s);
+      const qrSize = 160 * s;
+      const qrX = (pw - qrSize) / 2;
+      const qrY = 82 * s;
+      pctx.fillStyle = '#ffffff';
+      pctx.beginPath();
+      const rr = 14 * s;
+      pctx.moveTo(qrX + rr, qrY);
+      pctx.lineTo(qrX + qrSize - rr, qrY);
+      pctx.quadraticCurveTo(qrX + qrSize, qrY, qrX + qrSize, qrY + rr);
+      pctx.lineTo(qrX + qrSize, qrY + qrSize - rr);
+      pctx.quadraticCurveTo(qrX + qrSize, qrY + qrSize, qrX + qrSize - rr, qrY + qrSize);
+      pctx.lineTo(qrX + rr, qrY + qrSize);
+      pctx.quadraticCurveTo(qrX, qrY + qrSize, qrX, qrY + qrSize - rr);
+      pctx.lineTo(qrX, qrY + rr);
+      pctx.quadraticCurveTo(qrX, qrY, qrX + rr, qrY);
+      pctx.closePath();
+      pctx.fill();
 
-        ctx.fillStyle = '#88C63A';
-        ctx.font = `500 ${8 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-        ctx.fillText('COE Evolution · 2026', w / 2, 286 * s);
+      const pad = 10 * s;
+      pctx.drawImage(pdfQr, qrX + pad, qrY + pad, qrSize - pad * 2, qrSize - pad * 2);
 
-        // Generar PDF con jsPDF
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'px', [w, h]);
-        pdf.addImage(c.toDataURL('image/png'), 'PNG', 0, 0, w, h);
+      pctx.fillStyle = 'rgba(245,245,247,0.55)';
+      pctx.font = `${9 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
+      pctx.fillText('Código de acceso personal e intransferible', pw / 2, 268 * s);
 
-        // Usar blob URL en vez de data URI (iOS Safari no descarga data: URIs)
-        const blob = pdf.output('blob');
-        const url = URL.createObjectURL(blob);
-        downloadLink.href = url;
-        downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
-      });
+      pctx.fillStyle = '#88C63A';
+      pctx.font = `500 ${8 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
+      pctx.fillText('COE Evolution · 2026', pw / 2, 286 * s);
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'px', [pw, ph]);
+      pdf.addImage(pc.toDataURL('image/png'), 'PNG', 0, 0, pw, ph);
+
+      const blob = pdf.output('blob');
+      const url = URL.createObjectURL(blob);
+      downloadLink.href = url;
+      downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
     });
 
   } catch (err) {
@@ -627,6 +673,108 @@ form.addEventListener('submit', async (e) => {
     submitBtn.disabled = false;
   }
 });
+</script>
+
+<script>
+// Constellation background
+(function(){
+  const c = document.getElementById('bgGrid');
+  const ctx = c.getContext('2d');
+  let particles = [];
+  const COUNT = 55;
+  const CONN_DIST = 200;
+  const LINE_ALPHA = 0.45;
+  const PT_ALPHA_MIN = 0.35;
+  const PT_ALPHA_MAX = 0.6;
+
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  class P {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * c.width;
+      this.y = Math.random() * c.height;
+      this.vx = (Math.random() - 0.5) * 0.2;
+      this.vy = (Math.random() - 0.5) * 0.2;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < 0 || this.x > c.width) this.vx *= -1;
+      if (this.y < 0 || this.y > c.height) this.vy *= -1;
+    }
+  }
+
+  for (let i = 0; i < COUNT; i++) particles.push(new P());
+
+  const rmq = matchMedia('(prefers-reduced-motion: reduce)');
+
+  function draw() {
+    const w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Update
+    if (!rmq.matches) particles.forEach(p => p.update());
+
+    // Draw connections
+    for (let i = 0; i < COUNT; i++) {
+      for (let j = i + 1; j < COUNT; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONN_DIST) {
+          const alpha = (1 - dist / CONN_DIST) * LINE_ALPHA;
+          ctx.strokeStyle = `rgba(136,198,58,${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw particles
+    particles.forEach(p => {
+      const alpha = PT_ALPHA_MIN + Math.random() * (PT_ALPHA_MAX - PT_ALPHA_MIN);
+      ctx.fillStyle = `rgba(136,198,58,${alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(136,198,58,${alpha * 0.25})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    if (!rmq.matches) requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  // Re-spawn on resize
+  window.addEventListener('resize', () => {
+    particles.forEach(p => {
+      if (p.x > c.width || p.y > c.height) p.reset();
+    });
+  });
+})();
+
+// Parallax sutil en el icono
+(function(){
+  const icon = document.querySelector('.hero-icon');
+  if (!icon) return;
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 8;
+    const y = (e.clientY / window.innerHeight - 0.5) * 8;
+    icon.style.transform = `translate(${x}px, ${y}px)`;
+  });
+})();
 </script>
 </body>
 </html>
