@@ -435,6 +435,11 @@ body {
         <input class="field-input" id="cargo" type="text" placeholder="Ej: Gerente de Operaciones">
       </div>
 
+      <div class="field-group">
+        <label class="field-label" for="organizacion">Organización</label>
+        <input class="field-input" id="organizacion" type="text" placeholder="Ej: Banco Central">
+      </div>
+
       <div class="check-field">
         <input type="checkbox" id="confirmado">
         <label for="confirmado">Confirmo mi asistencia al evento COE Evolution</label>
@@ -501,6 +506,7 @@ form.addEventListener('submit', async (e) => {
   const telefono = document.getElementById('telefono').value.trim();
   const correo = document.getElementById('correo').value.trim();
   const cargo = document.getElementById('cargo').value.trim();
+  const organizacion = document.getElementById('organizacion').value.trim();
   const confirmado = document.getElementById('confirmado').checked;
 
   if (!nombre || !telefono || !correo) {
@@ -514,10 +520,10 @@ form.addEventListener('submit', async (e) => {
   const uid = crypto.randomUUID?.() ?? ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
 
   try {
-    console.log('Insertando en Supabase...', { uid, nombre, telefono });
+    console.log('Insertando en Supabase...', { uid, nombre, telefono, organizacion });
     const { error, data } = await supabaseClient
       .from('invitados')
-      .insert({ uid, nombre, telefono, correo, cargo, confirmado })
+      .insert({ uid, nombre, telefono, correo, cargo, organizacion, confirmado })
       .select();
 
     if (error) {
