@@ -87,13 +87,17 @@ body {
   position: relative;
 }
 
-.logo-video {
-  display: block;
+.logo-letter {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+  color: #88C63A;
   background: #000;
-  mix-blend-mode: screen;
+  font-family: -apple-system, "SF Pro Display", system-ui, sans-serif;
 }
 
 /* Títulos */
@@ -396,9 +400,7 @@ body {
   <!-- FORMULARIO -->
   <div class="form-section" id="formSection">
     <div class="logo-wrap">
-      <video class="logo-video" autoplay muted loop playsinline preload="auto">
-        <source src="/assets/logo_idle.mp4" type="video/mp4">
-      </video>
+      <div class="logo-letter">C</div>
     </div>
 
     <div class="eyebrow">COE Evolution · 2026</div>
@@ -482,8 +484,6 @@ const formSection = document.getElementById('formSection');
 const qrSection = document.getElementById('qrSection');
 const qrName = document.getElementById('qrName');
 const downloadLink = document.getElementById('downloadLink');
-
-document.querySelector('video').play().catch(() => {});
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -598,7 +598,12 @@ form.addEventListener('submit', async (e) => {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'px', [w, h]);
         pdf.addImage(c.toDataURL('image/png'), 'PNG', 0, 0, w, h);
-        downloadLink.href = pdf.output('datauristring');
+
+        // Usar blob URL en vez de data URI (iOS Safari no descarga data: URIs)
+        const blob = pdf.output('blob');
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
       });
     });
 
