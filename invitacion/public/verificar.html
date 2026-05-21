@@ -354,6 +354,14 @@ body {
       <div class="scanner-overlay"></div>
     </div>
     <p class="scanner-hint">Apunta al código QR del invitado</p>
+
+    <details style="width:100%;cursor:pointer;border:1px solid var(--border);border-radius:14px;padding:12px;background:var(--bg-elevated);color:var(--text-muted);font-size:13px">
+      <summary style="font-weight:500;color:var(--text-muted)">⌨ Ingresar código manual</summary>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <input id="manualInput" type="text" placeholder="Pega el código aquí" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:14px;font-family:"SF Mono",monospace;color:var(--text);outline:none;letter-spacing:0.1em">
+        <button id="manualBtn" style="background:var(--accent);color:#0c0c0e;border:none;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Verificar</button>
+      </div>
+    </details>
   </div>
 
   <!-- Estado: CARGANDO -->
@@ -698,6 +706,19 @@ if (urlUid) {
 }
 
 window.addEventListener('beforeunload', stopCamera);
+
+// Manual code entry
+document.getElementById('manualBtn').addEventListener('click', () => {
+  const val = document.getElementById('manualInput').value.trim();
+  if (val) {
+    stopCamera();
+    scanning = false;
+    verificar(val);
+  }
+});
+document.getElementById('manualInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('manualBtn').click();
+});
 </script>
 </body>
 </html>

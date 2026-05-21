@@ -337,6 +337,16 @@ body {
 }
 
 /* Acciones post-registro */
+.qr-code-text {
+  font-size: 12px;
+  font-family: "SF Mono", "Menlo", monospace;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  user-select: all;
+  word-break: break-all;
+  text-align: center;
+}
+
 .qr-actions {
   display: flex;
   flex-direction: column;
@@ -526,6 +536,20 @@ form.addEventListener('submit', async (e) => {
   const uid = crypto.randomUUID?.() ?? ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
 
   try {
+    // Verificar si el correo ya está registrado
+    const { data: existente } = await supabaseClient
+      .from('invitados')
+      .select('nombre')
+      .eq('correo', correo)
+      .maybeSingle();
+    if (existente) {
+      errorMsg.textContent = `El correo "${correo}" ya está registrado (${existente.nombre}).`;
+      errorMsg.classList.add('visible');
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+      return;
+    }
+
     console.log('Insertando en Supabase...', { uid, nombre, telefono, organizacion });
     const { error, data } = await supabaseClient
       .from('invitados')
@@ -582,82 +606,83 @@ form.addEventListener('submit', async (e) => {
       }
       qrContainer.appendChild(canvas);
 
-      // Generar PDF (ticket — mismo estilo que el formulario)
-      const s = 4;
-      const pw = 800, ph = 300 * s;
-      const pc = document.createElement('canvas');
-      pc.width = pw; pc.height = ph;
-      const pctx = pc.getContext('2d');
+      // Generar PDF
+      const genPdf = () => {
+        const pw = 600, ph = 900;
+        const pc = document.createElement('canvas');
+        pc.width = pw; pc.height = ph;
+        const pctx = pc.getContext('2d');
 
-      pctx.fillStyle = '#0c0c0e';
-      pctx.fillRect(0, 0, pw, ph);
+        pctx.fillStyle = '#0c0c0e';
+        pctx.fillRect(0, 0, pw, ph);
 
-      // QR de alta resolución para el PDF
-      const qrPdfSize = 160 * s;
-      const pdfSize = qrPdfSize;
-      const pdfCell = pdfSize / (modules + 8);
-      const pdfQr = document.createElement('canvas');
-      pdfQr.width = pdfQr.height = pdfSize;
-      const pqrCtx = pdfQr.getContext('2d');
-      pqrCtx.fillStyle = '#ffffff';
-      pqrCtx.fillRect(0, 0, pdfSize, pdfSize);
-      const pdfOffset = 4 * pdfCell;
-      for (let r = 0; r < modules; r++) {
-        for (let c = 0; c < modules; c++) {
-          if (qr.isDark(r, c)) {
-            pqrCtx.fillStyle = isFinder(r, c) ? '#88C63A' : '#444';
-            pqrCtx.fillRect(pdfOffset + c * pdfCell, pdfOffset + r * pdfCell, pdfCell, pdfCell);
-          }
+        // Header
+        const heroIcon = document.querySelector('.hero-icon');
+        const hasIcon = heroIcon && heroIcon.complete && heroIcon.naturalWidth > 0;
+        if (hasIcon) {
+          pctx.drawImage(heroIcon, (pw - 48) / 2, 32, 48, 48);
         }
-      }
-
-      const qrX = (pw - qrPdfSize) / 2;
-      const qrY = 102 * s;
-      pctx.fillStyle = '#ffffff';
-      pctx.beginPath();
-      const rr = 14 * s;
-      pctx.moveTo(qrX + rr, qrY);
-      pctx.lineTo(qrX + qrPdfSize - rr, qrY);
-      pctx.quadraticCurveTo(qrX + qrPdfSize, qrY, qrX + qrPdfSize, qrY + rr);
-      pctx.lineTo(qrX + qrPdfSize, qrY + qrPdfSize - rr);
-      pctx.quadraticCurveTo(qrX + qrPdfSize, qrY + qrPdfSize, qrX + qrPdfSize - rr, qrY + qrPdfSize);
-      pctx.lineTo(qrX + rr, qrY + qrPdfSize);
-      pctx.quadraticCurveTo(qrX, qrY + qrPdfSize, qrX, qrY + qrPdfSize - rr);
-      pctx.lineTo(qrX, qrY + rr);
-      pctx.quadraticCurveTo(qrX, qrY, qrX + rr, qrY);
-      pctx.closePath();
-      pctx.fill();
-
-      const pad = 10 * s;
-      pctx.drawImage(pdfQr, qrX + pad, qrY + pad, qrPdfSize - pad * 2, qrPdfSize - pad * 2);
-
-      pctx.fillStyle = 'rgba(245,245,247,0.55)';
-      pctx.font = `${9 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-      pctx.textAlign = 'center';
-      pctx.fillText('Invitación Especial e Intransferible', pw / 2, 268 * s);
-
-      pctx.fillStyle = '#88C63A';
-      pctx.font = `500 ${8 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-      pctx.fillText('COE EVOLUTION · 2026', pw / 2, 286 * s);
-
-      // Cargar logo y dibujar encabezado
-      const logo = new Image();
-      logo.onload = () => {
-        const logoSize = 40 * s;
-        pctx.drawImage(logo, (pw - logoSize) / 2, 10 * s, logoSize, logoSize);
-        finishPdf();
-      };
-      logo.onerror = () => finishPdf();
-      logo.src = '/assets/Icono%20coe.png';
-
-      function finishPdf() {
         pctx.textAlign = 'center';
         pctx.fillStyle = '#88C63A';
-        pctx.font = `bold ${26 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-        pctx.fillText('COE EVOLUTION', pw / 2, 66 * s);
+        pctx.font = 'bold 32px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('COE EVOLUTION', pw / 2, hasIcon ? 120 : 80);
+        pctx.fillStyle = 'rgba(245,245,247,0.5)';
+        pctx.font = '400 14px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('Invitación digital intransferible', pw / 2, hasIcon ? 148 : 104);
+        pctx.fillStyle = '#f5f5f7';
+        pctx.font = '600 18px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText(nombre, pw / 2, hasIcon ? 174 : 130);
+
+        // QR de alta resolución
+        const qrCard = 480;
+        const qrImg = 420;
+        const pdfCell = qrImg / (modules + 8);
+        const pdfQr = document.createElement('canvas');
+        pdfQr.width = pdfQr.height = qrImg;
+        const pqrCtx = pdfQr.getContext('2d');
+        pqrCtx.fillStyle = '#ffffff';
+        pqrCtx.fillRect(0, 0, qrImg, qrImg);
+        const pdfOff = 4 * pdfCell;
+        for (let r = 0; r < modules; r++) {
+          for (let c = 0; c < modules; c++) {
+            if (qr.isDark(r, c)) {
+              pqrCtx.fillStyle = isFinder(r, c) ? '#88C63A' : '#444';
+              pqrCtx.fillRect(pdfOff + c * pdfCell, pdfOff + r * pdfCell, pdfCell, pdfCell);
+            }
+          }
+        }
+
+        const qrX = (pw - qrCard) / 2;
+        const qrY = hasIcon ? 210 : 160;
+        pctx.fillStyle = '#ffffff';
+        const r2 = 12;
+        pctx.beginPath();
+        pctx.moveTo(qrX + r2, qrY);
+        pctx.lineTo(qrX + qrCard - r2, qrY);
+        pctx.quadraticCurveTo(qrX + qrCard, qrY, qrX + qrCard, qrY + r2);
+        pctx.lineTo(qrX + qrCard, qrY + qrCard - r2);
+        pctx.quadraticCurveTo(qrX + qrCard, qrY + qrCard, qrX + qrCard - r2, qrY + qrCard);
+        pctx.lineTo(qrX + r2, qrY + qrCard);
+        pctx.quadraticCurveTo(qrX, qrY + qrCard, qrX, qrY + qrCard - r2);
+        pctx.lineTo(qrX, qrY + r2);
+        pctx.quadraticCurveTo(qrX, qrY, qrX + r2, qrY);
+        pctx.closePath();
+        pctx.fill();
+
+        const pad = 30;
+        pctx.drawImage(pdfQr, qrX + pad, qrY + pad, qrImg, qrImg);
+
+        // Footer
+        const f1 = qrY + qrCard + 40;
+        pctx.fillStyle = 'rgba(245,245,247,0.5)';
+        pctx.font = '500 13px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('Código de acceso personal e intransferible', pw / 2, f1);
+        pctx.fillStyle = '#88C63A';
+        pctx.font = '500 11px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('COE Evolution · 2026', pw / 2, f1 + 20);
         pctx.fillStyle = 'rgba(245,245,247,0.3)';
-        pctx.font = `400 ${13 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-        pctx.fillText('2026', pw / 2, 84 * s);
+        pctx.font = '400 9px "SF Mono", "Menlo", monospace';
+        pctx.fillText(uid, pw / 2, f1 + 36);
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'px', [pw, ph]);
@@ -667,9 +692,9 @@ form.addEventListener('submit', async (e) => {
         const url = URL.createObjectURL(blob);
         downloadLink.href = url;
         downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
-      }
+      };
+      genPdf();
     });
-  });
 
   } catch (err) {
     console.error('Error completo:', err);
