@@ -220,6 +220,10 @@ body {
   0%, 100% { opacity: 0.8; }
   50% { opacity: 1; }
 }
+@keyframes fadeOut {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
 
 /* Tabs */
 .tabs {
@@ -481,6 +485,39 @@ function startCamera() {
     scanFrame();
   }).catch(() => {});
 }
+
+// Tap para enfocar
+function setupTapFocus() {
+  const wrap = document.getElementById('scannerWrap');
+  wrap.addEventListener('click', (e) => {
+    const rect = wrap.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Animación visual del foco
+    const ring = document.createElement('div');
+    ring.style.cssText = `
+      position:absolute;left:${x - 20}px;top:${y - 20}px;
+      width:40px;height:40px;border:2px solid rgba(136,198,58,.8);
+      border-radius:50%;pointer-events:none;z-index:10;
+      animation:fadeOut .5s ease forwards;
+    `;
+    wrap.appendChild(ring);
+    setTimeout(() => ring.remove(), 600);
+
+    // Intentar enfocar si hay cámara activa
+    if (stream) {
+      const track = stream.getVideoTracks()[0];
+      try {
+        const cap = track.getCapabilities && track.getCapabilities();
+        if (cap && cap.focusMode && cap.focusMode.includes('single-shot')) {
+          track.applyConstraints({ advanced: [{ focusMode: 'single-shot' }] });
+        }
+      } catch {}
+    }
+  });
+}
+setupTapFocus();
 
 function scanFrame() {
   if (!scanning) return;
