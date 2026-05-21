@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="COE Evolution">
+<title>COE Evolution · Invitación</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  min-height: 100vh;
+  background: #0c0c0e;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+:root {
+  --bg: #0c0c0e;
+  --bg-elevated: #18181b;
+  --bg-card: #1f1f23;
+  --surface: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f5f5f7;
+  --text-muted: rgba(245, 245, 247, 0.55);
+  --text-dim: rgba(245, 245, 247, 0.35);
+  --coe-green-100: #D6EBC2;
+  --coe-green-200: #B8DD93;
+  --coe-green-300: #9BCE6A;
+  --coe-green-400: #84C237;
+  --coe-green-450: #88C63A;
+  --coe-green-500: #42AA42;
+  --accent: var(--coe-green-450);
+  --accent-bright: var(--coe-green-300);
+  --accent-deep: #267335;
+  --success: var(--coe-green-500);
+  --success-bg: rgba(66, 170, 66, 0.15);
+  --glow: rgba(132, 194, 55, 0.25);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  min-height: 100dvh;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Sección: formulario */
+.form-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.form-section.hidden {
+  display: none;
+}
+
+/* Logo animado */
+.logo-wrap {
+  width: 100px;
+  height: 100px;
+  background: #000;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.logo-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  mix-blend-mode: screen;
+}
+
+/* Títulos */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  font-weight: 500;
+  text-align: center;
+}
+
+.headline {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.subhead {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  text-align: center;
+  margin-top: -8px;
+}
+
+/* Formulario */
+.form-card {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.field-input::placeholder {
+  color: var(--text-dim);
+}
+
+.field-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--glow);
+}
+
+.field-input.error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(255, 88, 72, 0.15);
+}
+
+/* Checkbox de confirmación */
+.check-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.check-field input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.check-field input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.check-field input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/14px no-repeat;
+}
+
+.check-field label {
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+  color: var(--text);
+}
+
+/* Botón submit */
+.submit-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #0c0c0e;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-btn .spinner {
+  display: none;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(12, 12, 14, 0.3);
+  border-top-color: #0c0c0e;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.submit-btn.loading .spinner { display: block; }
+.submit-btn.loading .btn-text { display: none; }
+
+/* Mensaje de error */
+.error-msg {
+  font-size: 13px;
+  color: var(--danger);
+  text-align: center;
+  display: none;
+}
+
+.error-msg.visible { display: block; }
+
+/* ============================================
+   SECCIÓN QR (después del envío)
+   ============================================ */
+.qr-section {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fadeUp 0.8s var(--ease-out-expo) forwards;
+}
+
+.qr-section.visible { display: flex; }
+
+.qr-card {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+#qrcode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#qrcode img, #qrcode canvas {
+  display: block;
+  width: 200px !important;
+  height: 200px !important;
+}
+
+.qr-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 500;
+}
+
+.qr-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
+}
+
+.qr-hint {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.qr-hint strong {
+  color: var(--accent-bright);
+  font-weight: 500;
+}
+
+/* Acciones post-registro */
+.qr-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.qr-actions a,
+.qr-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.qr-actions a:active,
+.qr-actions button:active {
+  transform: scale(0.98);
+  border-color: var(--accent);
+}
+
+.qr-actions a .icon,
+.qr-actions button .icon {
+  font-size: 16px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- FORMULARIO -->
+  <div class="form-section" id="formSection">
+    <div class="logo-wrap">
+      <video class="logo-video" autoplay muted loop playsinline preload="auto">
+        <source src="/assets/logo_idle.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="eyebrow">COE Evolution · 2026</div>
+    <h1 class="headline">Estás invitado</h1>
+    <p class="subhead">Confirma tu asistencia al evento que está transformando la banca.</p>
+
+    <form class="form-card" id="form">
+      <div class="field-group">
+        <label class="field-label" for="nombre">Nombre completo</label>
+        <input class="field-input" id="nombre" type="text" placeholder="Ej: María García" required autocomplete="name">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="telefono">Teléfono</label>
+        <input class="field-input" id="telefono" type="tel" placeholder="+58 414 123 4567" required autocomplete="tel">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="correo">Correo electrónico</label>
+        <input class="field-input" id="correo" type="email" placeholder="ejemplo@correo.com" required autocomplete="email">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cargo">Cargo</label>
+        <input class="field-input" id="cargo" type="text" placeholder="Ej: Gerente de Operaciones">
+      </div>
+
+      <div class="check-field">
+        <input type="checkbox" id="confirmado">
+        <label for="confirmado">Confirmo mi asistencia al evento COE Evolution</label>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="submit-btn" id="submitBtn" type="submit">
+        <span class="spinner"></span>
+        <span class="btn-text">Confirmar asistencia</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- QR (post-envío) -->
+  <div class="qr-section" id="qrSection">
+    <div class="eyebrow">¡Registrado!</div>
+    <p class="qr-name" id="qrName"></p>
+
+    <div class="qr-card">
+      <span class="qr-label">Tu código de acceso</span>
+      <div id="qrcode"></div>
+    </div>
+
+    <p class="qr-hint">
+      Presenta este código en la entrada del evento.<br>
+      <strong>Es personal e intransferible.</strong>
+    </p>
+
+    <div class="qr-actions">
+      <a id="downloadLink" download="COE_Evolution_QR.png">
+        <span class="icon">⬇</span> Descargar QR
+      </a>
+      <button onclick="window.location.href='/'">
+        <span class="icon">↩</span> Volver al inicio
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://avqfndjpkfegfpoqyxeg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cWZuZGpwa2ZlZ2Zwb3F5eGVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzU3OTQsImV4cCI6MjA5NDk1MTc5NH0.aBsVuz6Es4jwgpFihqKhRUVuxsKmskEgk5gmmvxSSVc';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const form = document.getElementById('form');
+const submitBtn = document.getElementById('submitBtn');
+const errorMsg = document.getElementById('errorMsg');
+const formSection = document.getElementById('formSection');
+const qrSection = document.getElementById('qrSection');
+const qrName = document.getElementById('qrName');
+const downloadLink = document.getElementById('downloadLink');
+
+document.querySelector('video').play().catch(() => {});
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  errorMsg.classList.remove('visible');
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
+
+  const nombre = document.getElementById('nombre').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  const correo = document.getElementById('correo').value.trim();
+  const cargo = document.getElementById('cargo').value.trim();
+  const confirmado = document.getElementById('confirmado').checked;
+
+  if (!nombre || !telefono || !correo) {
+    errorMsg.textContent = 'Completa nombre, teléfono y correo.';
+    errorMsg.classList.add('visible');
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+    return;
+  }
+
+  const uid = crypto.randomUUID();
+
+  try {
+    const { error } = await supabase
+      .from('invitados')
+      .insert({ uid, nombre, telefono, correo, cargo, confirmado });
+
+    if (error) throw new Error(error.message);
+
+    // Mostrar QR
+    const qrUrl = `${window.location.origin}/verificar.html?uid=${uid}`;
+    qrName.textContent = nombre;
+
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = '';
+
+    new QRCode(qrContainer, {
+      text: qrUrl,
+      width: 200,
+      height: 200,
+      colorDark: '#0c0c0e',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    downloadLink.href = qrContainer.querySelector('canvas').toDataURL('image/png');
+    formSection.classList.add('hidden');
+    qrSection.classList.add('visible');
+
+  } catch (err) {
+    errorMsg.textContent = err.message;
+    errorMsg.classList.add('visible');
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

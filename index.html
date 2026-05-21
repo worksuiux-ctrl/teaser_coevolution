@@ -2518,57 +2518,32 @@
   }
 
   // ============================================
-  // TIMING — ajusta acá la duración de cada parte
+  // TIMING — ritmo por perfil
   // ============================================
-  // Todos los valores en milisegundos.
-  // Resumen de un beat (suma de los 4):
-  //   delayEnter + showProblem + showSolution + holdTitle
+  // Cada perfil tiene un tempo distinto para que la experiencia se sienta única:
+  //   - manager: rápido, decisiones ágiles
+  //   - operator: ritmo constante, proceso metódico
+  //   - tech: pausado, análisis detallado
   //
-  // Si quieres beats más largos: sube showProblem y showSolution.
-  // Si quieres más respiro antes del siguiente beat: sube holdTitle.
-  // Si quieres que aparezca más rápido al activar el beat: baja delayEnter.
+  // delayEnter: pausa antes del primer stage
+  // showProblem: cuánto se ve el "antes"
+  // showSolution: cuánto se ve el "después"
+  // holdTitle: respiro antes del siguiente beat
 
   const TIMING = {
-    // Pausa antes de mostrar el primer stage del beat (suspense corto)
-    delayEnter: 300,
-
-    // Cuánto se ve el stage "antes/problema" antes de cambiar
-    showProblem: 2200,
-
-    // Cuánto se ve el stage "después/solución" antes de mostrar el titular
-    showSolution: 2000,
-
-    // Cuánto queda el titular visible antes de pasar al siguiente beat
-    holdTitle: 1500,
+    manager:  { delayEnter: 200, showProblem: 1400, showSolution: 1600, holdTitle: 1000 },
+    operator: { delayEnter: 300, showProblem: 2200, showSolution: 2000, holdTitle: 1500 },
+    tech:     { delayEnter: 400, showProblem: 2800, showSolution: 2600, holdTitle: 1800 },
   };
 
-  // Si el usuario prefiere movimiento reducido, acelera los timings
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    TIMING.delayEnter = 50;
-    TIMING.showProblem = 600;
-    TIMING.showSolution = 600;
-    TIMING.holdTitle = 300;
-  }
-
-  // Duración total de un beat (calculado automáticamente):
-  //   delayEnter + showProblem + showSolution + holdTitle
-  // Por defecto: 300 + 2200 + 2000 + 1500 = 6000ms (6s)
-  //
-  // Esta duración se inyecta como variable CSS para sincronizar
-  // la animación de la barra de progreso con el flujo de tiempos.
-  const BEAT_DURATION =
-    TIMING.delayEnter + TIMING.showProblem + TIMING.showSolution + TIMING.holdTitle;
-
-  document.documentElement.style.setProperty(
-    '--beat-duration',
-    BEAT_DURATION + 'ms'
-  );
+  const TIMING_FAST = { delayEnter: 50, showProblem: 600, showSolution: 600, holdTitle: 300 };
 
   // TEASER — estado del flujo
   // Solo guardamos UN timer activo a la vez (cadena encadenada).
   let currentTimer = null;
   let currentTeaserType = null;
   let isPaused = false;
+  let currentTiming = null; // se setea en runTeaser según el perfil
 
   function clearTeaserTimers() {
     if (currentTimer) {
@@ -2620,8 +2595,6 @@
     if (headline) headline.classList.remove('in');
 
     // Helper: fuerza play de los videos de un stage cuando se activa.
-    // Necesario porque los frame-logos tienen preload="metadata" para
-    // no saturar al navegador con 18 videos cargando a la vez.
     function activateStageVideos(stage) {
       stage.querySelectorAll('video').forEach(v => {
         const p = v.play();
@@ -2654,10 +2627,10 @@
           // Paso D: respiro antes de pasar al siguiente beat
           scheduleNext(() => {
             onComplete();
-          }, TIMING.holdTitle);
-        }, TIMING.showSolution);
-      }, TIMING.showProblem);
-    }, TIMING.delayEnter);
+          }, currentTiming.holdTitle);
+        }, currentTiming.showSolution);
+      }, currentTiming.showProblem);
+    }, currentTiming.delayEnter);
   }
 
   // Avanza entre beats: beat 0 → beat 1 → beat 2 → final
@@ -2674,6 +2647,13 @@
     scene.querySelectorAll('.progress-segment').forEach(s => s.classList.remove('active', 'done'));
     scene.querySelectorAll('.stage').forEach(s => s.classList.remove('in', 'out'));
     scene.querySelectorAll('.beat-headline-block').forEach(h => h.classList.remove('in'));
+
+    // Selecciona timing según perfil (o versión rápida si reduced-motion)
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    currentTiming = prefersReduced ? TIMING_FAST : (TIMING[type] || TIMING.operator);
+    const beatDuration = currentTiming.delayEnter + currentTiming.showProblem
+                       + currentTiming.showSolution + currentTiming.holdTitle;
+    document.documentElement.style.setProperty('--beat-duration', beatDuration + 'ms');
 
     const beats = Array.from(scene.querySelectorAll('.beat'));
     const segments = scene.querySelectorAll('.progress-segment');
