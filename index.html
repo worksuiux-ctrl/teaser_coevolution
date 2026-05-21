@@ -2702,6 +2702,18 @@
       beats.forEach(b => b.classList.remove('active'));
       beat.classList.add('active');
 
+      // Precarga videos de este beat y del siguiente
+      beat.querySelectorAll('.stage video').forEach(v => {
+        v.setAttribute('preload', 'auto');
+        if (v.readyState < 2) try { v.load(); } catch (e) {}
+      });
+      if (beats[i + 1]) {
+        beats[i + 1].querySelectorAll('.stage video').forEach(v => {
+          v.setAttribute('preload', 'auto');
+          if (v.readyState < 2) try { v.load(); } catch (e) {}
+        });
+      }
+
       if (navigator.vibrate && i > 0) navigator.vibrate(10);
 
       // Reproduce los pasos internos del beat
@@ -2775,6 +2787,8 @@
       scene.querySelectorAll('.progress-segment').forEach(s => s.classList.remove('active', 'done'));
       scene.querySelectorAll('.stage').forEach(s => s.classList.remove('in', 'out'));
       scene.querySelectorAll('.beat-headline-block').forEach(h => h.classList.remove('in'));
+      // Restaura preload original para no mantener videos precargados en memoria
+      scene.querySelectorAll('.frame-logo').forEach(v => v.setAttribute('preload', 'metadata'));
     });
     currentTeaserType = null;
     isPaused = false;
