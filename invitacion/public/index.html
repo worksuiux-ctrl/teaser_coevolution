@@ -692,6 +692,20 @@ form.addEventListener('submit', async (e) => {
         const url = URL.createObjectURL(blob);
         downloadLink.href = url;
         downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+        // Enviar PDF por correo
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64 = reader.result.split(',')[1];
+          try {
+            await supabaseClient.functions.invoke('send-invite', {
+              body: { email: correo, nombre, pdfBase64: base64 }
+            });
+          } catch (e) {
+            console.error('Error al enviar correo:', e);
+          }
+        };
+        reader.readAsDataURL(blob);
       };
       genPdf();
     });
