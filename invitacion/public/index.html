@@ -472,7 +472,7 @@ body {
 <script>
 const SUPABASE_URL = 'https://avqfndjpkfegfpoqyxeg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cWZuZGpwa2ZlZ2Zwb3F5eGVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzU3OTQsImV4cCI6MjA5NDk1MTc5NH0.aBsVuz6Es4jwgpFihqKhRUVuxsKmskEgk5gmmvxSSVc';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const form = document.getElementById('form');
 const submitBtn = document.getElementById('submitBtn');
@@ -504,17 +504,24 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  const uid = crypto.randomUUID();
+  const uid = crypto.randomUUID?.() ?? ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
 
   try {
-    const { error } = await supabase
+    console.log('Insertando en Supabase...', { uid, nombre, telefono });
+    const { error, data } = await supabaseClient
       .from('invitados')
-      .insert({ uid, nombre, telefono, correo, cargo, confirmado });
+      .insert({ uid, nombre, telefono, correo, cargo, confirmado })
+      .select();
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error('Error de Supabase:', error);
+      throw new Error(error.message);
+    }
+    console.log('Insert OK:', data);
 
-    // Mostrar QR
-    const qrUrl = `${window.location.origin}/verificar.html?uid=${uid}`;
+    // Mostrar QR — URL absoluta que funcione en local y GitHub Pages
+    const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    const qrUrl = `${baseUrl}verificar.html?uid=${uid}`;
     qrName.textContent = nombre;
 
     const qrContainer = document.getElementById('qrcode');
@@ -534,7 +541,8 @@ form.addEventListener('submit', async (e) => {
     qrSection.classList.add('visible');
 
   } catch (err) {
-    errorMsg.textContent = err.message;
+    console.error('Error completo:', err);
+    errorMsg.textContent = err.message || 'Error desconocido. Abrí la consola (F12) para más detalles.';
     errorMsg.classList.add('visible');
     submitBtn.classList.remove('loading');
     submitBtn.disabled = false;
