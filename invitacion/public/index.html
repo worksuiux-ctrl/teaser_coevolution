@@ -88,7 +88,7 @@ body {
 
 .hero-title {
   font-size: 40px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.03em;
   color: #88C63A;
   text-shadow: 0 0 40px rgba(136,198,58,0.15);
@@ -716,8 +716,6 @@ form.addEventListener('submit', async (e) => {
   const COUNT = isMobile ? 25 : 55;
   const CONN_DIST = isMobile ? 150 : 200;
   const LINE_ALPHA = 0.45;
-  const PT_ALPHA_MIN = 0.35;
-  const PT_ALPHA_MAX = 0.6;
 
   function resize() {
     c.width = window.innerWidth;
@@ -773,15 +771,9 @@ form.addEventListener('submit', async (e) => {
 
     // Draw particles
     particles.forEach(p => {
-      const alpha = PT_ALPHA_MIN + Math.random() * (PT_ALPHA_MAX - PT_ALPHA_MIN);
-      ctx.fillStyle = `rgba(136,198,58,${alpha})`;
+      ctx.fillStyle = 'rgba(136,198,58,0.5)';
       ctx.beginPath();
       ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = `rgba(136,198,58,${alpha * 0.25})`;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
       ctx.fill();
     });
 
