@@ -456,8 +456,8 @@ body {
     </p>
 
     <div class="qr-actions">
-      <a id="downloadLink" download="COE_Evolution_QR.png">
-        <span class="icon">⬇</span> Descargar QR
+      <a id="downloadLink" download="COE_Evolution_QR.pdf">
+        <span class="icon">⬇</span> Descargar PDF
       </a>
       <button onclick="window.location.href='/'">
         <span class="icon">↩</span> Volver al inicio
@@ -469,6 +469,7 @@ body {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://avqfndjpkfegfpoqyxeg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cWZuZGpwa2ZlZ2Zwb3F5eGVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzU3OTQsImV4cCI6MjA5NDk1MTc5NH0.aBsVuz6Es4jwgpFihqKhRUVuxsKmskEgk5gmmvxSSVc';
@@ -542,7 +543,7 @@ form.addEventListener('submit', async (e) => {
         correctLevel: QRCode.CorrectLevel.H
       });
 
-      // Generar PNG para descarga con fondo, logo y recuadro
+      // Generar PDF para descarga con fondo, logo y recuadro
       requestAnimationFrame(() => {
         const original = qrContainer.querySelector('canvas');
         if (!original) return;
@@ -552,11 +553,9 @@ form.addEventListener('submit', async (e) => {
         c.width = w; c.height = h;
         const ctx = c.getContext('2d');
 
-        // Fondo oscuro
         ctx.fillStyle = '#0c0c0e';
         ctx.fillRect(0, 0, w, h);
 
-        // Título "COE Evolution"
         ctx.textAlign = 'center';
         ctx.fillStyle = '#88C63A';
         ctx.font = `bold ${20 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
@@ -565,7 +564,6 @@ form.addEventListener('submit', async (e) => {
         ctx.font = `500 ${14 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
         ctx.fillText('Evolution', w / 2, 62 * s);
 
-        // Recuadro blanco para QR
         const qrSize = 160 * s;
         const qrX = (w - qrSize) / 2;
         const qrY = 82 * s;
@@ -584,12 +582,10 @@ form.addEventListener('submit', async (e) => {
         ctx.closePath();
         ctx.fill();
 
-        // QR dentro del recuadro (10px de padding a cada lado)
         const pad = 10 * s;
         ctx.imageSmoothingEnabled = false;
         ctx.drawImage(original, qrX + pad, qrY + pad, qrSize - pad * 2, qrSize - pad * 2);
 
-        // Texto inferior
         ctx.fillStyle = 'rgba(245,245,247,0.55)';
         ctx.font = `${9 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
         ctx.fillText('Código de acceso personal e intransferible', w / 2, 268 * s);
@@ -598,7 +594,11 @@ form.addEventListener('submit', async (e) => {
         ctx.font = `500 ${8 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
         ctx.fillText('COE Evolution · 2026', w / 2, 286 * s);
 
-        downloadLink.href = c.toDataURL('image/png');
+        // Generar PDF con jsPDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'px', [w, h]);
+        pdf.addImage(c.toDataURL('image/png'), 'PNG', 0, 0, w, h);
+        downloadLink.href = pdf.output('datauristring');
       });
     });
 
