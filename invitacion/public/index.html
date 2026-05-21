@@ -423,7 +423,7 @@ body > * { position: relative; z-index: 1; }
   <!-- FORMULARIO -->
   <div class="form-section" id="formSection">
     <div class="hero">
-      <img class="hero-icon" src="/assets/Icono%20coe.png" alt="COE">
+      <img class="hero-icon" src="../../assets/Icono%20coe.png" alt="COE">
       <div class="hero-title">COE EVOLUTION</div>
       <div class="hero-year">2026</div>
       <div class="hero-sub">Invitación Especial e Intransferible</div>
@@ -712,8 +712,9 @@ form.addEventListener('submit', async (e) => {
   const c = document.getElementById('bgGrid');
   const ctx = c.getContext('2d');
   let particles = [];
-  const COUNT = 55;
-  const CONN_DIST = 200;
+  const isMobile = window.innerWidth < 600;
+  const COUNT = isMobile ? 25 : 55;
+  const CONN_DIST = isMobile ? 150 : 200;
   const LINE_ALPHA = 0.45;
   const PT_ALPHA_MIN = 0.35;
   const PT_ALPHA_MAX = 0.6;
@@ -723,6 +724,7 @@ form.addEventListener('submit', async (e) => {
     c.height = window.innerHeight;
   }
   window.addEventListener('resize', resize);
+  window.addEventListener('load', resize);
   resize();
 
   class P {
