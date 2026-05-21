@@ -337,15 +337,13 @@ body {
 }
 
 /* Acciones post-registro */
-.qr-code-text {
+.email-status {
   font-size: 12px;
-  font-family: "SF Mono", "Menlo", monospace;
-  color: var(--text-dim);
-  letter-spacing: 0.15em;
-  user-select: all;
-  word-break: break-all;
+  color: var(--text-muted);
   text-align: center;
 }
+.email-status.sent { color: var(--accent); }
+.email-status.error { color: var(--danger); }
 
 .qr-actions {
   display: flex;
@@ -484,6 +482,8 @@ body > * { position: relative; z-index: 1; }
       Presenta este código en la entrada del evento.<br>
       <strong>Es personal e intransferible.</strong>
     </p>
+
+    <p class="email-status" id="emailStatus"></p>
 
     <div class="qr-actions">
       <a id="downloadLink" download="COE_Evolution_QR.pdf">
@@ -694,15 +694,23 @@ form.addEventListener('submit', async (e) => {
         downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
 
         // Enviar PDF por correo
+        const emailStatus = document.getElementById('emailStatus');
+        emailStatus.textContent = 'Enviando código al correo...';
+        emailStatus.className = 'email-status';
         const reader = new FileReader();
         reader.onload = async () => {
           const base64 = reader.result.split(',')[1];
           try {
-            await supabaseClient.functions.invoke('send-invite', {
+            const res = await supabaseClient.functions.invoke('send-invite', {
               body: { email: correo, nombre, pdfBase64: base64 }
             });
+            if (res.error) throw new Error(res.error);
+            emailStatus.textContent = '✅ Código enviado a ' + correo;
+            emailStatus.className = 'email-status sent';
           } catch (e) {
             console.error('Error al enviar correo:', e);
+            emailStatus.textContent = '⚠ No se pudo enviar el correo. Puedes descargar el PDF abajo.';
+            emailStatus.className = 'email-status error';
           }
         };
         reader.readAsDataURL(blob);
