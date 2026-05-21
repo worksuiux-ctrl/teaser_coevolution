@@ -233,15 +233,15 @@ body {
       <div class="scanner-overlay"></div>
     </div>
     <p class="scanner-hint">Apunta al código QR del invitado</p>
-    <button class="action-btn secondary" onclick="window.location.href='/'">
-      <span class="btn-text">↩ Volver al inicio</span>
-    </button>
   </div>
 
   <!-- Estado: CARGANDO -->
   <div class="state" id="stateLoading">
     <div class="loading-spinner"></div>
     <p class="state-header">Verificando código...</p>
+    <button class="action-btn secondary" onclick="location.reload()">
+      <span class="btn-text">↻ Reintentar</span>
+    </button>
   </div>
 
   <!-- Estado: INVITADO ENCONTRADO (no usado aún) -->
@@ -388,12 +388,21 @@ function resetScanner() {
 async function verificar(uid) {
   currentUid = uid;
   showState('stateLoading');
+
+  // Timeout 8s para no quedarse colgado
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Timeout')), 8000)
+  );
+
   try {
-    const { data, error } = await supabaseClient
-      .from('invitados')
-      .select('*')
-      .eq('uid', uid)
-      .single();
+    const { data, error } = await Promise.race([
+      supabaseClient
+        .from('invitados')
+        .select('*')
+        .eq('uid', uid)
+        .single(),
+      timeout
+    ]);
 
     if (error || !data) {
       showState('stateInvalid');
@@ -419,7 +428,6 @@ async function verificar(uid) {
   }
 }
 
-// Marcar como presente en Supabase
 document.getElementById('markBtn').addEventListener('click', async function() {
   const uid = currentUid;
   if (!uid) return;
