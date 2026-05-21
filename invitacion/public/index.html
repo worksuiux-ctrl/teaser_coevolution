@@ -518,7 +518,7 @@ form.addEventListener('submit', async (e) => {
   submitBtn.classList.add('loading');
   submitBtn.disabled = true;
 
-  const nombre = document.getElementById('nombre').value.trim();
+  let nombre = document.getElementById('nombre').value.trim();
   const telefono = document.getElementById('telefono').value.trim();
   const correo = document.getElementById('correo').value.trim();
   const cargo = document.getElementById('cargo').value.trim();
@@ -533,34 +533,33 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  const uid = crypto.randomUUID?.() ?? ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
-
   try {
     // Verificar si el correo ya está registrado
     const { data: existente } = await supabaseClient
       .from('invitados')
-      .select('nombre')
+      .select('nombre, uid')
       .eq('correo', correo)
       .maybeSingle();
+
+    let uid;
     if (existente) {
-      errorMsg.textContent = `El correo "${correo}" ya está registrado (${existente.nombre}).`;
-      errorMsg.classList.add('visible');
-      submitBtn.classList.remove('loading');
-      submitBtn.disabled = false;
-      return;
-    }
+      uid = existente.uid;
+      nombre = existente.nombre;
+      console.log('Correo ya registrado, reusando uid:', uid);
+    } else {
+      uid = crypto.randomUUID?.() ?? ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
+      console.log('Insertando en Supabase...', { uid, nombre, telefono, organizacion });
+      const { error, data } = await supabaseClient
+        .from('invitados')
+        .insert({ uid, nombre, telefono, correo, cargo, organizacion, confirmado })
+        .select();
 
-    console.log('Insertando en Supabase...', { uid, nombre, telefono, organizacion });
-    const { error, data } = await supabaseClient
-      .from('invitados')
-      .insert({ uid, nombre, telefono, correo, cargo, organizacion, confirmado })
-      .select();
-
-    if (error) {
-      console.error('Error de Supabase:', error);
-      throw new Error(error.message);
+      if (error) {
+        console.error('Error de Supabase:', error);
+        throw new Error(error.message);
+      }
+      console.log('Insert OK:', data);
     }
-    console.log('Insert OK:', data);
     console.log('Mostrando QR...');
 
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
