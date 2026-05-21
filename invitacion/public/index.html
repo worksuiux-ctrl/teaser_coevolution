@@ -279,21 +279,19 @@ body {
   animation: fadeUp 0.8s var(--ease-out-expo) forwards;
 }
 
-.qr-section.visible { display: flex; }
+.qr-section.visible {
+  display: flex;
+  align-items: center;
+}
 
 .qr-card {
-  background: rgba(31, 31, 35, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 20px;
+  background: #ffffff;
+  padding: 16px;
   border-radius: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 280px;
+  width: fit-content;
 }
 
 #qrcode {
@@ -302,10 +300,8 @@ body {
   justify-content: center;
 }
 
-#qrcode img, #qrcode canvas {
+#qrcode canvas {
   display: block;
-  width: 200px !important;
-  height: 200px !important;
 }
 
 .qr-wrap {
@@ -317,7 +313,7 @@ body {
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: #999;
   font-weight: 500;
 }
 
@@ -469,7 +465,6 @@ body > * { position: relative; z-index: 1; }
     <p class="qr-name" id="qrName"></p>
 
     <div class="qr-card">
-      <span class="qr-label">Tu código de acceso</span>
       <div class="qr-wrap">
         <div id="qrcode"></div>
       </div>
@@ -563,31 +558,31 @@ form.addEventListener('submit', async (e) => {
       qr.make();
       const modules = qr.getModuleCount();
 
-      // Canvas para pantalla (200×200 con CSS)
-      const size = 200;
+      // Canvas para pantalla (240×240 con CSS)
+      const size = 240;
       const cell = size / (modules + 8);
       const canvas = document.createElement('canvas');
       canvas.width = canvas.height = size;
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#1a1a1a';
+      const isFinder = (r, c) =>
+        (r < 7 && c < 7) ||
+        (r < 7 && c >= modules - 7) ||
+        (r >= modules - 7 && c < 7);
+
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, size, size);
-      ctx.fillStyle = '#88C63A';
       const offset = 4 * cell;
       for (let r = 0; r < modules; r++) {
         for (let c = 0; c < modules; c++) {
           if (qr.isDark(r, c)) {
-            const x = offset + c * cell;
-            const y = offset + r * cell;
-            const radius = cell * 0.42;
-            ctx.beginPath();
-            ctx.arc(x + cell / 2, y + cell / 2, radius, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = isFinder(r, c) ? '#88C63A' : '#444';
+            ctx.fillRect(offset + c * cell, offset + r * cell, cell, cell);
           }
         }
       }
       qrContainer.appendChild(canvas);
 
-      // Generar PDF
+      // Generar PDF (ticket — mismo estilo que el formulario)
       const s = 4;
       const pw = 800, ph = 300 * s;
       const pc = document.createElement('canvas');
@@ -597,73 +592,84 @@ form.addEventListener('submit', async (e) => {
       pctx.fillStyle = '#0c0c0e';
       pctx.fillRect(0, 0, pw, ph);
 
-      pctx.textAlign = 'center';
-      pctx.fillStyle = '#88C63A';
-      pctx.font = `bold ${20 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-      pctx.fillText('COE', pw / 2, 42 * s);
-      pctx.fillStyle = '#f5f5f7';
-      pctx.font = `500 ${14 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-      pctx.fillText('Evolution', pw / 2, 62 * s);
-
       // QR de alta resolución para el PDF
-      const pdfSize = 560;
+      const qrPdfSize = 160 * s;
+      const pdfSize = qrPdfSize;
       const pdfCell = pdfSize / (modules + 8);
       const pdfQr = document.createElement('canvas');
       pdfQr.width = pdfQr.height = pdfSize;
       const pqrCtx = pdfQr.getContext('2d');
-      pqrCtx.fillStyle = '#88C63A';
+      pqrCtx.fillStyle = '#ffffff';
+      pqrCtx.fillRect(0, 0, pdfSize, pdfSize);
       const pdfOffset = 4 * pdfCell;
       for (let r = 0; r < modules; r++) {
         for (let c = 0; c < modules; c++) {
           if (qr.isDark(r, c)) {
-            const x = pdfOffset + c * pdfCell;
-            const y = pdfOffset + r * pdfCell;
-            const radius = pdfCell * 0.42;
-            pqrCtx.beginPath();
-            pqrCtx.arc(x + pdfCell / 2, y + pdfCell / 2, radius, 0, Math.PI * 2);
-            pqrCtx.fill();
+            pqrCtx.fillStyle = isFinder(r, c) ? '#88C63A' : '#444';
+            pqrCtx.fillRect(pdfOffset + c * pdfCell, pdfOffset + r * pdfCell, pdfCell, pdfCell);
           }
         }
       }
 
-      const qrSize = 160 * s;
-      const qrX = (pw - qrSize) / 2;
-      const qrY = 82 * s;
+      const qrX = (pw - qrPdfSize) / 2;
+      const qrY = 102 * s;
       pctx.fillStyle = '#ffffff';
       pctx.beginPath();
       const rr = 14 * s;
       pctx.moveTo(qrX + rr, qrY);
-      pctx.lineTo(qrX + qrSize - rr, qrY);
-      pctx.quadraticCurveTo(qrX + qrSize, qrY, qrX + qrSize, qrY + rr);
-      pctx.lineTo(qrX + qrSize, qrY + qrSize - rr);
-      pctx.quadraticCurveTo(qrX + qrSize, qrY + qrSize, qrX + qrSize - rr, qrY + qrSize);
-      pctx.lineTo(qrX + rr, qrY + qrSize);
-      pctx.quadraticCurveTo(qrX, qrY + qrSize, qrX, qrY + qrSize - rr);
+      pctx.lineTo(qrX + qrPdfSize - rr, qrY);
+      pctx.quadraticCurveTo(qrX + qrPdfSize, qrY, qrX + qrPdfSize, qrY + rr);
+      pctx.lineTo(qrX + qrPdfSize, qrY + qrPdfSize - rr);
+      pctx.quadraticCurveTo(qrX + qrPdfSize, qrY + qrPdfSize, qrX + qrPdfSize - rr, qrY + qrPdfSize);
+      pctx.lineTo(qrX + rr, qrY + qrPdfSize);
+      pctx.quadraticCurveTo(qrX, qrY + qrPdfSize, qrX, qrY + qrPdfSize - rr);
       pctx.lineTo(qrX, qrY + rr);
       pctx.quadraticCurveTo(qrX, qrY, qrX + rr, qrY);
       pctx.closePath();
       pctx.fill();
 
       const pad = 10 * s;
-      pctx.drawImage(pdfQr, qrX + pad, qrY + pad, qrSize - pad * 2, qrSize - pad * 2);
+      pctx.drawImage(pdfQr, qrX + pad, qrY + pad, qrPdfSize - pad * 2, qrPdfSize - pad * 2);
 
       pctx.fillStyle = 'rgba(245,245,247,0.55)';
       pctx.font = `${9 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-      pctx.fillText('Código de acceso personal e intransferible', pw / 2, 268 * s);
+      pctx.textAlign = 'center';
+      pctx.fillText('Invitación Especial e Intransferible', pw / 2, 268 * s);
 
       pctx.fillStyle = '#88C63A';
       pctx.font = `500 ${8 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
-      pctx.fillText('COE Evolution · 2026', pw / 2, 286 * s);
+      pctx.fillText('COE EVOLUTION · 2026', pw / 2, 286 * s);
 
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'px', [pw, ph]);
-      pdf.addImage(pc.toDataURL('image/png'), 'PNG', 0, 0, pw, ph);
+      // Cargar logo y dibujar encabezado
+      const logo = new Image();
+      logo.onload = () => {
+        const logoSize = 40 * s;
+        pctx.drawImage(logo, (pw - logoSize) / 2, 10 * s, logoSize, logoSize);
+        finishPdf();
+      };
+      logo.onerror = () => finishPdf();
+      logo.src = '/assets/Icono%20coe.png';
 
-      const blob = pdf.output('blob');
-      const url = URL.createObjectURL(blob);
-      downloadLink.href = url;
-      downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
+      function finishPdf() {
+        pctx.textAlign = 'center';
+        pctx.fillStyle = '#88C63A';
+        pctx.font = `bold ${26 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
+        pctx.fillText('COE EVOLUTION', pw / 2, 66 * s);
+        pctx.fillStyle = 'rgba(245,245,247,0.3)';
+        pctx.font = `400 ${13 * s}px -apple-system, "SF Pro Display", system-ui, sans-serif`;
+        pctx.fillText('2026', pw / 2, 84 * s);
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'px', [pw, ph]);
+        pdf.addImage(pc.toDataURL('image/png'), 'PNG', 0, 0, pw, ph);
+
+        const blob = pdf.output('blob');
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
+      }
     });
+  });
 
   } catch (err) {
     console.error('Error completo:', err);
