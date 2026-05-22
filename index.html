@@ -124,10 +124,20 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform;
   }
 
   .logo-anim {
     animation: logoStep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  /* iOS Safari fix: el transform rotate con cubic-bezier causa
+     duplicación de imagen en algunos dispositivos (iPhone 15 Pro).
+     Se reemplaza por un pulso suave que no genera artefactos. */
+  .ios .logo-anim {
+    animation: logoPulse 3s ease-in-out infinite;
   }
 
   @keyframes logoStep {
@@ -139,10 +149,9 @@
     100% { transform: rotate(360deg); }
   }
 
-
-  @keyframes logoFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+  @keyframes logoPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.85; }
   }
 
 
@@ -165,8 +174,11 @@
     flex: 6;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     padding: 0 24px max(48px, env(safe-area-inset-bottom));
+  }
+
+  .profile-bottom-content {
+    margin-top: auto;
   }
 
   .logo-mark {
@@ -177,6 +189,8 @@
     opacity: 0;
     transform: translateY(20px) scale(0.85);
     transition: opacity 0.8s var(--ease-out-back), transform 0.8s var(--ease-out-back);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .hero-title {
@@ -201,7 +215,7 @@
 
   .headline {
     font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em;
-    margin-bottom: auto;
+    margin-bottom: 12px;
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -273,6 +287,8 @@
     margin-bottom: 20px;
     background: var(--bg);
     position: relative;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .loading-text { font-size: 14px; color: var(--text-muted); letter-spacing: 0.05em; }
@@ -1358,7 +1374,9 @@
   </div>
   <div class="profile-bottom">
     <h1 class="headline">Sé testigo.<br>Sé parte.</h1>
+    <div class="profile-bottom-content">
     <p class="subhead">Selecciona el perfil que más te identifique.</p>
+
     <div class="profile-options">
       <button class="profile-btn" data-profile="manager">
         <span class="label-block">
@@ -1381,6 +1399,7 @@
         </span>
         <span class="arrow">→</span>
       </button>
+    </div>
     </div>
   </div>
 </div>
@@ -2186,6 +2205,17 @@
   //
   // Cambia solo esta línea cuando definas el destino final:
   const CTA_URL = 'https://wa.me/000000000?text=Quiero%20ser%20parte%20de%20COE%20Evolution';
+
+  // ============================================
+  // DETECCIÓN iOS
+  // - Safari tiene bugs con transform: rotate() en animaciones CSS
+  //   que causan duplicación del logo y elementos superpuestos
+  //   en algunos dispositivos (iPhone 15 Pro).
+  // - Agregamos clase .ios al <html> para aplicar CSS específico.
+  // ============================================
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+    document.documentElement.classList.add('ios');
+  }
 
   // Aplicar la URL al botón
   document.getElementById('primary-cta').setAttribute('href', CTA_URL);
