@@ -119,6 +119,43 @@ body {
   border-bottom: 1px solid rgba(136,198,58,0.15);
 }
 
+/* Evento */
+.event-card {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.event-icon {
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.event-label {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.event-value {
+  color: var(--text);
+}
+
 /* Formulario */
 .form-card {
   width: 100%;
@@ -437,6 +474,34 @@ body > * { position: relative; z-index: 1; }
       <div class="hero-title">COE EVOLUTION</div>
       <div class="hero-year">2026</div>
       <div class="hero-sub">Invitación Especial e Intransferible</div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-row">
+        <span class="event-icon">📍</span>
+        <span class="event-label">Lugar:</span>
+        <span class="event-value">Hotel Londres, El Rosal  Chacao</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">🔗</span>
+        <span class="event-label">Referencia:</span>
+        <span class="event-value">Frente al C.C. Lido</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">🏛</span>
+        <span class="event-label">Salón:</span>
+        <span class="event-value">Crystal</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">🕐</span>
+        <span class="event-label">Hora:</span>
+        <span class="event-value">8:00 am</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">📅</span>
+        <span class="event-label">Fecha:</span>
+        <span class="event-value">02 de Junio del 2026</span>
+      </div>
     </div>
 
     <form class="form-card" id="form" novalidate>
