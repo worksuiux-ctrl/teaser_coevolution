@@ -115,31 +115,63 @@
   .scene.active { opacity: 1; pointer-events: auto; z-index: 1; }
 
   /* ============================================
-     LOGO ANIMADO (componente reutilizable)
-     - mix-blend-mode: lighten o screen sobre el video
-       hace que el fondo negro desaparezca
-     - Importante: el contenedor NO debe tener fondo
-       y el video debe estar en background-color: black
-       para que screen funcione bien
+     LOGO ANIMADO (CSS animation sobre PNG)
+     - Reemplazo de video por imagen estática
+       con animación CSS
      ============================================ */
-  .logo-video {
+  .logo-image {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: contain;
-    background: #000;
-    mix-blend-mode: screen;
+  }
+
+  .logo-anim {
+    animation: logoStep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  @keyframes logoStep {
+    0%   { transform: rotate(0deg); }
+    15%  { transform: rotate(0deg); }
+    40%  { transform: rotate(180deg); }
+    65%  { transform: rotate(180deg); }
+    90%  { transform: rotate(360deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
   }
 
 
   /* ============================================
      ESCENA 1: PERFIL
      ============================================ */
-  #scene-profile { justify-content: center; text-align: center; }
+  #scene-profile { padding: 0; text-align: center; }
+  #scene-profile { display: flex; flex-direction: column; }
+
+  .profile-top {
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: max(24px, env(safe-area-inset-top));
+  }
+
+  .profile-bottom {
+    flex: 6;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 24px max(48px, env(safe-area-inset-bottom));
+  }
 
   .logo-mark {
-    width: 220px; height: 220px;
-    margin: 0 auto 16px;
+    width: 110px; height: 110px;
+    margin: 0 auto 32px;
     position: relative;
     background: var(--bg);
     opacity: 0;
@@ -147,18 +179,29 @@
     transition: opacity 0.8s var(--ease-out-back), transform 0.8s var(--ease-out-back);
   }
 
-  .eyebrow {
-    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--accent-bright); margin-bottom: 16px;
-    font-weight: 500;
+  .hero-title {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #88C63A;
+    text-shadow: 0 0 40px rgba(136,198,58,0.15);
+    line-height: 1.1;
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
+  .hero-year {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    color: rgba(245,245,247,0.35);
+    margin: 0;
+  }
+
   .headline {
     font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em;
-    margin-bottom: 12px;
+    margin-bottom: auto;
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -166,7 +209,7 @@
 
   .subhead {
     font-size: 16px; color: var(--text-muted); line-height: 1.5;
-    margin-bottom: 40px;
+    margin-bottom: 12px;
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -180,10 +223,11 @@
   }
 
   #scene-profile.active .logo-mark      { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.1s; }
-  #scene-profile.active .eyebrow        { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
-  #scene-profile.active .headline       { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
-  #scene-profile.active .subhead        { opacity: 1; transform: translateY(0); transition-delay: 0.7s; }
-  #scene-profile.active .profile-options { opacity: 1; transform: translateY(0); transition-delay: 0.9s; }
+  #scene-profile.active .hero-title     { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+  #scene-profile.active .hero-year      { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
+  #scene-profile.active .headline       { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
+  #scene-profile.active .subhead        { opacity: 1; transform: translateY(0); transition-delay: 0.8s; }
+  #scene-profile.active .profile-options { opacity: 1; transform: translateY(0); transition-delay: 1.0s; }
 
   .profile-btn {
     background: var(--bg-elevated);
@@ -225,7 +269,7 @@
   #scene-loading { justify-content: center; align-items: center; text-align: center; }
 
   .loading-orb {
-    width: 200px; height: 200px;
+    width: 100px; height: 100px;
     margin-bottom: 20px;
     background: var(--bg);
     position: relative;
@@ -390,8 +434,8 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 56px;
-    height: 56px;
+    width: 30px;
+    height: 30px;
     pointer-events: none;
     opacity: 0;
     transform: scale(0.7);
@@ -888,7 +932,7 @@
   #scene-final { justify-content: center; align-items: center; text-align: center; }
 
   .final-mark {
-    width: 260px; height: 260px;
+    width: 130px; height: 130px;
     margin: 0 auto 16px;
     background: var(--bg);
     opacity: 0;
@@ -1301,230 +1345,50 @@
 </head>
 <body>
 
-<!-- ============================================
-     PANEL DE TEST BLEND MODES (?test en la URL)
-     - Solo se activa si la URL contiene ?test
-     - Útil para diagnóstico en mobile sin subir otro archivo
-     ============================================ -->
-<style>
-  #blend-test-panel {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #0c0c0e;
-    color: white;
-    overflow-y: auto;
-    padding: 16px;
-    z-index: 9999;
-    font-family: system-ui, sans-serif;
-  }
-  #blend-test-panel.active { display: block; }
-  #blend-test-panel h2 {
-    font-size: 13px;
-    color: #88C63A;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin: 16px 0 6px;
-  }
-  #blend-test-panel .bt-label {
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 8px;
-  }
-  #blend-test-panel .bt-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: center;
-  }
-  #blend-test-panel .bt-box {
-    width: 90px; height: 90px;
-    border: 1px dashed rgba(255,255,255,0.2);
-    position: relative;
-    flex-shrink: 0;
-  }
-  #blend-test-panel .bt-info {
-    font-size: 11px;
-    color: rgba(255,255,255,0.7);
-    flex: 1;
-  }
-  #blend-test-panel .bt-info strong {
-    color: white;
-    display: block;
-    margin-bottom: 2px;
-  }
-  #blend-test-panel video {
-    width: 100%; height: 100%;
-    object-fit: contain;
-    display: block;
-  }
-  #blend-test-panel .bt1 video { /* sin blend */ }
-  #blend-test-panel .bt2 video { mix-blend-mode: screen; }
-  #blend-test-panel .bt3 { background: #0c0c0e; }
-  #blend-test-panel .bt3 video { background: #000; mix-blend-mode: screen; }
-  #blend-test-panel .bt4 { background: #0c0c0e; opacity: 1; }
-  #blend-test-panel .bt4 video { background: #000; mix-blend-mode: screen; }
-  #blend-test-panel .bt5 { background: #0c0c0e; transform: scale(1); }
-  #blend-test-panel .bt5 video { background: #000; mix-blend-mode: screen; }
-  #blend-test-panel .bt6 { background: #0c0c0e; }
-  #blend-test-panel .bt6 video { background: #000; mix-blend-mode: lighten; }
-  #blend-test-panel .bt7 video {
-    mix-blend-mode: screen;
-    transform: translateZ(0);
-    will-change: transform;
-    isolation: isolate;
-    backface-visibility: hidden;
-  }
-  #blend-test-panel .bt7-wrap {
-    background: #0c0c0e;
-    transform: translateZ(0);
-    isolation: isolate;
-  }
-  #blend-test-panel .bt8 video { /* sin blend, control */ }
-  #blend-test-panel .close-btn {
-    position: fixed;
-    top: 12px; right: 12px;
-    background: rgba(132, 194, 55, 0.2);
-    border: 1px solid #88C63A;
-    color: #88C63A;
-    padding: 6px 12px;
-    border-radius: 100px;
-    font-size: 12px;
-    z-index: 10000;
-    cursor: pointer;
-  }
-</style>
 
-<div id="blend-test-panel">
-  <button class="close-btn" onclick="document.getElementById('blend-test-panel').classList.remove('active')">Cerrar ×</button>
-
-  <h2>Diagnóstico blend modes</h2>
-  <p class="bt-label">Dime cuáles muestran cuadrado y cuáles solo el logo verde.</p>
-
-  <div class="bt-row">
-    <div class="bt-box bt1">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/logo_idle.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="bt-info"><strong>1. Video puro</strong>Control: debería verse el cuadrado.</div>
-  </div>
-
-  <div class="bt-row">
-    <div class="bt-box bt2">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/logo_idle.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="bt-info"><strong>2. screen, padre sin bg</strong>Test sin nada que mezclar.</div>
-  </div>
-
-  <div class="bt-row">
-    <div class="bt-box bt3">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/logo_idle.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="bt-info"><strong>3. screen, padre CON bg</strong>Setup actual del teaser.</div>
-  </div>
-
-  <div class="bt-row">
-    <div class="bt-box bt4">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/logo_idle.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="bt-info"><strong>4. screen + opacity:1</strong>Stacking context test.</div>
-  </div>
-
-  <div class="bt-row">
-    <div class="bt-box bt5">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/logo_idle.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="bt-info"><strong>5. screen + transform</strong>Transform context test.</div>
-  </div>
-
-  <div class="bt-row">
-    <div class="bt-box bt6">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/logo_idle.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="bt-info"><strong>6. lighten + bg</strong>Alternativa a screen.</div>
-  </div>
-
-  <div class="bt-row">
-    <div class="bt-box bt7-wrap">
-      <div class="bt7" style="width:100%;height:100%;">
-        <video autoplay muted loop playsinline preload="auto">
-          <source src="assets/logo_idle.mp4" type="video/mp4">
-        </video>
-      </div>
-    </div>
-    <div class="bt-info"><strong>7. FIX Android</strong>screen + translateZ + isolation. ⭐</div>
-  </div>
-
-  <div class="bt-row">
-    <div class="bt-box bt8">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/logo_idle.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="bt-info"><strong>8. Sin blend</strong>Control: cuadrado completo.</div>
-  </div>
-</div>
-
-<script>
-  // Activa el panel de test si la URL tiene ?test
-  if (window.location.search.includes('test')) {
-    document.getElementById('blend-test-panel').classList.add('active');
-  }
-</script>
 
 <!-- ESCENA 1: PERFIL -->
 <div class="scene active" id="scene-profile">
-  <div class="logo-mark">
-    <video class="logo-video" autoplay muted loop playsinline preload="auto">
-      <source src="assets/logo_idle.mp4" type="video/mp4">
-    </video>
+  <div class="profile-top">
+    <div class="logo-mark">
+      <img class="logo-image logo-anim" src="assets/Icono coe.png" alt="COE Evolution">
+    </div>
+    <div class="hero-title">COE EVOLUTION</div>
+    <div class="hero-year">2026</div>
   </div>
-  <div class="eyebrow">COE Evolution · 2026</div>
-  <h1 class="headline">Sé testigo.<br>Sé parte.</h1>
-  <p class="subhead">Cuéntanos quién eres para mostrarte lo que viene.</p>
-
-  <div class="profile-options">
-    <button class="profile-btn" data-profile="manager">
-      <span class="label-block">
-        <span class="label-title">Tomo decisiones</span>
-        <span class="label-desc">Gerencia, dirección, VP</span>
-      </span>
-      <span class="arrow">→</span>
-    </button>
-    <button class="profile-btn" data-profile="operator">
-      <span class="label-block">
-        <span class="label-title">Opero el día a día</span>
-        <span class="label-desc">Equipos operativos y soporte</span>
-      </span>
-      <span class="arrow">→</span>
-    </button>
-    <button class="profile-btn" data-profile="tech">
-      <span class="label-block">
-        <span class="label-title">Mantengo el sistema</span>
-        <span class="label-desc">Infraestructura, TI, integraciones</span>
-      </span>
-      <span class="arrow">→</span>
-    </button>
+  <div class="profile-bottom">
+    <h1 class="headline">Sé testigo.<br>Sé parte.</h1>
+    <p class="subhead">Selecciona el perfil que más te identifique.</p>
+    <div class="profile-options">
+      <button class="profile-btn" data-profile="manager">
+        <span class="label-block">
+          <span class="label-title">Tomo decisiones</span>
+          <span class="label-desc">Gerencia, dirección, VP</span>
+        </span>
+        <span class="arrow">→</span>
+      </button>
+      <button class="profile-btn" data-profile="operator">
+        <span class="label-block">
+          <span class="label-title">Opero el día a día</span>
+          <span class="label-desc">Equipos operativos y soporte</span>
+        </span>
+        <span class="arrow">→</span>
+      </button>
+      <button class="profile-btn" data-profile="tech">
+        <span class="label-block">
+          <span class="label-title">Mantengo el sistema</span>
+          <span class="label-desc">Infraestructura, TI, integraciones</span>
+        </span>
+        <span class="arrow">→</span>
+      </button>
+    </div>
   </div>
 </div>
 
 <!-- ESCENA 2: LOADING -->
 <div class="scene" id="scene-loading">
   <div class="loading-orb">
-    <video class="logo-video" autoplay muted loop playsinline preload="auto">
-      <source src="assets/logo_idle.mp4" type="video/mp4">
-    </video>
+    <img class="logo-image logo-anim" src="assets/Icono coe.png" alt="COE Evolution">
   </div>
   <div class="loading-text">Preparando tu evolución</div>
 </div>
@@ -1558,9 +1422,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="left">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Resultado del trimestre</div>
               <div class="mock-tag warn">Histórico</div>
@@ -1580,9 +1442,7 @@
 
         <div class="stage" data-stage="1" data-enter="right">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Próximos 30 días</div>
               <div class="mock-tag live">Predictivo</div>
@@ -1637,9 +1497,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="down">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Primera respuesta</div>
               <div class="mock-tag warn">Hoy</div>
@@ -1655,9 +1513,7 @@
 
         <div class="stage" data-stage="1" data-enter="up">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Primera respuesta</div>
               <div class="mock-tag live">Con el nuevo sistema</div>
@@ -1698,9 +1554,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="scale">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Tu banco hoy</div>
               <div class="mock-tag warn">Fragmentado</div>
@@ -1744,9 +1598,7 @@
 
         <div class="stage" data-stage="1" data-enter="scale">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Vista ejecutiva</div>
               <div class="mock-tag live">Unificado</div>
@@ -1839,9 +1691,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="scale">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Estado del sistema</div>
               <div class="mock-tag warn">Sin señal</div>
@@ -1861,9 +1711,7 @@
 
         <div class="stage" data-stage="1" data-enter="scale">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Estado · en vivo</div>
               <div class="mock-tag live">En vivo</div>
@@ -1908,9 +1756,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="left">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Monitor de operaciones</div>
               <div class="mock-tag info">Reactivo</div>
@@ -1925,9 +1771,7 @@
 
         <div class="stage" data-stage="1" data-enter="right">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Detección anticipada</div>
               <div class="mock-tag live">Predictivo</div>
@@ -1975,9 +1819,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="left">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Bandeja de hoy</div>
               <div class="mock-tag warn">Saturado</div>
@@ -1995,9 +1837,7 @@
 
         <div class="stage" data-stage="1" data-enter="right">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Lo crítico de hoy</div>
               <div class="mock-tag live">Priorizado</div>
@@ -2059,9 +1899,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="left">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Estado del servidor</div>
               <div class="mock-tag warn">Sin telemetría</div>
@@ -2091,9 +1929,7 @@
 
         <div class="stage" data-stage="1" data-enter="right">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Estado del servidor</div>
               <div class="mock-tag live">En vivo</div>
@@ -2150,9 +1986,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="down">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Integraciones</div>
               <div class="mock-tag warn">Sin monitor</div>
@@ -2186,9 +2020,7 @@
 
         <div class="stage" data-stage="1" data-enter="up">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Integraciones · 4 activas</div>
               <div class="mock-tag live">Monitor activo</div>
@@ -2247,9 +2079,7 @@
       <div class="stage-stack">
         <div class="stage" data-stage="0" data-enter="scale">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_neg.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Auditoría y eventos</div>
               <div class="mock-tag warn">Logs dispersos</div>
@@ -2275,9 +2105,7 @@
 
         <div class="stage" data-stage="1" data-enter="scale">
           <div class="mock-frame with-logo">
-            <video class="logo-video frame-logo" autoplay muted loop playsinline preload="metadata">
-              <source src="assets/logo_pos.mp4" type="video/mp4">
-            </video>
+            <img class="logo-image frame-logo" src="assets/Icono coe.png" alt="">
             <div class="mock-header">
               <div class="mock-label">Sistema blindado</div>
               <div class="mock-tag live">SHA-256</div>
@@ -2328,9 +2156,7 @@
 <!-- ESCENA FINAL -->
 <div class="scene" id="scene-final">
   <div class="final-mark">
-    <video class="logo-video" autoplay muted loop playsinline preload="auto">
-      <source src="assets/logo_idle.mp4" type="video/mp4">
-    </video>
+    <img class="logo-image logo-anim" src="assets/Icono coe.png" alt="COE Evolution">
   </div>
   <h1 class="final-headline">Tú eres parte<br>de la evolución.</h1>
   <p class="final-sub">Lo verás completo en el evento.<br>Vuelve a tu asiento.</p>
@@ -2384,16 +2210,6 @@
     void scenes[name].offsetWidth;
     scenes[name].classList.add('active');
 
-    // CRÍTICO: los navegadores móviles (especialmente iOS Safari)
-    // pausan automáticamente los videos cuando el elemento queda
-    // "oculto" o cuando pasa tiempo sin que la pestaña sea visible.
-    // Al activar la escena, forzamos el play() de todos sus videos.
-    // play() devuelve una Promise; ignoramos el error si el navegador
-    // bloquea el play (algo raro porque están muted + autoplay).
-    scenes[name].querySelectorAll('video').forEach(v => {
-      const p = v.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-    });
   }
 
   // ============================================
@@ -2566,7 +2382,7 @@
     isPaused = true;
     if (currentTimer) currentTimer.pause();
     scenes[currentTeaserType].classList.add('paused');
-    // Importante: NO tocamos los videos. Siguen en su loop natural.
+    // Importante: los elementos visuales (imágenes) se mantienen estáticos durante la pausa.
     if (navigator.vibrate) navigator.vibrate(8);
   }
 
@@ -2594,20 +2410,11 @@
     stages.forEach(s => { s.classList.remove('in', 'out'); });
     if (headline) headline.classList.remove('in');
 
-    // Helper: fuerza play de los videos de un stage cuando se activa.
-    function activateStageVideos(stage) {
-      stage.querySelectorAll('video').forEach(v => {
-        const p = v.play();
-        if (p && typeof p.catch === 'function') p.catch(() => {});
-      });
-    }
-
     // Paso A: aparece stage 0 (antes/problema)
     scheduleNext(() => {
       if (stages[0]) {
         stages[0].classList.add('in');
         stages[0].querySelectorAll('.counter-big').forEach(c => animateCounter(c));
-        activateStageVideos(stages[0]);
       }
 
       // Paso B: cambia a stage 1 (después/solución)
@@ -2616,7 +2423,6 @@
         if (stages[1]) {
           stages[1].classList.add('in');
           stages[1].querySelectorAll('.counter-big').forEach(c => animateCounter(c));
-          activateStageVideos(stages[1]);
         }
         if (navigator.vibrate) navigator.vibrate(8);
 
@@ -2681,18 +2487,6 @@
       // Activa este beat (oculta los demás)
       beats.forEach(b => b.classList.remove('active'));
       beat.classList.add('active');
-
-      // Precarga videos de este beat y del siguiente
-      beat.querySelectorAll('.stage video').forEach(v => {
-        v.setAttribute('preload', 'auto');
-        if (v.readyState < 2) try { v.load(); } catch (e) {}
-      });
-      if (beats[i + 1]) {
-        beats[i + 1].querySelectorAll('.stage video').forEach(v => {
-          v.setAttribute('preload', 'auto');
-          if (v.readyState < 2) try { v.load(); } catch (e) {}
-        });
-      }
 
       if (navigator.vibrate && i > 0) navigator.vibrate(10);
 
@@ -2767,61 +2561,10 @@
       scene.querySelectorAll('.progress-segment').forEach(s => s.classList.remove('active', 'done'));
       scene.querySelectorAll('.stage').forEach(s => s.classList.remove('in', 'out'));
       scene.querySelectorAll('.beat-headline-block').forEach(h => h.classList.remove('in'));
-      // Restaura preload original para no mantener videos precargados en memoria
-      scene.querySelectorAll('.frame-logo').forEach(v => v.setAttribute('preload', 'metadata'));
     });
     currentTeaserType = null;
     isPaused = false;
   }
-
-  // RECUPERACIÓN DE VIDEOS EN BACKGROUND
-  // - iOS Safari y Chrome móvil pausan videos cuando la pestaña
-  //   pasa a background o cuando hay cambios de visibilidad
-  // - Al volver, los videos pueden quedar congelados en su último frame
-  // - Este listener detecta cuando vuelve el foco y los reanuda
-  // ============================================
-
-  // Helper: fuerza el play de todos los videos del documento que
-  // hayan quedado pausados por el browser sin avisar.
-  // El .catch() silencia errores esperables de políticas de autoplay.
-  function ensureVideosPlaying() {
-    document.querySelectorAll('video').forEach(v => {
-      // Tres casos a manejar:
-      // 1. video paused → play normal
-      // 2. video con readyState < 2 (sin datos) → load() + play
-      // 3. video con error → recreate (no implementado, raro)
-      if (v.paused || v.readyState < 2) {
-        try {
-          const p = v.play();
-          if (p && typeof p.catch === 'function') p.catch(() => {});
-        } catch (e) {}
-      }
-    });
-  }
-
-  // KICK INICIAL: al cargar la página, forzamos play de los videos
-  // visibles del perfil. Sin esto, el logo grande del perfil puede
-  // quedarse en frame 0 (especialmente en mobile donde el autoplay
-  // a veces no arranca para todos los videos a la vez).
-  // Lo hacemos cuando la página haya cargado completamente.
-  if (document.readyState === 'complete') {
-    ensureVideosPlaying();
-  } else {
-    window.addEventListener('load', ensureVideosPlaying);
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      ensureVideosPlaying();
-    }
-  });
-
-  // Backup: cada cierto tiempo verificamos que los videos sigan corriendo.
-  // Es defensivo contra casos edge donde el navegador los pausó
-  // silenciosamente sin disparar visibilitychange.
-  setInterval(() => {
-    if (!document.hidden) ensureVideosPlaying();
-  }, 8000);
 
 </script>
 
