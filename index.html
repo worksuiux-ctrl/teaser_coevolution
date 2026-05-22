@@ -135,10 +135,10 @@
    iOS / WebKit OVERRIDES
    - GPU A17 Pro bug: compositing layers con
      transform + opacity se duplican.
-   - Solución: solo opacity, linear easing,
-     DURACIONES ORIGINALES (no acortadas),
-     y exit de escenas instantáneo (sin
-     transición de salida) para evitar overlap.
+   - Solución: solo opacity (nunca transform),
+     con easing ease (mismo feel que Android).
+     Las transform excepciones (bar, clock-fill,
+     fillProgress) usan linear para evitar capas.
    - NO usar translateZ/backface-visibility.
    ============================================ */
 
@@ -146,7 +146,7 @@
   animation: logoStep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
-/* Scene/Beat: EXIT instantáneo, ENTER con fade */
+/* Scene/Beat: EXIT instantáneo, ENTER con fade ease */
 .ios .scene {
   opacity: 0 !important;
   visibility: hidden !important;
@@ -155,7 +155,7 @@
 .ios .scene.active {
   opacity: 1 !important;
   visibility: visible !important;
-  transition: opacity 0.6s linear !important;
+  transition: opacity 0.6s ease !important;
 }
 .ios .beat {
   opacity: 0 !important;
@@ -165,10 +165,10 @@
 .ios .beat.active {
   opacity: 1 !important;
   visibility: visible !important;
-  transition: opacity 0.5s linear !important;
+  transition: opacity 0.5s ease !important;
 }
 
-/* Profile scene: fade + stagger, duración original */
+/* Profile scene: fade + stagger, ease, duración original */
 .ios #scene-profile .logo-mark,
 .ios #scene-profile .hero-title,
 .ios #scene-profile .hero-year,
@@ -177,7 +177,7 @@
 .ios #scene-profile .profile-options {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.8s linear !important;
+  transition: opacity 0.8s ease !important;
 }
 .ios #scene-profile.active .logo-mark      { opacity: 1 !important; transition-delay: 0.1s !important; }
 .ios #scene-profile.active .hero-title     { opacity: 1 !important; transition-delay: 0.3s !important; }
@@ -188,37 +188,37 @@
 
 /* Profile buttons: sin scale en active */
 .ios .profile-btn {
-  transition: border-color 0.25s linear, background 0.25s linear !important;
+  transition: border-color 0.25s ease, background 0.25s ease !important;
 }
 .ios .profile-btn:active {
   transform: none !important;
 }
 .ios .profile-btn .arrow {
-  transition: color 0.2s linear !important;
+  transition: color 0.2s ease !important;
 }
 .ios .profile-btn:active .arrow {
   transform: none !important;
 }
 
-/* Beat eyebrow: fade, duración original 0.6s */
+/* Beat eyebrow: fade ease */
 .ios .beat-eyebrow {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.6s linear !important;
+  transition: opacity 0.6s ease !important;
 }
 .ios .beat.active .beat-eyebrow {
   opacity: 1 !important;
   transform: none !important;
 }
 .ios .beat-eyebrow::before {
-  transition: width 0.6s linear !important;
+  transition: width 0.6s ease !important;
 }
 
-/* Stages: fade, duración original */
+/* Stages: fade ease */
 .ios .stage {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.6s linear !important;
+  transition: opacity 0.6s ease !important;
 }
 .ios .stage.in {
   opacity: 1 !important;
@@ -229,11 +229,11 @@
   transform: none !important;
 }
 
-/* Frame logo: fade */
+/* Frame logo: fade ease */
 .ios .frame-logo {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.6s linear !important;
+  transition: opacity 0.6s ease !important;
 }
 .ios .stage.in .frame-logo {
   opacity: 1 !important;
@@ -241,48 +241,49 @@
   transition-delay: 0.4s !important;
 }
 
-/* Words in titles: fade, duración original 0.7s */
+/* Words in titles: fade ease */
 .ios .beat-title .word {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.7s linear !important;
+  transition: opacity 0.7s ease !important;
 }
 .ios .beat-headline-block.in .word {
   opacity: 1 !important;
   transform: none !important;
 }
 
-/* Beat body: fade, duración original 0.6s */
+/* Beat body: fade ease */
 .ios .beat-body {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.6s linear !important;
+  transition: opacity 0.6s ease !important;
 }
 .ios .beat-headline-block.in .beat-body {
   opacity: 1 !important;
   transform: none !important;
 }
 
-/* Data viz: duraciones originales */
+/* Data viz: animaciones con transform usan linear (seguro para GPU),
+   las de opacity usan ease para igualar timing Android */
 .ios .bar {
   transition: transform 0.6s linear !important;
 }
 .ios .conf-area {
-  transition: opacity 1s linear !important;
+  transition: opacity 1s ease !important;
 }
 .ios .hist-line {
   transition: stroke-dashoffset 1s linear !important;
 }
 .ios .proj-line {
-  transition: opacity 0.8s linear !important;
+  transition: opacity 0.8s ease !important;
 }
 .ios .proj-end {
-  transition: opacity 0.4s linear !important;
+  transition: opacity 0.4s ease !important;
 }
 .ios .kpi-cell {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.5s linear !important;
+  transition: opacity 0.5s ease !important;
 }
 .ios .stage.in .kpi-cell {
   opacity: 1 !important;
@@ -297,7 +298,7 @@
 .ios .net-card {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.5s linear !important;
+  transition: opacity 0.5s ease !important;
 }
 .ios .stage.in .net-card {
   opacity: 1 !important;
@@ -306,7 +307,7 @@
 .ios .system-cell {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.4s linear !important;
+  transition: opacity 0.4s ease !important;
 }
 .ios .stage.in .system-cell {
   opacity: 1 !important;
@@ -316,12 +317,12 @@
   transition: stroke-dashoffset 1.4s linear !important;
 }
 .ios .flow-dot {
-  transition: opacity 0.4s linear !important;
+  transition: opacity 0.4s ease !important;
 }
 .ios .notif {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.5s linear !important;
+  transition: opacity 0.5s ease !important;
 }
 .ios .stage.in .notif {
   opacity: 1 !important;
@@ -330,7 +331,7 @@
 .ios .item-row {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.45s linear !important;
+  transition: opacity 0.45s ease !important;
 }
 .ios .stage.in .item-row {
   opacity: 1 !important;
@@ -339,7 +340,7 @@
 .ios .log-line {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.3s linear !important;
+  transition: opacity 0.3s ease !important;
 }
 .ios .stage.in .log-line {
   opacity: 1 !important;
@@ -348,7 +349,7 @@
 .ios .metric-cell {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.4s linear !important;
+  transition: opacity 0.4s ease !important;
 }
 .ios .stage.in .metric-cell {
   opacity: 1 !important;
@@ -357,7 +358,7 @@
 .ios .service-row {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.4s linear !important;
+  transition: opacity 0.4s ease !important;
 }
 .ios .stage.in .service-row {
   opacity: 1 !important;
@@ -367,28 +368,28 @@
   transition: stroke-dashoffset 1.2s linear !important;
 }
 .ios .sparkline-fill {
-  transition: opacity 0.8s linear !important;
+  transition: opacity 0.8s ease !important;
 }
 
-/* Final scene: fade + stagger, duraciones originales */
+/* Final scene: fade + stagger, ease */
 .ios .final-mark {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 1s linear !important;
+  transition: opacity 1s ease !important;
 }
 .ios .final-headline {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.8s linear !important;
+  transition: opacity 0.8s ease !important;
 }
 .ios .final-sub {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.8s linear !important;
+  transition: opacity 0.8s ease !important;
 }
 .ios .final-hint {
   opacity: 0 !important;
-  transition: opacity 0.8s linear !important;
+  transition: opacity 0.8s ease !important;
 }
 .ios #scene-final.active .final-mark     { opacity: 1 !important; transition-delay: 0.2s !important; }
 .ios #scene-final.active .final-headline { opacity: 1 !important; transition-delay: 0.6s !important; }
@@ -397,12 +398,12 @@
 .ios #scene-final.active .primary-cta   { opacity: 1 !important; transition-delay: 1.6s !important; }
 .ios #scene-final.active .replay-btn    { opacity: 1 !important; transition-delay: 1.9s !important; }
 
-/* CTA / Replay: fade, duración original 0.8s */
+/* CTA / Replay: fade ease */
 .ios .primary-cta,
 .ios .replay-btn {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.8s linear !important;
+  transition: opacity 0.8s ease !important;
 }
 .ios .primary-cta:active,
 .ios .replay-btn:active {
@@ -410,18 +411,18 @@
 }
 .ios .primary-cta .arrow,
 .ios .replay-btn .arrow {
-  transition: color 0.2s linear !important;
+  transition: color 0.2s ease !important;
 }
 .ios .primary-cta:active .arrow,
 .ios .replay-btn:active .arrow {
   transform: none !important;
 }
 
-/* Pause hint: fade */
+/* Pause hint: fade ease */
 .ios .pause-hint {
   opacity: 0 !important;
   transform: none !important;
-  transition: opacity 0.25s linear !important;
+  transition: opacity 0.25s ease !important;
 }
 .ios .scene.paused .pause-hint {
   opacity: 1 !important;
