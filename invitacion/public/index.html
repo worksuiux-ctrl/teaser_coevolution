@@ -345,6 +345,18 @@ body {
 .email-status.sent { color: var(--accent); }
 .email-status.error { color: var(--danger); }
 
+.email-spinner {
+  display: none;
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: var(--accent-bright);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.email-status.sending .email-spinner { display: inline-block; }
+
 .qr-actions {
   display: flex;
   flex-direction: column;
@@ -483,7 +495,10 @@ body > * { position: relative; z-index: 1; }
       <strong>Es personal e intransferible.</strong>
     </p>
 
-    <p class="email-status" id="emailStatus"></p>
+    <p class="email-status" id="emailStatus">
+      <span class="email-spinner" id="emailSpinner"></span>
+      <span id="emailStatusText"></span>
+    </p>
 
     <div class="qr-actions">
       <a id="downloadLink" download="COE_Evolution_QR.pdf">
@@ -690,8 +705,9 @@ form.addEventListener('submit', async (e) => {
 
         // Enviar PDF por correo
         const emailStatus = document.getElementById('emailStatus');
-        emailStatus.textContent = 'Enviando código al correo...';
-        emailStatus.className = 'email-status';
+        const emailStatusText = document.getElementById('emailStatusText');
+        emailStatusText.textContent = 'Enviando código al correo...';
+        emailStatus.className = 'email-status sending';
         const reader = new FileReader();
         reader.onload = async () => {
           const base64 = reader.result.split(',')[1];
@@ -700,11 +716,11 @@ form.addEventListener('submit', async (e) => {
               body: { email: correo, nombre, pdfBase64: base64 }
             });
             if (res.error) throw new Error(res.error);
-            emailStatus.textContent = '✅ Código enviado a ' + correo;
+            emailStatusText.textContent = '✅ Código enviado a ' + correo;
             emailStatus.className = 'email-status sent';
           } catch (e) {
             console.error('Error al enviar correo:', e);
-            emailStatus.textContent = '⚠ No se pudo enviar el correo. Puedes descargar el PDF abajo.';
+            emailStatusText.textContent = '⚠ No se pudo enviar el correo. Puedes descargar el PDF abajo.';
             emailStatus.className = 'email-status error';
           }
         };
