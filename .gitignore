@@ -1,7 +1,12 @@
+# Documentos markdown
+*.md
+
+# Archivos de respaldo antiguos
+*index_estable.old*
+*.old.html
+
+# Scripts de prueba de correo
+_send-test.js
+
+# Dependencias
 node_modules/
-.env
-.env.local
-*.log
-.DS_Store
-Thumbs.db
-.vscode/
