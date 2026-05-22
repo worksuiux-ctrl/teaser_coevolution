@@ -12,14 +12,14 @@ function htmlEmail(nombre: string): string {
     ['Lugar', 'Hotel Londres, El Rosal, Chacao'],
     ['Referencia', 'Frente al C.C. Lido'],
     ['Salón', 'Crystal'],
-    ['Hora', '8:00 am'],
+    ['Hora', '8:00 AM'],
     ['Fecha', '02 de Junio del 2026'],
   ];
   const schedule = [
-    ['8:00', 'Recepción / VR Experience', false],
-    ['8:30', 'Presentación — Innovation', true],
-    ['9:30', 'Break / Desayuno & Networking', false],
-    ['10:15', 'Presentación — Evolution', true],
+    ['8:00 AM', 'Recepción / VR Experience', false],
+    ['8:30 AM', 'Presentación — Innovation', true],
+    ['9:30 AM', 'Break / Desayuno & Networking', false],
+    ['10:15 AM', 'Presentación — Evolution', true],
   ];
 
   const detailsRows = details.map(([label, value], i) =>
@@ -35,7 +35,7 @@ function htmlEmail(nombre: string): string {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td width="56" style="vertical-align:middle;padding:2px 0">
-            <span style="display:inline-block;background:${highlight ? '#88C63A' : 'rgba(255,255,255,0.06)'};color:${highlight ? '#0c0c0e' : 'rgba(245,245,247,0.5)'};font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:0.02em">${time}</span>
+            <span style="display:inline-block;background:${highlight ? '#88C63A' : 'rgba(255,255,255,0.06)'};color:${highlight ? '#0c0c0e' : 'rgba(245,245,247,0.5)'};font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:0.02em;white-space:nowrap">${time}</span>
           </td>
           <td style="vertical-align:middle;padding:2px 0 2px 8px">
             <span style="color:${highlight ? '#9BCE6A' : '#f5f5f7'};font-size:14px;font-weight:${highlight ? '600' : '400'}">${activity}</span>
@@ -154,15 +154,15 @@ Adjunto encontrarás tu código QR personal e intransferible.
 Preséntalo en la entrada del evento.
 
 📅 Fecha: 02 de Junio del 2026
-🕐 Hora: 8:00 am
+🕐 Hora: 8:00 AM
 📍 Lugar: Hotel Londres, El Rosal, Chacao
 🏛 Salón: Crystal
 
 Cronograma:
-8:00  — Recepción / VR Experience
-8:30  — Presentación — Innovation
-9:30  — Break / Desayuno & Networking
-10:15 — Presentación — Evolution
+8:00 AM — Recepción / VR Experience
+8:30 AM — Presentación — Innovation
+9:30 AM — Break / Desayuno & Networking
+10:15 AM — Presentación — Evolution
 
 COE Evolution · 2026`,
       html: htmlEmail(nombre),
