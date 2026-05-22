@@ -145,6 +145,10 @@
 .ios .logo-anim {
   animation: logoStep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
+/* A17 Pro: logo sin transform (solo opacity) para evitar bug GPU */
+.ios-a17 .logo-anim {
+  animation: iosLogoPulse 6s ease-in-out infinite !important;
+}
 
 /* Scene/Beat: EXIT instantáneo, ENTER con fade ease */
 .ios .scene {
@@ -430,6 +434,11 @@
 }
 
 /* iOS keyframes: opacity-only (sin transform) */
+/* Logo pulse para A17 Pro (evita transform:rotate que rompe GPU) */
+@keyframes iosLogoPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
 @keyframes iosPing {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -2525,14 +2534,24 @@
   const CTA_URL = 'https://wa.me/000000000?text=Quiero%20ser%20parte%20de%20COE%20Evolution';
 
   // ============================================
-  // DETECCIÓN iOS
-  // - Safari tiene bugs con transform: rotate() en animaciones CSS
-  //   que causan duplicación del logo y elementos superpuestos
-  //   en algunos dispositivos (iPhone 15 Pro).
-  // - Agregamos clase .ios al <html> para aplicar CSS específico.
+  // DETECCIÓN iOS + GPU problemática
+  // - Safari + A17 Pro (iPhone 15 Pro/Max): transform: rotate()
+  //   en animaciones CSS causa duplicación del logo y rompe
+  //   las transiciones opacity del resto (el timing falla).
+  // - En otros iPhones el logo rota bien.
+  // - Detectamos A17 Pro por resolución física de pantalla y
+  //   agregamos clase .ios-a17 para CSS específico.
   // ============================================
   if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
     document.documentElement.classList.add('ios');
+    // A17 Pro: iPhone 15 Pro (1179x2556) y 15 Pro Max (1290x2796)
+    const w = Math.min(screen.width, screen.height);
+    const h = Math.max(screen.width, screen.height);
+    const pw = Math.round(w * window.devicePixelRatio);
+    const ph = Math.round(h * window.devicePixelRatio);
+    if ((pw === 1179 && ph === 2556) || (pw === 1290 && ph === 2796)) {
+      document.documentElement.classList.add('ios-a17');
+    }
   }
 
   // Aplicar la URL al botón
