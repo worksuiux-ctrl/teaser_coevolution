@@ -10,3 +10,6 @@ _send-test.js
 
 # Dependencias
 node_modules/
+
+# Archivos muertos / backup
+_archive/
