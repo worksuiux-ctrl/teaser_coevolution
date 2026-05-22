@@ -28,8 +28,8 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-  html, body {
-    height: 100%;
+   html, body {
+    height: 100dvh;
     overflow: hidden;
     background: #0c0c0e;
     color: #f5f5f7;
@@ -100,8 +100,9 @@
     flex-direction: column;
     padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.6s ease;
+    transition: opacity 0.6s ease, visibility 0s 0.6s;
   }
 
   /* Blindaje: cuando la escena no está activa, ningún descendiente
@@ -112,7 +113,7 @@
     pointer-events: none !important;
   }
 
-  .scene.active { opacity: 1; pointer-events: auto; z-index: 1; }
+  .scene.active { opacity: 1; visibility: visible; transition: opacity 0.6s ease, visibility 0s 0s; pointer-events: auto; z-index: 1; }
 
   /* ============================================
      LOGO ANIMADO (CSS animation sobre PNG)
@@ -130,21 +131,45 @@
     animation: logoStep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   }
 
-  /* iOS fix: GPU bug en A17 Pro duplica elementos con animaciones.
-     Se desactivan animaciones y propiedades que crean capas de composición. */
-  .ios .logo-anim {
-    animation: none;
+/* iOS fix: GPU bug en A17 Pro duplica elementos con animaciones.
+   Se desactivan animaciones y propiedades que crean capas de composición. */
+.ios .logo-anim {
+  animation: none;
+}
+.ios #scene-profile.active .logo-mark,
+.ios #scene-profile.active .hero-title,
+.ios #scene-profile.active .hero-year,
+.ios #scene-profile.active .headline,
+.ios #scene-profile.active .subhead,
+.ios #scene-profile.active .profile-options {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* WebKit stacking context fix: aisla capas para evitar superposición */
+@supports (-webkit-touch-callout: none) {
+  .scene {
+    isolation: isolate !important;
+    -webkit-transform: translateZ(0) !important;
+    -webkit-backface-visibility: hidden !important;
   }
-  .ios #scene-profile.active .logo-mark,
-  .ios #scene-profile.active .hero-title,
-  .ios #scene-profile.active .hero-year,
-  .ios #scene-profile.active .headline,
-  .ios #scene-profile.active .subhead,
-  .ios #scene-profile.active .profile-options {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  .beat {
+    isolation: isolate !important;
+    -webkit-transform: translateZ(0) !important;
+    -webkit-backface-visibility: hidden !important;
   }
+  .mock-frame {
+    -webkit-backface-visibility: hidden !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+  }
+  .logo-mark,
+  .loading-orb,
+  .final-mark {
+    -webkit-backface-visibility: hidden !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+  }
+}
 
   @keyframes logoStep {
     0%   { transform: rotate(0deg); }
@@ -307,11 +332,12 @@
     display: flex;
     flex-direction: column;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease, visibility 0s 0.5s;
   }
 
-  .beat.active { opacity: 1; pointer-events: auto; }
+  .beat.active { opacity: 1; visibility: visible; transition: opacity 0.5s ease, visibility 0s 0s; pointer-events: auto; }
 
   /* ============================================
      LAYOUT INTERNO DEL BEAT
@@ -996,6 +1022,7 @@
     text-decoration: none;
     width: 100%;
     max-width: 320px;
+    flex-shrink: 0;
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.8s ease, transform 0.8s ease, border-color 0.25s ease;
@@ -2228,15 +2255,11 @@
   };
 
   function showScene(name) {
-    // Quitar active de TODAS, incluyendo la actual (por si name === current)
     Object.values(scenes).forEach(s => {
       s.classList.remove('active');
     });
-    // Forzar reflow para que el navegador procese el quitar la clase
-    // antes de volver a ponerla. Esto resetea correctamente las transitions.
     void scenes[name].offsetWidth;
     scenes[name].classList.add('active');
-
   }
 
   // ============================================
