@@ -9,23 +9,22 @@ const corsHeaders = {
 
 function htmlEmail(nombre: string): string {
   const details = [
-    ['📍', 'Lugar', 'Hotel Londres, El Rosal, Chacao'],
-    ['🔗', 'Referencia', 'Frente al C.C. Lido'],
-    ['🏛', 'Salón', 'Crystal'],
-    ['🕐', 'Hora', '8:00 am'],
-    ['📅', 'Fecha', '02 de Junio del 2026'],
+    ['Lugar', 'Hotel Londres, El Rosal, Chacao'],
+    ['Referencia', 'Frente al C.C. Lido'],
+    ['Salón', 'Crystal'],
+    ['Hora', '8:00 am'],
+    ['Fecha', '02 de Junio del 2026'],
   ];
   const schedule = [
-    ['8:00', 'Recepción', false],
-    ['8:30', 'Presentación Innovation', true],
-    ['9:15', 'Desayuno (45 min)', false],
-    ['10:15', 'Presentación Evolution', true],
-    ['11:15', 'Cierre', false],
+    ['8:00', 'Recepción / VR Experience', false],
+    ['8:30', 'Presentación — Innovation', true],
+    ['9:30', 'Break / Desayuno & Networking', false],
+    ['10:15', 'Presentación — Evolution', true],
   ];
 
-  const detailsRows = details.map(([icon, label, value], i) =>
+  const detailsRows = details.map(([label, value], i) =>
     `<tr><td style="padding:${i === 0 ? '0' : '8'}px 0;font-size:14px;border-top:${i === 0 ? '0' : '1'}px solid rgba(255,255,255,0.04)">
-      <span style="margin-right:10px;font-size:15px">${icon}</span>
+      <span style="color:#88C63A;margin-right:10px;font-size:10px">●</span>
       <span style="color:rgba(245,245,247,0.35);margin-right:8px;font-size:13px">${label}</span>
       <span style="color:#f5f5f7;font-weight:500">${value}</span>
     </td></tr>`
@@ -160,11 +159,10 @@ Preséntalo en la entrada del evento.
 🏛 Salón: Crystal
 
 Cronograma:
-8:00  — Recepción
-8:30  — Presentación Innovation
-9:15  — Desayuno
-10:15 — Presentación Evolution
-11:15 — Cierre
+8:00  — Recepción / VR Experience
+8:30  — Presentación — Innovation
+9:30  — Break / Desayuno & Networking
+10:15 — Presentación — Evolution
 
 COE Evolution · 2026`,
       html: htmlEmail(nombre),
