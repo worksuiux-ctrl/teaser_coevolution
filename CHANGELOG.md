@@ -43,3 +43,18 @@ Faltaban las reglas `.ios #scene-final.active .primary-cta` y `.ios #scene-final
 
 #### 6. hero-year sin animación
 `.hero-year` no tenía `opacity: 0` ni `transition` en su CSS base, por lo que el stagger con `transition-delay` no funcionaba. Se agregaron.
+
+---
+
+## Segunda ronda (22 mayo 2026) — Timing y overlap
+
+### Problemas reportados
+- **iOS:** timing muy rápido (transiciones acortadas de 0.6s→0.35s)
+- **iOS:** logo superpuesto al cambiar de escena (overlap por visibility delay)
+- **Android en algunos dispositivos:** timing acelerado
+
+### Soluciones
+1. **Duraciones originales restauradas en iOS:** se revirtió el acortamiento (0.35s→0.6s, etc.). Todas las transiciones opacity usan las mismas duraciones que el CSS base.
+2. **Scene/Beat exit instantáneo:** `.ios .scene { transition: none; opacity: 0; visibility: hidden }` + `.ios .scene.active { transition: opacity 0.6s ease }`. La escena anterior se oculta al instante, la nueva fadea. Sin overlap.
+3. **Cascade fix:** `.ios .scene.active` necesita `opacity: 1 !important` para vencer a `.ios .scene` con `opacity: 0 !important`.
+4. **`linear` → `ease` en iOS:** el easing `linear` se percibe más rápido aunque la duración sea la misma. Se cambió a `ease` en todas las transiciones de opacity. Las de transform (bar, clock-fill, fillProgress, stroke-dashoffset) mantienen `linear` por seguridad GPU.
