@@ -124,20 +124,26 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    will-change: transform;
   }
 
   .logo-anim {
     animation: logoStep 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   }
 
-  /* iOS Safari fix: el transform rotate con cubic-bezier causa
-     duplicación de imagen en algunos dispositivos (iPhone 15 Pro).
-     Se reemplaza por un pulso suave que no genera artefactos. */
+  /* iOS fix: GPU bug en A17 Pro duplica elementos con animaciones.
+     Se desactivan animaciones y propiedades que crean capas de composición. */
   .ios .logo-anim {
-    animation: logoPulse 3s ease-in-out infinite;
+    animation: none;
+  }
+  .ios #scene-profile.active .logo-mark,
+  .ios #scene-profile.active .hero-title,
+  .ios #scene-profile.active .hero-year,
+  .ios #scene-profile.active .headline,
+  .ios #scene-profile.active .subhead,
+  .ios #scene-profile.active .profile-options {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 
   @keyframes logoStep {
@@ -147,11 +153,6 @@
     65%  { transform: rotate(180deg); }
     90%  { transform: rotate(360deg); }
     100% { transform: rotate(360deg); }
-  }
-
-  @keyframes logoPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.85; }
   }
 
 
@@ -189,8 +190,6 @@
     opacity: 0;
     transform: translateY(20px) scale(0.85);
     transition: opacity 0.8s var(--ease-out-back), transform 0.8s var(--ease-out-back);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
 
   .hero-title {
@@ -287,8 +286,6 @@
     margin-bottom: 20px;
     background: var(--bg);
     position: relative;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
 
   .loading-text { font-size: 14px; color: var(--text-muted); letter-spacing: 0.05em; }
