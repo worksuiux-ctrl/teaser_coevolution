@@ -2284,8 +2284,8 @@
 
 <!-- ============================================
      ESCENA 5: TEASER TÉCNICO
-     - Mocks tipo monitoring/observability tool
-     - Estética: terminal-friendly, sparklines, logs
+     - Observabilidad del ecosistema bancario
+     - Core banking, interfaces, APIs, health score
      ============================================ -->
 <div class="scene teaser" id="scene-tech">
   <div class="progress-bar">
@@ -2294,17 +2294,15 @@
     <div class="progress-segment" data-seg="2"><div class="fill"></div></div>
   </div>
 
-  <!-- Indicador "PAUSA": aparece cuando el usuario mantiene presionada
-       la pantalla. Posicionado absolute en la esquina superior derecha. -->
   <div class="pause-hint">
     <span class="pause-icon"></span>
     <span>Pausa</span>
   </div>
 
-  <!-- BEAT 0: SALUD — monitoreo de servidores -->
+  <!-- BEAT 0: CORE BANCARIO — heartbeat y conexión con el core -->
   <div class="beat" data-beat="0">
     <div class="beat-top">
-      <div class="beat-eyebrow">01 · Salud</div>
+      <div class="beat-eyebrow">01 · Core Bancario</div>
     </div>
 
     <div class="beat-middle">
@@ -2313,28 +2311,27 @@
           <div class="mock-frame with-logo">
             <img class="logo-image frame-logo" src="../assets/Icono coe.png" alt="">
             <div class="mock-header">
-              <div class="mock-label">Estado del servidor</div>
-              <div class="mock-tag warn">Sin telemetría</div>
+              <div class="mock-label">Conexión con el Core</div>
+              <div class="mock-tag warn">Sin señal</div>
             </div>
-            <div class="mock-value warm">¿Está vivo?</div>
-            <div class="mock-trend warn">Sin métricas en tiempo real</div>
-            <div class="sparkline-wrap">
-              <div class="sparkline-header">
-                <span class="sparkline-label">CPU</span>
-                <span class="sparkline-value">—</span>
+            <div class="mock-value warm">¿El core responde?</div>
+            <div class="mock-trend warn">Heartbeat desconocido</div>
+            <div class="service-list">
+              <div class="service-row">
+                <span class="service-status dim"></span>
+                <span class="service-name">Heartbeat</span>
+                <span class="service-latency">—</span>
               </div>
-              <svg class="sparkline-svg" viewBox="0 0 300 32" preserveAspectRatio="none">
-                <path class="sparkline-path dim" d="M 0 16 L 60 16 L 120 16 L 180 16 L 240 16 L 300 16"/>
-              </svg>
-            </div>
-            <div class="sparkline-wrap">
-              <div class="sparkline-header">
-                <span class="sparkline-label">Memoria</span>
-                <span class="sparkline-value">—</span>
+              <div class="service-row">
+                <span class="service-status dim"></span>
+                <span class="service-name">Transacciones</span>
+                <span class="service-latency">— tps</span>
               </div>
-              <svg class="sparkline-svg" viewBox="0 0 300 32" preserveAspectRatio="none">
-                <path class="sparkline-path dim" d="M 0 16 L 60 16 L 120 16 L 180 16 L 240 16 L 300 16"/>
-              </svg>
+              <div class="service-row">
+                <span class="service-status dim"></span>
+                <span class="service-name">Última sincronía</span>
+                <span class="service-latency">—</span>
+              </div>
             </div>
           </div>
         </div>
@@ -2343,30 +2340,27 @@
           <div class="mock-frame with-logo">
             <img class="logo-image frame-logo" src="../assets/Icono coe.png" alt="">
             <div class="mock-header">
-              <div class="mock-label">Estado del servidor</div>
-              <div class="mock-tag live">En vivo</div>
+              <div class="mock-label">Core en línea</div>
+              <div class="mock-tag live">Heartbeat OK</div>
             </div>
-            <div class="mock-value success">Operando</div>
-            <div class="mock-trend">● Telemetría en tiempo real</div>
-            <div class="sparkline-wrap">
-              <div class="sparkline-header">
-                <span class="sparkline-label">CPU</span>
-                <span class="sparkline-value">34%</span>
+            <div class="mock-value success">Core conectado</div>
+            <div class="mock-trend">● 12 ms · tiempo real</div>
+            <div class="service-list">
+              <div class="service-row">
+                <span class="service-status"></span>
+                <span class="service-name">Heartbeat</span>
+                <span class="service-latency good">12 ms</span>
               </div>
-              <svg class="sparkline-svg" viewBox="0 0 300 32" preserveAspectRatio="none">
-                <path class="sparkline-fill" d="M 0 32 L 0 22 L 30 24 L 60 18 L 90 20 L 120 14 L 150 17 L 180 12 L 210 15 L 240 10 L 270 13 L 300 11 L 300 32 Z"/>
-                <path class="sparkline-path" d="M 0 22 L 30 24 L 60 18 L 90 20 L 120 14 L 150 17 L 180 12 L 210 15 L 240 10 L 270 13 L 300 11"/>
-              </svg>
-            </div>
-            <div class="sparkline-wrap">
-              <div class="sparkline-header">
-                <span class="sparkline-label">Memoria</span>
-                <span class="sparkline-value">62%</span>
+              <div class="service-row">
+                <span class="service-status"></span>
+                <span class="service-name">Transacciones</span>
+                <span class="service-latency good">1,240 tps</span>
               </div>
-              <svg class="sparkline-svg" viewBox="0 0 300 32" preserveAspectRatio="none">
-                <path class="sparkline-fill" d="M 0 32 L 0 18 L 30 16 L 60 19 L 90 14 L 120 17 L 150 13 L 180 16 L 210 12 L 240 14 L 270 11 L 300 13 L 300 32 Z"/>
-                <path class="sparkline-path" d="M 0 18 L 30 16 L 60 19 L 90 14 L 120 17 L 150 13 L 180 16 L 210 12 L 240 14 L 270 11 L 300 13"/>
-              </svg>
+              <div class="service-row">
+                <span class="service-status"></span>
+                <span class="service-name">Última sincronía</span>
+                <span class="service-latency good">0.3 s</span>
+              </div>
             </div>
           </div>
         </div>
@@ -2377,21 +2371,21 @@
       <div class="beat-headline-block">
         <h2 class="beat-title">
           <span class="line">
-            <span class="word" data-dir="left" style="transition-delay: 0s">Sabes&nbsp;</span><span class="word" data-dir="left" style="transition-delay: 0.08s">qué&nbsp;</span><span class="word accent" data-dir="right" style="transition-delay: 0.2s">respira.</span>
+            <span class="word" data-dir="left" style="transition-delay: 0s">Sabes&nbsp;</span><span class="word" data-dir="up" style="transition-delay: 0.08s">que&nbsp;</span><span class="word accent" data-dir="right" style="transition-delay: 0.2s">late.</span>
           </span>
           <span class="line">
-            <span class="word warm" data-dir="down" style="transition-delay: 0.4s">Y&nbsp;</span><span class="word" data-dir="down" style="transition-delay: 0.48s">qué&nbsp;</span><span class="word" data-dir="down" style="transition-delay: 0.56s">no.</span>
+            <span class="word" data-dir="left" style="transition-delay: 0.4s">Sabes&nbsp;</span><span class="word warm" data-dir="left" style="transition-delay: 0.48s">cómo.</span>
           </span>
         </h2>
-        <p class="beat-body">Métricas en vivo de cada servidor. Antes que el problema se sienta.</p>
+        <p class="beat-body">Monitoreo en vivo del core bancario. Heartbeat, latencia, throughput en tiempo real.</p>
       </div>
     </div>
   </div>
 
-  <!-- BEAT 1: CONEXIONES — APIs e integraciones -->
+  <!-- BEAT 1: INTERFACES — estado de conexión de las interfaces -->
   <div class="beat" data-beat="1">
     <div class="beat-top">
-      <div class="beat-eyebrow">02 · Conexiones</div>
+      <div class="beat-eyebrow">02 · Interfaces</div>
     </div>
 
     <div class="beat-middle">
@@ -2400,32 +2394,18 @@
           <div class="mock-frame with-logo">
             <img class="logo-image frame-logo" src="../assets/Icono coe.png" alt="">
             <div class="mock-header">
-              <div class="mock-label">Integraciones</div>
-              <div class="mock-tag warn">Sin monitor</div>
+              <div class="mock-label">Estado de interfaces</div>
+              <div class="mock-tag warn">Sin monitoreo</div>
             </div>
-            <div class="mock-value warm">¿Conectado?</div>
-            <div class="mock-trend warn">Detección manual</div>
-            <div class="service-list">
-              <div class="service-row">
-                <span class="service-status dim"></span>
-                <span class="service-name">api/core</span>
-                <span class="service-latency">— ms</span>
-              </div>
-              <div class="service-row">
-                <span class="service-status dim"></span>
-                <span class="service-name">api/transport</span>
-                <span class="service-latency">— ms</span>
-              </div>
-              <div class="service-row">
-                <span class="service-status dim"></span>
-                <span class="service-name">api/vault</span>
-                <span class="service-latency">— ms</span>
-              </div>
-              <div class="service-row">
-                <span class="service-status dim"></span>
-                <span class="service-name">interface/atm</span>
-                <span class="service-latency">— ms</span>
-              </div>
+            <div class="mock-value warm">¿Todo funciona?</div>
+            <div class="mock-trend warn">Sin visibilidad</div>
+            <div class="system-grid">
+              <div class="system-cell"><div class="dot dim"></div></div>
+              <div class="system-cell"><div class="dot dim"></div></div>
+              <div class="system-cell"><div class="dot dim"></div></div>
+              <div class="system-cell"><div class="dot dim"></div></div>
+              <div class="system-cell"><div class="dot dim"></div></div>
+              <div class="system-cell"><div class="dot dim"></div></div>
             </div>
           </div>
         </div>
@@ -2434,31 +2414,41 @@
           <div class="mock-frame with-logo">
             <img class="logo-image frame-logo" src="../assets/Icono coe.png" alt="">
             <div class="mock-header">
-              <div class="mock-label">Integraciones · 4 activas</div>
-              <div class="mock-tag live">Monitor activo</div>
+              <div class="mock-label">6 interfaces monitoreadas</div>
+              <div class="mock-tag live">Todas en línea</div>
             </div>
-            <div class="mock-value success">Todas conectadas</div>
-            <div class="mock-trend">↗ Latencia óptima</div>
+            <div class="mock-value success">Ecosistema conectado</div>
+            <div class="mock-trend">↗ 99.8% disponibilidad</div>
             <div class="service-list">
               <div class="service-row">
                 <span class="service-status"></span>
-                <span class="service-name">api/core</span>
-                <span class="service-latency good">42 ms</span>
+                <span class="service-name">api/core-banking</span>
+                <span class="service-latency good">12 ms · REST</span>
               </div>
               <div class="service-row">
                 <span class="service-status"></span>
-                <span class="service-name">api/transport</span>
-                <span class="service-latency good">58 ms</span>
+                <span class="service-name">ws/transactions</span>
+                <span class="service-latency good">8 ms · WS</span>
               </div>
               <div class="service-row">
                 <span class="service-status warn"></span>
-                <span class="service-name">api/vault</span>
-                <span class="service-latency warn">184 ms</span>
+                <span class="service-name">sftp/collections</span>
+                <span class="service-latency warn">184 ms · file</span>
               </div>
               <div class="service-row">
                 <span class="service-status"></span>
-                <span class="service-name">interface/atm</span>
-                <span class="service-latency good">71 ms</span>
+                <span class="service-name">mq/notifications</span>
+                <span class="service-latency good">23 ms · queue</span>
+              </div>
+              <div class="service-row">
+                <span class="service-status"></span>
+                <span class="service-name">rest/crm-sync</span>
+                <span class="service-latency good">45 ms · REST</span>
+              </div>
+              <div class="service-row">
+                <span class="service-status"></span>
+                <span class="service-name">db/replica-core</span>
+                <span class="service-latency good">3 ms · DB</span>
               </div>
             </div>
           </div>
@@ -2470,21 +2460,21 @@
       <div class="beat-headline-block">
         <h2 class="beat-title">
           <span class="line">
-            <span class="word" data-dir="left" style="transition-delay: 0s">Todo&nbsp;</span><span class="word" data-dir="up" style="transition-delay: 0.08s">lo&nbsp;</span><span class="word accent" data-dir="right" style="transition-delay: 0.2s">conectado,</span>
+            <span class="word" data-dir="left" style="transition-delay: 0s">Cada&nbsp;</span><span class="word accent" data-dir="right" style="transition-delay: 0.15s">interfaz,</span>
           </span>
           <span class="line">
-            <span class="word" data-dir="left" style="transition-delay: 0.4s">a&nbsp;</span><span class="word" data-dir="left" style="transition-delay: 0.48s">la&nbsp;</span><span class="word warm" data-dir="right" style="transition-delay: 0.56s">vista.</span>
+            <span class="word" data-dir="right" style="transition-delay: 0.35s">en&nbsp;</span><span class="word warm" data-dir="left" style="transition-delay: 0.45s">tiempo real.</span>
           </span>
         </h2>
-        <p class="beat-body">APIs, interfaces y servicios en un solo panel. Sin sorpresas.</p>
+        <p class="beat-body">APIs, websockets, colas, archivos y réplica DB. Todo conectado, todo medido.</p>
       </div>
     </div>
   </div>
 
-  <!-- BEAT 2: RESILIENCIA — seguridad y logs -->
+  <!-- BEAT 2: OBSERVABILIDAD — dashboard completo del ecosistema -->
   <div class="beat" data-beat="2">
     <div class="beat-top">
-      <div class="beat-eyebrow">03 · Resiliencia</div>
+      <div class="beat-eyebrow">03 · Observabilidad</div>
     </div>
 
     <div class="beat-middle">
@@ -2493,23 +2483,23 @@
           <div class="mock-frame with-logo">
             <img class="logo-image frame-logo" src="../assets/Icono coe.png" alt="">
             <div class="mock-header">
-              <div class="mock-label">Auditoría y eventos</div>
-              <div class="mock-tag warn">Logs dispersos</div>
+              <div class="mock-label">Ecosistema hoy</div>
+              <div class="mock-tag warn">Opaco</div>
             </div>
-            <div class="mock-value warm">Difícil rastrear</div>
-            <div class="mock-trend warn">Eventos sin contexto</div>
+            <div class="mock-value warm">Sin visibilidad</div>
+            <div class="mock-trend warn">Datos dispersos</div>
             <div class="metric-grid">
               <div class="metric-cell">
                 <div class="metric-value muted">—</div>
-                <div class="metric-label">Eventos/h</div>
+                <div class="metric-label">Health</div>
               </div>
               <div class="metric-cell">
                 <div class="metric-value muted">—</div>
-                <div class="metric-label">Cifrado</div>
+                <div class="metric-label">Alertas</div>
               </div>
               <div class="metric-cell">
                 <div class="metric-value muted">—</div>
-                <div class="metric-label">Uptime</div>
+                <div class="metric-label">Throughput</div>
               </div>
             </div>
           </div>
@@ -2519,30 +2509,30 @@
           <div class="mock-frame with-logo">
             <img class="logo-image frame-logo" src="../assets/Icono coe.png" alt="">
             <div class="mock-header">
-              <div class="mock-label">Sistema blindado</div>
-              <div class="mock-tag live">SHA-256</div>
+              <div class="mock-label">COE Observability Hub</div>
+              <div class="mock-tag live">En vivo</div>
             </div>
-            <div class="mock-value success">Trazable</div>
-            <div class="mock-trend">● Cada evento, registrado</div>
+            <div class="mock-value success">Health Score 98%</div>
+            <div class="mock-trend">● 0 incidentes críticos</div>
             <div class="metric-grid">
               <div class="metric-cell">
-                <div class="metric-value">1.2K</div>
-                <div class="metric-label">Eventos/h</div>
+                <div class="metric-value">98%</div>
+                <div class="metric-label">Health</div>
               </div>
               <div class="metric-cell">
-                <div class="metric-value">256</div>
-                <div class="metric-label">SHA bits</div>
+                <div class="metric-value">3</div>
+                <div class="metric-label">Alertas</div>
               </div>
               <div class="metric-cell">
-                <div class="metric-value">99.9%</div>
-                <div class="metric-label">Uptime</div>
+                <div class="metric-value">3.2K</div>
+                <div class="metric-label">Transac/min</div>
               </div>
             </div>
             <div class="log-feed">
-              <div class="log-line"><span class="ts">14:32:01</span><span class="ok">[OK]</span> auth.session validated</div>
-              <div class="log-line"><span class="ts">14:32:03</span><span class="info">[INFO]</span> vault.transfer encrypted</div>
-              <div class="log-line"><span class="ts">14:32:07</span><span class="ok">[OK]</span> atm.sync completed</div>
-              <div class="log-line"><span class="ts">14:32:09</span><span class="warn">[WARN]</span> api.latency spike resolved</div>
+              <div class="log-line"><span class="ts">14:32:01</span><span class="ok">[OK]</span> core heartbeat received</div>
+              <div class="log-line"><span class="ts">14:32:03</span><span class="info">[INFO]</span> ws/transactions connected</div>
+              <div class="log-line"><span class="ts">14:32:07</span><span class="ok">[OK]</span> sftp/collections sync complete</div>
+              <div class="log-line"><span class="ts">14:32:09</span><span class="warn">[WARN]</span> mq/notifications latency spike</div>
             </div>
           </div>
         </div>
@@ -2553,13 +2543,13 @@
       <div class="beat-headline-block">
         <h2 class="beat-title">
           <span class="line">
-            <span class="word accent" data-dir="left" style="transition-delay: 0s">Nada&nbsp;</span><span class="word" data-dir="up" style="transition-delay: 0.12s">se&nbsp;</span><span class="word" data-dir="right" style="transition-delay: 0.22s">pierde.</span>
+            <span class="word accent" data-dir="left" style="transition-delay: 0s">Siempre&nbsp;</span><span class="word" data-dir="up" style="transition-delay: 0.12s">sabes&nbsp;</span><span class="word" data-dir="right" style="transition-delay: 0.22s">qué&nbsp;</span><span class="word" data-dir="right" style="transition-delay: 0.3s">pasa.</span>
           </span>
           <span class="line">
-            <span class="word" data-dir="right" style="transition-delay: 0.4s">Todo&nbsp;</span><span class="word warm" data-dir="left" style="transition-delay: 0.5s">queda.</span>
+            <span class="word" data-dir="right" style="transition-delay: 0.48s">Siempre&nbsp;</span><span class="word warm" data-dir="left" style="transition-delay: 0.58s">sabes&nbsp;</span><span class="word accent" data-dir="left" style="transition-delay: 0.68s">por qué.</span>
           </span>
         </h2>
-        <p class="beat-body">Trazabilidad completa con encriptación de nueva generación.</p>
+        <p class="beat-body">Observabilidad completa del ecosistema. Health score, trazabilidad, alertas inteligentes.</p>
       </div>
     </div>
   </div>
