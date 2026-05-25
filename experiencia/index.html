@@ -2851,9 +2851,8 @@
     scene.querySelectorAll('.stage').forEach(s => s.classList.remove('in', 'out'));
     scene.querySelectorAll('.beat-headline-block').forEach(h => h.classList.remove('in'));
 
-    // Selecciona timing según perfil (o versión rápida si reduced-motion)
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    currentTiming = prefersReduced ? TIMING_FAST : (TIMING[type] || TIMING.operator);
+    // Selecciona timing según perfil (siempre normal, ignoramos prefers-reduced-motion)
+    currentTiming = TIMING[type] || TIMING.operator;
     const beatDuration = currentTiming.delayEnter + currentTiming.showProblem
                        + currentTiming.showSolution + currentTiming.holdTitle;
     document.documentElement.style.setProperty('--beat-duration', beatDuration + 'ms');
