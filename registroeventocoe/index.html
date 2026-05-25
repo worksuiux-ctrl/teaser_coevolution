@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="COE Evolution">
+<title>COE Evolution · Invitación</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  min-height: 100vh;
+  background: #0c0c0e;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+:root {
+  --bg: #0c0c0e;
+  --bg-elevated: #18181b;
+  --bg-card: #1f1f23;
+  --surface: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f5f5f7;
+  --text-muted: rgba(245, 245, 247, 0.55);
+  --text-dim: rgba(245, 245, 247, 0.35);
+  --coe-green-100: #D6EBC2;
+  --coe-green-200: #B8DD93;
+  --coe-green-300: #9BCE6A;
+  --coe-green-400: #84C237;
+  --coe-green-450: #88C63A;
+  --coe-green-500: #42AA42;
+  --accent: var(--coe-green-450);
+  --accent-bright: var(--coe-green-300);
+  --accent-deep: #267335;
+  --success: var(--coe-green-500);
+  --success-bg: rgba(66, 170, 66, 0.15);
+  --glow: rgba(132, 194, 55, 0.25);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  min-height: 100dvh;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.form-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.form-section.hidden { display: none; }
+
+.hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.hero-title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #88C63A;
+  text-shadow: 0 0 40px rgba(136,198,58,0.15);
+}
+
+.hero-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.hero-year {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: rgba(245,245,247,0.3);
+  margin-top: 6px;
+}
+
+.hero-sub {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #f5f5f7;
+  margin-top: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(136,198,58,0.15);
+}
+
+.event-card {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.event-icon {
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 10px;
+}
+
+.event-label {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.event-value { color: var(--text); }
+
+.form-card {
+  width: 100%;
+  background: rgba(31, 31, 35, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.field-input::placeholder { color: var(--text-dim); }
+
+.field-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--glow);
+}
+
+.field-input.error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(255, 88, 72, 0.15);
+}
+
+.check-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.check-field input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.check-field input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.check-field input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/14px no-repeat;
+}
+
+.check-field label {
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #88C63A 0%, #6BB329 100%);
+  color: #0c0c0e;
+  border: none;
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.submit-btn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-btn .spinner {
+  display: none;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(12, 12, 14, 0.3);
+  border-top-color: #0c0c0e;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.submit-btn.loading .spinner { display: block; }
+.submit-btn.loading .btn-text { display: none; }
+
+.error-msg {
+  font-size: 13px;
+  color: var(--danger);
+  text-align: center;
+  display: none;
+}
+
+.error-msg.visible { display: block; }
+
+.qr-section {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fadeUp 0.8s var(--ease-out-expo) forwards;
+}
+
+.qr-section.visible {
+  display: flex;
+  align-items: center;
+}
+
+.qr-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+}
+
+#qrcode { display: flex; align-items: center; justify-content: center; }
+
+#qrcode canvas { display: block; }
+
+.qr-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.qr-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999;
+  font-weight: 500;
+}
+
+.qr-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
+}
+
+.qr-hint {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.qr-hint strong {
+  color: var(--accent-bright);
+  font-weight: 500;
+}
+
+.email-status {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.email-status.sent { color: var(--accent); }
+.email-status.error { color: var(--danger); }
+
+.email-spinner {
+  display: none;
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: var(--accent-bright);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.email-status.sending .email-spinner { display: inline-block; }
+
+.qr-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.qr-actions a,
+.qr-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.qr-actions a:active,
+.qr-actions button:active {
+  transform: scale(0.98);
+  border-color: var(--accent);
+}
+
+.qr-actions a .icon,
+.qr-actions button .icon { font-size: 16px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+#bgGrid {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body > * { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+
+<canvas id="bgGrid"></canvas>
+
+<div class="container">
+
+  <div class="form-section" id="formSection">
+    <div class="hero">
+      <img class="hero-icon" src="../assets/Icono%20coe.png" alt="COE">
+      <div class="hero-title">COE EVOLUTION</div>
+      <div class="hero-year">2026</div>
+      <div class="hero-sub">Invitación Especial e Intransferible</div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-row">
+        <span class="event-icon">●</span>
+        <span class="event-label">Lugar:</span>
+        <span class="event-value">Hotel Londres. El Rosal. Chacao. Caracas.</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">●</span>
+        <span class="event-label">Referencia:</span>
+        <span class="event-value">Frente al C.C. Lido</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">●</span>
+        <span class="event-label">Salón:</span>
+        <span class="event-value">Crystal</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">●</span>
+        <span class="event-label">Hora:</span>
+        <span class="event-value">8:00 A.M.</span>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">●</span>
+        <span class="event-label">Fecha:</span>
+        <span class="event-value">Martes 02 de Junio de 2026</span>
+      </div>
+    </div>
+
+    <form class="form-card" id="form" novalidate>
+      <div class="field-group">
+        <label class="field-label" for="nombre">Nombre completo</label>
+        <input class="field-input" id="nombre" type="text" placeholder="Ej: María García" required autocomplete="name">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="telefono">Teléfono</label>
+        <input class="field-input" id="telefono" type="tel" placeholder="+58 414 123 4567" required autocomplete="tel">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="correo">Correo electrónico</label>
+        <input class="field-input" id="correo" type="email" placeholder="ejemplo@correo.com" required autocomplete="email">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cargo">Cargo</label>
+        <input class="field-input" id="cargo" type="text" placeholder="Ej: Gerente de Operaciones">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="organizacion">Organización</label>
+        <input class="field-input" id="organizacion" type="text" placeholder="Ej: Banco Central">
+      </div>
+
+      <div class="check-field">
+        <input type="checkbox" id="confirmado">
+        <label for="confirmado">Confirmo mi asistencia</label>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="submit-btn" id="submitBtn" type="button">
+        <span class="btn-text">Confirmar asistencia</span>
+      </button>
+    </form>
+  </div>
+
+  <div class="qr-section" id="qrSection">
+    <div class="eyebrow">¡Registrado!</div>
+    <p class="qr-name" id="qrName"></p>
+
+    <div class="qr-card">
+      <div class="qr-wrap">
+        <div id="qrcode"></div>
+      </div>
+    </div>
+
+    <p class="qr-hint">
+      Presenta este código en la entrada del evento.<br>
+      <strong>Es personal e intransferible.</strong>
+    </p>
+
+    <p class="email-status" id="emailStatus">
+      <span class="email-spinner" id="emailSpinner"></span>
+      <span id="emailStatusText"></span>
+    </p>
+
+    <div class="qr-actions">
+      <a id="downloadLink" download="COE_Evolution_QR.pdf">
+        <span class="icon">⬇</span> Descargar PDF
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://avqfndjpkfegfpoqyxeg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cWZuZGpwa2ZlZ2Zwb3F5eGVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzU3OTQsImV4cCI6MjA5NDk1MTc5NH0.aBsVuz6Es4jwgpFihqKhRUVuxsKmskEgk5gmmvxSSVc';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const form = document.getElementById('form');
+const submitBtn = document.getElementById('submitBtn');
+const errorMsg = document.getElementById('errorMsg');
+const formSection = document.getElementById('formSection');
+const qrSection = document.getElementById('qrSection');
+const qrName = document.getElementById('qrName');
+const downloadLink = document.getElementById('downloadLink');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  errorMsg.classList.remove('visible');
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
+
+  let nombre = document.getElementById('nombre').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  const correo = document.getElementById('correo').value.trim();
+  const cargo = document.getElementById('cargo').value.trim();
+  const organizacion = document.getElementById('organizacion').value.trim();
+  const confirmado = document.getElementById('confirmado').checked;
+
+  if (!nombre || !telefono || !correo) {
+    errorMsg.textContent = 'Completa nombre, teléfono y correo.';
+    errorMsg.classList.add('visible');
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+    return;
+  }
+
+  try {
+    const { data: existente } = await supabaseClient
+      .from('invitados')
+      .select('nombre, uid')
+      .eq('correo', correo)
+      .maybeSingle();
+
+    let uid;
+    if (existente) {
+      uid = existente.uid;
+      nombre = existente.nombre;
+    } else {
+      uid = crypto.randomUUID?.() ?? ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
+      const { error, data } = await supabaseClient
+        .from('invitados')
+        .insert({ uid, nombre, telefono, correo, cargo, organizacion, confirmado })
+        .select();
+
+      if (error) throw new Error(error.message);
+    }
+
+    const qrUrl = `${window.location.origin}/verificar/?uid=${uid}`;
+    qrName.textContent = nombre;
+
+    formSection.classList.add('hidden');
+    qrSection.classList.add('visible');
+
+    requestAnimationFrame(() => {
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+
+      const qr = qrcode(0, 'H');
+      qr.addData(qrUrl);
+      qr.make();
+      const modules = qr.getModuleCount();
+
+      const size = 240;
+      const cell = size / (modules + 8);
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+      const offset = 4 * cell;
+      for (let r = 0; r < modules; r++) {
+        for (let c = 0; c < modules; c++) {
+          if (qr.isDark(r, c)) {
+            ctx.fillStyle = '#444';
+            ctx.fillRect(offset + c * cell, offset + r * cell, cell, cell);
+          }
+        }
+      }
+      qrContainer.appendChild(canvas);
+
+      const genPdf = () => {
+        const pw = 600, ph = 900;
+        const pc = document.createElement('canvas');
+        pc.width = pw; pc.height = ph;
+        const pctx = pc.getContext('2d');
+
+        pctx.fillStyle = '#0c0c0e';
+        pctx.fillRect(0, 0, pw, ph);
+
+        const heroIcon = document.querySelector('.hero-icon');
+        const hasIcon = heroIcon && heroIcon.complete && heroIcon.naturalWidth > 0;
+        if (hasIcon) {
+          pctx.drawImage(heroIcon, (pw - 48) / 2, 32, 48, 48);
+        }
+        pctx.textAlign = 'center';
+        pctx.fillStyle = '#88C63A';
+        pctx.font = 'bold 32px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('COE EVOLUTION', pw / 2, hasIcon ? 120 : 80);
+        pctx.fillStyle = 'rgba(245,245,247,0.5)';
+        pctx.font = '400 14px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('Invitación digital intransferible', pw / 2, hasIcon ? 148 : 104);
+        pctx.fillStyle = '#f5f5f7';
+        pctx.font = '600 18px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText(nombre, pw / 2, hasIcon ? 174 : 130);
+
+        const qrCard = 480;
+        const qrImg = 420;
+        const pdfCell = qrImg / (modules + 8);
+        const pdfQr = document.createElement('canvas');
+        pdfQr.width = pdfQr.height = qrImg;
+        const pqrCtx = pdfQr.getContext('2d');
+        pqrCtx.fillStyle = '#ffffff';
+        pqrCtx.fillRect(0, 0, qrImg, qrImg);
+        const pdfOff = 4 * pdfCell;
+        for (let r = 0; r < modules; r++) {
+          for (let c = 0; c < modules; c++) {
+            if (qr.isDark(r, c)) {
+              pqrCtx.fillStyle = '#444';
+              pqrCtx.fillRect(pdfOff + c * pdfCell, pdfOff + r * pdfCell, pdfCell, pdfCell);
+            }
+          }
+        }
+
+        const qrX = (pw - qrCard) / 2;
+        const qrY = hasIcon ? 210 : 160;
+        pctx.fillStyle = '#ffffff';
+        const r2 = 12;
+        pctx.beginPath();
+        pctx.moveTo(qrX + r2, qrY);
+        pctx.lineTo(qrX + qrCard - r2, qrY);
+        pctx.quadraticCurveTo(qrX + qrCard, qrY, qrX + qrCard, qrY + r2);
+        pctx.lineTo(qrX + qrCard, qrY + qrCard - r2);
+        pctx.quadraticCurveTo(qrX + qrCard, qrY + qrCard, qrX + qrCard - r2, qrY + qrCard);
+        pctx.lineTo(qrX + r2, qrY + qrCard);
+        pctx.quadraticCurveTo(qrX, qrY + qrCard, qrX, qrY + qrCard - r2);
+        pctx.lineTo(qrX, qrY + r2);
+        pctx.quadraticCurveTo(qrX, qrY, qrX + r2, qrY);
+        pctx.closePath();
+        pctx.fill();
+
+        const pad = 30;
+        pctx.drawImage(pdfQr, qrX + pad, qrY + pad, qrImg, qrImg);
+
+        const f1 = qrY + qrCard + 40;
+        pctx.fillStyle = 'rgba(245,245,247,0.5)';
+        pctx.font = '500 13px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('Código de acceso personal e intransferible', pw / 2, f1);
+        pctx.fillStyle = '#88C63A';
+        pctx.font = '500 11px -apple-system, "SF Pro Display", system-ui, sans-serif';
+        pctx.fillText('COE Evolution · 2026', pw / 2, f1 + 20);
+        pctx.fillStyle = 'rgba(245,245,247,0.3)';
+        pctx.font = '400 9px "SF Mono", "Menlo", monospace';
+        pctx.fillText(uid, pw / 2, f1 + 36);
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'px', [pw, ph]);
+        pdf.addImage(pc.toDataURL('image/png'), 'PNG', 0, 0, pw, ph);
+
+        const blob = pdf.output('blob');
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+        const emailStatus = document.getElementById('emailStatus');
+        const emailStatusText = document.getElementById('emailStatusText');
+        emailStatusText.textContent = 'Enviando código al correo...';
+        emailStatus.className = 'email-status sending';
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64 = reader.result.split(',')[1];
+          try {
+            const res = await supabaseClient.functions.invoke('send-invite', {
+              body: { email: correo, nombre, pdfBase64: base64 }
+            });
+            if (res.error) throw new Error(res.error);
+            emailStatusText.textContent = '✅ Código enviado a ' + correo;
+            emailStatus.className = 'email-status sent';
+          } catch (e) {
+            emailStatusText.textContent = '⚠ No se pudo enviar el correo. Puedes descargar el PDF abajo.';
+            emailStatus.className = 'email-status error';
+          }
+        };
+        reader.readAsDataURL(blob);
+      };
+      genPdf();
+    });
+
+  } catch (err) {
+    errorMsg.textContent = err.message || 'Error desconocido.';
+    errorMsg.classList.add('visible');
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+  }
+});
+</script>
+
+<script>
+(function(){
+  const c = document.getElementById('bgGrid');
+  const ctx = c.getContext('2d');
+  let particles = [];
+  const isMobile = window.innerWidth < 600;
+  const COUNT = isMobile ? 25 : 55;
+  const CONN_DIST = isMobile ? 150 : 200;
+  const LINE_ALPHA = 0.45;
+
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('load', resize);
+  resize();
+
+  class P {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * c.width;
+      this.y = Math.random() * c.height;
+      this.vx = (Math.random() - 0.5) * 0.2;
+      this.vy = (Math.random() - 0.5) * 0.2;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < 0 || this.x > c.width) this.vx *= -1;
+      if (this.y < 0 || this.y > c.height) this.vy *= -1;
+    }
+  }
+
+  for (let i = 0; i < COUNT; i++) particles.push(new P());
+
+  const rmq = matchMedia('(prefers-reduced-motion: reduce)');
+
+  function draw() {
+    const w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+
+    if (!rmq.matches) particles.forEach(p => p.update());
+
+    for (let i = 0; i < COUNT; i++) {
+      for (let j = i + 1; j < COUNT; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONN_DIST) {
+          const alpha = (1 - dist / CONN_DIST) * LINE_ALPHA;
+          ctx.strokeStyle = `rgba(136,198,58,${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    particles.forEach(p => {
+      ctx.fillStyle = 'rgba(136,198,58,0.5)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    if (!rmq.matches) requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  window.addEventListener('resize', () => {
+    particles.forEach(p => {
+      if (p.x > c.width || p.y > c.height) p.reset();
+    });
+  });
+})();
+</script>
+</body>
+</html>
