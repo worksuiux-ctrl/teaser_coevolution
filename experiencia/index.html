@@ -1636,6 +1636,12 @@
     .scene,
     .beat,
     .stage { opacity: 1 !important; transform: none !important; }
+    /* iOS: restaurar animación del logo aunque tenga Reduce Motion */
+    .ios .logo-wrap,
+    .ios .logo-wrap .ellipse {
+      animation-duration: 3.2s !important;
+      animation-iteration-count: infinite !important;
+    }
   }
 
   /* ============================================
