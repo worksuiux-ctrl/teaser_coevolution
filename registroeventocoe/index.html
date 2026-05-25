@@ -583,13 +583,19 @@ form.addEventListener('submit', async (e) => {
   }
 
   try {
-    const res = await supabaseClient.functions.invoke('register-invite', {
-      body: { nombre, telefono, correo, cargo, organizacion, confirmado }
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/register-invite`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nombre, telefono, correo, cargo, organizacion, confirmado })
     });
 
-    if (res.error) throw new Error(res.error.message || res.error);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al registrar');
 
-    const { uid, nombre: nombreRes, registered } = res.data;
+    const { uid, nombre: nombreRes, registered } = data;
     nombre = nombreRes;
 
     if (registered) {
