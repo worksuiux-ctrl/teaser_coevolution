@@ -479,6 +479,16 @@
     padding-top: calc(120px + env(safe-area-inset-top));
   }
 
+  .profile-logo {
+    margin-bottom: 16px;
+    width: 44px;
+    height: 57px;
+  }
+  .profile-logo .logo-wrap {
+    width: 44px;
+    height: 57px;
+  }
+
   .profile-bottom {
     flex: 6;
     display: flex;
@@ -1678,24 +1688,25 @@
      - A los ~1.2s transiciona a la posición superior
        y aparece la escena de perfil debajo
      ============================================ */
-  .splash-logo {
+   .splash-logo {
     position: fixed;
     width: 66px;
     height: 85px;
     z-index: 100;
     pointer-events: none;
-    transition: top 1.1s cubic-bezier(0.22, 1, 0.36, 1),
-                left 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.6s ease;
   }
 
   .splash-logo.centered {
     top: calc(50% - 42.5px);
     left: calc(50% - 33px);
+    opacity: 1;
   }
 
   .splash-logo.moved {
-    top: calc(80px + env(safe-area-inset-top));
+    top: calc(50% - 42.5px);
     left: calc(50% - 33px);
+    opacity: 0;
   }
 
   .logo-wrap {
@@ -1754,11 +1765,19 @@
 </div>
 
 <!-- ESCENA 1: PERFIL -->
-<div class="scene" id="scene-profile">
-  <div class="profile-top">
-    <div class="hero-title">COE EVOLUTION</div>
-    <div class="hero-year">2026</div>
-  </div>
+  <div class="scene" id="scene-profile">
+    <div class="profile-top">
+      <div class="profile-logo">
+        <div class="logo-wrap">
+          <svg width="44" height="57" viewBox="0 0 66 85" fill="none">
+            <path d="M21.0692 42.5C21.0692 36.8304 25.2973 32.1035 28.9733 27.787C31.4819 24.8412 33 20.9977 33 16.7933C33 7.51862 25.6127 0 16.5 0C7.3873 0 0 7.51862 0 16.7933C0 20.9977 1.51805 24.8412 4.02672 27.787C7.70266 32.1035 11.9308 36.8304 11.9308 42.5C11.9308 48.1696 7.70266 52.8965 4.02671 57.213C1.51804 60.1588 0 64.0023 0 68.2067C0 77.4814 7.38729 85 16.5 85C25.6127 85 33 77.4814 33 68.2067C33 64.0023 31.4819 60.1588 28.9733 57.213C25.2973 52.8965 21.0692 48.1696 21.0692 42.5Z" fill="#88C63A"/>
+            <ellipse class="ellipse" cx="49.5" cy="42.3708" rx="16.5" ry="16.7933" fill="#88C63A"/>
+          </svg>
+        </div>
+      </div>
+      <div class="hero-title">COE EVOLUTION</div>
+      <div class="hero-year">2026</div>
+    </div>
   <div class="profile-bottom">
     <h1 class="headline">Sé testigo.<br>Sé parte.</h1>
     <div class="profile-bottom-content">
