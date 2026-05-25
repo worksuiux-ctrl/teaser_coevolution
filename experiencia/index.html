@@ -592,6 +592,33 @@
   }
 
   .loading-text { font-size: 14px; color: var(--text-muted); letter-spacing: 0.05em; }
+  .loading-hint { font-size: 13px; color: var(--text-muted); letter-spacing: 0.06em; margin-top: 12px; line-height: 1.5; max-width: 260px; }
+
+  .gesture-ring {
+    width: 44px; height: 44px;
+    margin: 32px auto 0;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    animation: gesturePulse 2.4s ease-in-out infinite;
+    position: relative;
+  }
+  .gesture-ring::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: gestureRipple 2.4s ease-out infinite;
+  }
+  @keyframes gesturePulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+  @keyframes gestureRipple {
+    0% { opacity: 0.4; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.4); }
+  }
 
   /* ============================================
      TEASER
@@ -1774,7 +1801,8 @@
       </svg>
     </div>
   </div>
-  <div class="loading-text">Preparando tu evolución</div>
+  <div class="gesture-ring"></div>
+  <div class="loading-hint">Mantén presionada la pantalla<br>para pausar y ver detalles</div>
 </div>
 
 <!-- ============================================
@@ -2657,7 +2685,7 @@
       // En iOS Safari mobile esto no hace nada porque está bloqueado por Apple
       requestFullscreen();
       showScene('loading');
-      setTimeout(() => { runTeaser(profile); }, 1400);
+      setTimeout(() => { runTeaser(profile); }, 2800);
     });
   });
 
