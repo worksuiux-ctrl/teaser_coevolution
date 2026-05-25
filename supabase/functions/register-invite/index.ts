@@ -12,9 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    const { nombre, telefono, correo, cargo, organizacion, confirmado } = await req.json();
-    if (!nombre || !telefono || !correo) {
-      return new Response(JSON.stringify({ error: 'Faltan nombre, teléfono o correo' }), {
+    const { correo } = await req.json();
+    if (!correo) {
+      return new Response(JSON.stringify({ error: 'Falta el correo' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -22,32 +22,16 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' };
 
-    const resp = await fetch(`${supabaseUrl}/rest/v1/invitados?correo=eq.${encodeURIComponent(correo)}&select=nombre,uid`, { headers });
+    const resp = await fetch(
+      `${supabaseUrl}/rest/v1/invitados?correo=eq.${encodeURIComponent(correo)}&select=nombre,uid`,
+      { headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` } }
+    );
+
     const rows = await resp.json();
+    const registered = Array.isArray(rows) && rows.length > 0;
 
-    if (Array.isArray(rows) && rows.length > 0) {
-      const { nombre: nombreExistente, uid } = rows[0];
-      return new Response(JSON.stringify({ registered: true, uid, nombre: nombreExistente }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const uid = crypto.randomUUID();
-    const insertResp = await fetch(`${supabaseUrl}/rest/v1/invitados`, {
-      method: 'POST',
-      headers: { ...headers, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ uid, nombre, telefono, correo, cargo, organizacion, confirmado }),
-    });
-
-    if (!insertResp.ok) {
-      const errBody = await insertResp.json();
-      throw new Error(errBody.message || 'Error al insertar');
-    }
-
-    return new Response(JSON.stringify({ registered: false, uid, nombre }), {
+    return new Response(JSON.stringify({ registered }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

@@ -583,20 +583,13 @@ form.addEventListener('submit', async (e) => {
   }
 
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/register-invite`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ nombre, telefono, correo, cargo, organizacion, confirmado })
+    const { error: fnError, data: fnData } = await supabaseClient.functions.invoke('register-invite', {
+      body: { correo }
     });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Error al registrar');
+    if (fnError) throw new Error(fnError.message || fnError);
 
-    const registered = data.registered === true;
-    if (registered) {
+    if (fnData.registered === true) {
       errorMsg.textContent = 'Este correo ya está registrado.';
       errorMsg.classList.add('visible');
       submitBtn.classList.remove('loading');
@@ -604,8 +597,12 @@ form.addEventListener('submit', async (e) => {
       return;
     }
 
-    const uid = data.uid;
-    nombre = data.nombre;
+    const uid = crypto.randomUUID();
+    const { error: insertError } = await supabaseClient
+      .from('invitados')
+      .insert({ uid, nombre, telefono, correo, cargo, organizacion, confirmado });
+
+    if (insertError) throw new Error(insertError.message);
 
     const qrUrl = `${window.location.origin}/verificar/?uid=${uid}`;
     qrName.textContent = nombre;
