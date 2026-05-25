@@ -1,5 +1,4 @@
 import { serve } from 'https://deno.land/std@0.192.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,40 +20,34 @@ serve(async (req) => {
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' };
 
-    const { data: existente } = await supabase
-      .from('invitados')
-      .select('nombre, uid')
-      .eq('correo', correo)
-      .maybeSingle();
+    const resp = await fetch(`${supabaseUrl}/rest/v1/invitados?correo=eq.${encodeURIComponent(correo)}&select=nombre,uid`, { headers });
+    const rows = await resp.json();
 
-    if (existente) {
-      return new Response(JSON.stringify({
-        registered: true,
-        uid: existente.uid,
-        nombre: existente.nombre,
-      }), {
+    if (Array.isArray(rows) && rows.length > 0) {
+      const { nombre: nombreExistente, uid } = rows[0];
+      return new Response(JSON.stringify({ registered: true, uid, nombre: nombreExistente }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const uid = crypto.randomUUID();
-    const { error: insertError } = await supabase
-      .from('invitados')
-      .insert({ uid, nombre, telefono, correo, cargo, organizacion, confirmado });
+    const insertResp = await fetch(`${supabaseUrl}/rest/v1/invitados`, {
+      method: 'POST',
+      headers: { ...headers, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ uid, nombre, telefono, correo, cargo, organizacion, confirmado }),
+    });
 
-    if (insertError) throw new Error(insertError.message);
+    if (!insertResp.ok) {
+      const errBody = await insertResp.json();
+      throw new Error(errBody.message || 'Error al insertar');
+    }
 
-    return new Response(JSON.stringify({
-      registered: false,
-      uid,
-      nombre,
-    }), {
+    return new Response(JSON.stringify({ registered: false, uid, nombre }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

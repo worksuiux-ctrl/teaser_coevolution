@@ -595,13 +595,13 @@ form.addEventListener('submit', async (e) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error al registrar');
 
-    const { uid, nombre: nombreRes, registered } = data;
-    nombre = nombreRes;
-
-    if (registered) {
+    if (data.registered === true) {
       errorMsg.textContent = 'Ya estás registrado. Aquí tienes tu código de acceso.';
       errorMsg.classList.add('visible');
     }
+
+    const uid = data.uid;
+    nombre = data.nombre;
 
     const qrUrl = `${window.location.origin}/verificar/?uid=${uid}`;
     qrName.textContent = nombre;
