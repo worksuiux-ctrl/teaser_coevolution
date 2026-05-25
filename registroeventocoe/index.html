@@ -595,9 +595,13 @@ form.addEventListener('submit', async (e) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error al registrar');
 
-    if (data.registered === true) {
-      errorMsg.textContent = 'Ya estás registrado. Aquí tienes tu código de acceso.';
+    const registered = data.registered === true;
+    if (registered) {
+      errorMsg.textContent = 'Este correo ya está registrado.';
       errorMsg.classList.add('visible');
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+      return;
     }
 
     const uid = data.uid;
