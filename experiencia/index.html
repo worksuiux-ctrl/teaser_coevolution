@@ -1641,6 +1641,7 @@
     .ios .logo-wrap .ellipse {
       animation-duration: 3.8s !important;
       animation-iteration-count: infinite !important;
+      animation-direction: alternate !important;
     }
   }
 
@@ -1673,7 +1674,7 @@
   .logo-wrap {
     width: 66px;
     height: 85px;
-    animation: logoAnim 3.8s cubic-bezier(0.42,0,0.58,1) infinite;
+    animation: logoAnim 3.8s cubic-bezier(0.42,0,0.58,1) infinite alternate;
     transform-origin: center center;
   }
 
@@ -1683,23 +1684,19 @@
 
   @keyframes logoAnim {
     0%   { transform: rotate(0deg) scale(1); }
-    37.5% { transform: rotate(45deg) scale(0.75); }
-    62.5% { transform: rotate(180deg) scale(0.75); }
-    75%  { transform: rotate(225deg) scale(0.72); }
-    100%  { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(180deg) scale(0.8); }
+    100% { transform: rotate(360deg) scale(0.7); }
   }
 
   .logo-wrap .ellipse {
-    animation: ellipseAnim 3.8s cubic-bezier(0.4,0,0.2,1) infinite;
+    animation: ellipseAnim 3.8s cubic-bezier(0.4,0,0.2,1) infinite alternate;
     transform-origin: 49.5px 42.3708px;
   }
 
   @keyframes ellipseAnim {
-    0%   { transform: scale(1); }
-    37.5% { transform: scale(0.6); }
-    62.5% { transform: scale(0.8); }
-    75%  { transform: scale(0.65); }
-    100%  { transform: scale(1); }
+    0%   { transform: scale(1) rotate(0deg); }
+    50%  { transform: scale(0.7) rotate(-180deg); }
+    100% { transform: scale(0.6) rotate(-360deg); }
   }
 
   @keyframes ctaPulse {
