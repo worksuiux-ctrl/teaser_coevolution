@@ -313,6 +313,133 @@ body.list-mode {
       opacity: 0.5;
     }
 
+    .pin-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .pin-overlay.visible { display: flex; }
+
+    .pin-modal {
+      width: 100%;
+      max-width: 300px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 24px;
+      padding: 40px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: fadeUp 0.35s var(--ease-out-expo);
+    }
+
+    .pin-modal .lock-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--warning-bg);
+      color: var(--warning);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .pin-modal .lock-icon svg { width: 22px; height: 22px; }
+
+    .pin-modal h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .pin-modal p.sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .pin-input-wrap {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pin-digit {
+      width: 52px; height: 60px;
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      font-size: 28px;
+      font-family: "SF Mono", "Menlo", monospace;
+      color: var(--text);
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      caret-color: var(--accent);
+    }
+
+    .pin-digit:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    .pin-digit.filled {
+      border-color: var(--accent);
+      background: var(--success-bg);
+    }
+
+    #pinError {
+      font-size: 13px;
+      color: #e68a2e;
+      text-align: center;
+      display: none;
+      margin-bottom: 16px;
+    }
+
+    #pinError.visible { display: block; }
+
+    .pin-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #0c0c0e;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pin-btn:active { transform: scale(0.97); opacity: 0.9; }
+    .pin-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .pin-btn .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(12,12,14,0.3);
+      border-top-color: #0c0c0e;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    .pin-btn.loading .spinner { display: block; }
+    .pin-btn.loading .btn-text { display: none; }
+
 .guest-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -379,6 +506,27 @@ body.list-mode {
 </style>
 </head>
 <body>
+
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-modal">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h2>Lista de Invitados</h2>
+    <p class="sub">Ingresa el PIN de acceso</p>
+    <div class="pin-input-wrap" id="pinWrap">
+      <input class="pin-digit" id="d0" type="text" inputmode="numeric" maxlength="1">
+      <input class="pin-digit" id="d1" type="text" inputmode="numeric" maxlength="1">
+      <input class="pin-digit" id="d2" type="text" inputmode="numeric" maxlength="1">
+      <input class="pin-digit" id="d3" type="text" inputmode="numeric" maxlength="1">
+    </div>
+    <p class="error-msg" id="pinError"></p>
+    <button class="pin-btn" id="pinBtn" disabled>
+      <span class="spinner"></span>
+      <span class="btn-text">Ingresar</span>
+    </button>
+  </div>
+</div>
 
 <div class="container">
 
@@ -515,17 +663,90 @@ function showState(id) {
   states[id].classList.add('visible');
 }
 
-// Tabs
+// PIN modal — digit inputs
+const pinDigits = [0,1,2,3].map(i => document.getElementById('d'+i));
+const pinBtn = document.getElementById('pinBtn');
+
+function getPin() { return pinDigits.map(d => d.value).join(''); }
+
+function updatePinState() {
+  pinDigits.forEach((d,i) => d.classList.toggle('filled', d.value !== ''));
+  pinBtn.disabled = getPin().length !== 4;
+}
+
+function clearPin() {
+  pinDigits.forEach(d => { d.value = ''; d.classList.remove('filled'); });
+  document.getElementById('pinError').classList.remove('visible');
+  pinBtn.disabled = true;
+  pinBtn.classList.remove('loading');
+}
+
+function focusPin() { pinDigits[0].focus(); }
+
+pinDigits.forEach((d, i) => {
+  d.addEventListener('input', () => {
+    d.value = d.value.replace(/[^0-9]/g, '').slice(0,1);
+    if (d.value && i < 3) pinDigits[i+1].focus();
+    updatePinState();
+  });
+  d.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !d.value && i > 0) {
+      pinDigits[i-1].focus();
+      pinDigits[i-1].value = '';
+      updatePinState();
+    }
+    if (e.key === 'Enter' && getPin().length === 4) checkPin(getPin());
+  });
+});
+
+async function checkPin(pin) {
+  const errEl = document.getElementById('pinError');
+  pinBtn.classList.add('loading');
+  pinBtn.disabled = true;
+  errEl.classList.remove('visible');
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/verify-pin`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error('PIN incorrecto');
+    sessionStorage.setItem('verify_pin', '1');
+    document.getElementById('pinOverlay').classList.remove('visible');
+    clearPin();
+    showState('stateList');
+    cargarLista();
+    document.querySelector('.container').classList.add('list-mode');
+    document.body.classList.add('list-mode');
+  } catch (err) {
+    errEl.textContent = 'PIN incorrecto. Intenta de nuevo.';
+    errEl.classList.add('visible');
+    pinDigits.forEach(d => { d.value = ''; d.classList.remove('filled'); });
+    pinDigits[0].focus();
+  }
+  pinBtn.classList.remove('loading');
+  pinBtn.disabled = getPin().length !== 4;
+}
+
+pinBtn.addEventListener('click', () => { if (getPin().length === 4) checkPin(getPin()); });
+
+// Update list-tab click to use new focus
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     if (tab.dataset.tab === 'list') {
       stopCamera();
-      showState('stateList');
-      cargarLista();
-      document.querySelector('.container').classList.add('list-mode');
-      document.body.classList.add('list-mode');
+      if (sessionStorage.getItem('verify_pin') === '1') {
+        showState('stateList');
+        cargarLista();
+        document.querySelector('.container').classList.add('list-mode');
+        document.body.classList.add('list-mode');
+      } else {
+        document.getElementById('pinOverlay').classList.add('visible');
+        focusPin();
+      }
     } else {
       document.querySelector('.container').classList.remove('list-mode');
       document.body.classList.remove('list-mode');
@@ -533,6 +754,12 @@ document.querySelectorAll('.tab').forEach(tab => {
       startCamera();
     }
   });
+});
+
+// Cerrar overlay si cambian a scan
+document.querySelector('[data-tab="scan"]').addEventListener('click', () => {
+  document.getElementById('pinOverlay').classList.remove('visible');
+  clearPin();
 });
 
 const video = document.getElementById('camera');
