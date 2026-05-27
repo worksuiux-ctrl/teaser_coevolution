@@ -595,7 +595,7 @@ async function cargarLista() {
       .from('invitados')
       .select('nombre, cargo, organizacion, usado, timestamp')
       .order('usado', { ascending: true })
-      .order('timestamp', { ascending: true });
+      .order('nombre', { ascending: true });
 
     if (error) throw error;
 
