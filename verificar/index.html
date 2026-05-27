@@ -428,7 +428,7 @@ body.list-mode {
         <span id="listDetail" style="font-size:13px;color:var(--text-muted)">
           <span class="filter-btn" data-filter="present" style="cursor:pointer;transition:opacity .2s">0 Presentes</span>
            ·
-          <span class="filter-btn" data-filter="pending" style="cursor:pointer;transition:opacity .2s">0 Registrados</span>
+          <span class="filter-btn" data-filter="pending" style="cursor:pointer;transition:opacity .2s">0 Por asistir</span>
         </span>
       </div>
       <button class="action-btn secondary" style="padding:8px 16px;font-size:13px;width:auto" onclick="cargarLista()">
@@ -656,7 +656,7 @@ function renderList(filter) {
   detailEl.innerHTML = `
     <span class="filter-btn ${statusFilter === 'present' ? 'active' : ''}" data-filter="present" style="cursor:pointer;transition:opacity .2s;color:var(--accent-bright)">${presentes.length} Presentes</span>
      ·
-    <span class="filter-btn ${statusFilter === 'pending' ? 'active' : ''}" data-filter="pending" style="cursor:pointer;transition:opacity .2s;color:#e68a2e">${pendientes.length} Registrados</span>
+    <span class="filter-btn ${statusFilter === 'pending' ? 'active' : ''}" data-filter="pending" style="cursor:pointer;transition:opacity .2s;color:#e68a2e">${pendientes.length} Por asistir</span>
   `;
 
   detailEl.querySelectorAll('.filter-btn').forEach(btn => {
@@ -680,7 +680,7 @@ function renderList(filter) {
         <div class="detail">${g.cargo || ''}</div>
         <div class="org">${g.organizacion || ''}</div>
       </div>
-      <div class="status-badge ${g.usado ? 'present' : 'pending'}">${g.usado ? 'Presente' : 'Registrado'}</div>
+      <div class="status-badge ${g.usado ? 'present' : 'pending'}">${g.usado ? 'Presente' : 'Por asistir'}</div>
     `;
     listEl.appendChild(card);
   });
