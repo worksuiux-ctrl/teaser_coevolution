@@ -260,19 +260,54 @@ body {
   width: 100%;
 }
 
-.guest-list {
-  width: 100%;
-  max-height: 60vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  scrollbar-width: none;
+#stateList {
+  align-self: flex-start;
+  justify-content: flex-start;
 }
 
-.guest-list::-webkit-scrollbar {
-  display: none;
+.container.list-mode {
+  justify-content: flex-start;
+  min-height: auto;
 }
+
+body.list-mode {
+  align-items: flex-start;
+  padding-top: 40px;
+}
+
+    .guest-list {
+      width: 100%;
+      max-height: 60vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      scrollbar-width: none;
+    }
+
+    .guest-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .search-input::placeholder { color: var(--text-dim); }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
 
 .guest-card {
   background: var(--bg-card);
@@ -392,6 +427,7 @@ body {
         ↻ Actualizar
       </button>
     </div>
+    <input class="search-input" id="searchInput" type="text" placeholder="Buscar por nombre u organización...">
     <div class="guest-list" id="guestList"></div>
   </div>
 
@@ -480,7 +516,11 @@ document.querySelectorAll('.tab').forEach(tab => {
       stopCamera();
       showState('stateList');
       cargarLista();
+      document.querySelector('.container').classList.add('list-mode');
+      document.body.classList.add('list-mode');
     } else {
+      document.querySelector('.container').classList.remove('list-mode');
+      document.body.classList.remove('list-mode');
       showState('stateScan');
       startCamera();
     }
@@ -585,10 +625,41 @@ function resetScanner() {
 }
 
 // Cargar lista de invitados desde Supabase
+let allGuests = [];
+
+function renderList(filter) {
+  const listEl = document.getElementById('guestList');
+  const q = (filter || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const filtered = !q ? allGuests : allGuests.filter(g =>
+    (g.nombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q) ||
+    (g.organizacion || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q)
+  );
+
+  const presentes = allGuests.filter(g => g.usado);
+  const pendientes = allGuests.filter(g => !g.usado);
+  document.getElementById('listDetail').innerHTML = `<span style="color:var(--accent-bright)">${presentes.length} Presentes</span> · <span style="color:#e68a2e">${pendientes.length} Registrados</span>`;
+
+  listEl.innerHTML = '';
+  filtered.forEach((g, i) => {
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+    card.style.animationDelay = `${i * 30}ms`;
+    const inicial = g.nombre.charAt(0).toUpperCase();
+    card.innerHTML = `
+      <div class="avatar ${g.usado ? 'present' : 'pending'}">${inicial}</div>
+      <div class="info">
+        <div class="name">${g.nombre}</div>
+        <div class="detail">${g.cargo || ''}</div>
+        <div class="org">${g.organizacion || ''}</div>
+      </div>
+      <div class="status-badge ${g.usado ? 'present' : 'pending'}">${g.usado ? 'Presente' : 'Registrado'}</div>
+    `;
+    listEl.appendChild(card);
+  });
+}
+
 async function cargarLista() {
   const listEl = document.getElementById('guestList');
-  const countEl = document.getElementById('listCount');
-  const detailEl = document.getElementById('listDetail');
   listEl.innerHTML = '<div class="loading-spinner" style="margin:40px auto"></div>';
   try {
     const { data, error } = await supabaseClient
@@ -599,32 +670,17 @@ async function cargarLista() {
 
     if (error) throw error;
 
-    const presentes = data.filter(g => g.usado);
-    const pendientes = data.filter(g => !g.usado);
-    countEl.textContent = 'Invitados confirmados';
-    detailEl.innerHTML = `<span style="color:var(--accent-bright)">${presentes.length} Presentes</span> · <span style="color:#e68a2e">${pendientes.length} Registrados</span>`;
-
-    listEl.innerHTML = '';
-    data.forEach((g, i) => {
-      const card = document.createElement('div');
-      card.className = 'guest-card';
-      card.style.animationDelay = `${i * 30}ms`;
-      const inicial = g.nombre.charAt(0).toUpperCase();
-      card.innerHTML = `
-        <div class="avatar ${g.usado ? 'present' : 'pending'}">${inicial}</div>
-        <div class="info">
-          <div class="name">${g.nombre}</div>
-          <div class="detail">${g.cargo || ''}</div>
-          <div class="org">${g.organizacion || ''}</div>
-        </div>
-        <div class="status-badge ${g.usado ? 'present' : 'pending'}">${g.usado ? 'Presente' : 'Registrado'}</div>
-      `;
-      listEl.appendChild(card);
-    });
+    allGuests = data;
+    const val = document.getElementById('searchInput').value;
+    renderList(val);
   } catch (err) {
     listEl.innerHTML = '<p class="state-sub">Error al cargar la lista</p>';
   }
 }
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  renderList(e.target.value);
+});
 
 // Verificar UID contra Supabase
 async function verificar(uid) {
