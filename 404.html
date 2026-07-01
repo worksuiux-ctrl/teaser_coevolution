@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>COE Evolution</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0c0c0e;
+      color: #f5f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100dvh; padding: 24px; text-align: center;
+    }
+    h1 { font-size: 48px; font-weight: 700; color: #88C63A; }
+    p { margin-top: 12px; font-size: 15px; color: rgba(245,245,247,0.55); }
+    a {
+      display: inline-block; margin-top: 24px; padding: 12px 32px;
+      background: #88C63A; color: #0c0c0e; text-decoration: none;
+      border-radius: 10px; font-weight: 600; font-size: 15px;
+    }
+  </style>
+  <script>
+    (function() {
+      if (location.pathname.startsWith('/prototipotesting2026/')) {
+        sessionStorage.redirect = location.href;
+        location.href = '/prototipotesting2026/';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div>
+    <h1>404</h1>
+    <p>Página no encontrada</p>
+    <a href="/">Volver al inicio</a>
+  </div>
+</body>
+</html>
