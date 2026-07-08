@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COE Suite — BackOffice</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-50: #ECF6E4;
+  --green-100: #D6EBC2;
+  --green-400: #84C237;
+  --green-500: #42AA42;
+  --green-600: #3CB93C;
+  --green-700: #267335;
+  --green-800: #4B7F0C;
+  --ink-900: #101828;
+  --ink-800: #2F2F2F;
+  --ink-700: #4F4F4F;
+  --ink-600: #4A5565;
+  --ink-500: #6B7280;
+  --ink-400: #98A1AF;
+  --ink-300: #B4B9BE;
+  --ink-250: #C2C7CA;
+  --ink-200: #D1D5DC;
+  --ink-150: #E5E7EB;
+  --ink-100: #F3F4F6;
+  --ink-50: #F9FAFB;
+  --warning: #FF9E03;
+  --danger: #FF5848;
+  --info: #0D9DDB;
+  --purple: #8A38F5;
+  --teal: #14B8A6;
+  --amber: #FF9E03;
+  --shadow: 0 1px 3px rgba(16,24,40,.08), 0 1px 2px rgba(16,24,40,.04);
+  --shadow-md: 0 4px 6px rgba(16,24,40,.08);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--ink-50);color:var(--ink-700);display:flex;overflow:hidden}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--ink-300);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-500)}
+
+/* ── SIDEBAR ── */
+#sidebar{width:260px;min-width:260px;background:#fff;border-right:1px solid var(--ink-150);display:flex;flex-direction:column;height:100vh;overflow-y:auto;z-index:10}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--ink-150)}
+.sb-logo h1{font-size:18px;font-weight:800;color:var(--green-500);letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.sb-logo h1 i{font-size:16px}
+.sb-logo p{font-size:9px;color:var(--ink-500);font-weight:600;letter-spacing:1.8px;text-transform:uppercase;margin-top:2px}
+.sb-logo p span{color:var(--amber)}
+.sb-nav{padding:8px 0;flex:1}
+.sb-sec{padding:12px 18px 6px;font-size:9px;font-weight:700;color:var(--ink-500);letter-spacing:1.5px;text-transform:uppercase}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 18px;font-size:12px;font-weight:500;color:var(--ink-700);text-decoration:none;transition:all .12s;cursor:pointer;border-left:3px solid transparent}
+.sb-link:hover{background:var(--ink-100);color:var(--ink-900)}
+.sb-link.active{background:var(--green-50);color:var(--green-700);font-weight:600;border-left-color:var(--green-500)}
+.sb-link i{width:16px;text-align:center;font-size:12px;color:var(--ink-400)}
+.sb-link.active i{color:var(--green-500)}
+.sb-count{display:inline-flex;align-items:center;justify-content:center;background:var(--ink-150);color:var(--ink-600);font-size:9px;font-weight:600;padding:0 6px;height:16px;border-radius:999px;margin-left:auto;font-family:'JetBrains Mono',monospace}
+
+/* ── MAIN ── */
+#main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:#fff;border-bottom:1px solid var(--ink-150);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar h2{font-size:16px;font-weight:700;color:var(--ink-900);display:flex;align-items:center;gap:8px}
+.topbar h2 i{color:var(--green-500);font-size:18px}
+.topbar .stats{display:flex;gap:16px;font-size:11px;color:var(--ink-500)}
+.topbar .stats span{display:flex;align-items:center;gap:4px}
+.topbar .stats b{color:var(--ink-900)}
+.content{flex:1;overflow-y:auto;padding:24px 28px 40px}
+
+/* ── COMPANY LIST ── */
+.list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.list-header h3{font-size:15px;font-weight:700;color:var(--ink-900)}
+.list-actions{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .12s}
+.btn-primary{background:var(--green-500);color:#fff}
+.btn-primary:hover{background:var(--green-600)}
+.btn-secondary{background:#fff;color:var(--ink-700);border:1px solid var(--ink-200)}
+.btn-secondary:hover{background:var(--ink-50);border-color:var(--ink-300)}
+.btn-danger{background:#fff;color:var(--danger);border:1px solid var(--ink-200)}
+.btn-danger:hover{background:#FEF2F2;border-color:var(--danger)}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+.company-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.company-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.8px;background:var(--ink-50);border-bottom:1px solid var(--ink-150)}
+.company-table td{padding:10px 14px;font-size:12px;color:var(--ink-700);border-bottom:1px solid var(--ink-100)}
+.company-table tr:last-child td{border-bottom:none}
+.company-table tr:hover td{background:var(--ink-50)}
+.company-table .cell-actions{display:flex;gap:4px}
+.tipo-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
+.tipo-banco{background:var(--green-50);color:var(--green-700)}
+.tipo-cit{background:#FFF4DC;color:#A76B00}
+.tipo-corp{background:#F2E6FE;color:#6B1EC6}
+.tipo-bcv{background:#E0F4FC;color:#0876A3}
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
+.status-activo{background:var(--green-50);color:var(--green-700)}
+.status-inactivo{background:var(--ink-100);color:var(--ink-500)}
+.status-suspendido{background:#FFF4DC;color:#A76B00}
+.plan-badge{font-size:11px;font-weight:600;color:var(--ink-700)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--ink-400)}
+.empty-state i{font-size:36px;margin-bottom:12px;display:block}
+.empty-state p{font-size:13px;margin-bottom:16px}
+
+/* ── WIZARD ── */
+.wizard-panel{display:none}
+.wizard-panel.active{display:block}
+.wizard-steps{display:flex;gap:0;margin-bottom:28px;background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-lg);padding:0;overflow:hidden;box-shadow:var(--shadow)}
+.wizard-step{flex:1;padding:10px 14px;display:flex;align-items:center;gap:8px;position:relative;background:#fff;transition:all .2s;cursor:default}
+.wizard-step.clickable{cursor:pointer}
+.wizard-step.clickable:hover{background:var(--ink-50)}
+.wizard-step + .wizard-step{border-left:1px solid var(--ink-150)}
+.wizard-step .ws-number{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;background:var(--ink-150);color:var(--ink-500);transition:all .2s}
+.wizard-step.active .ws-number{background:var(--green-500);color:#fff}
+.wizard-step.done .ws-number{background:var(--green-100);color:var(--green-700)}
+.wizard-step .ws-text{flex:1;min-width:0}
+.wizard-step .ws-text strong{display:block;font-size:11px;color:var(--ink-900);font-weight:600}
+.wizard-step .ws-text span{display:block;font-size:9px;color:var(--ink-500)}
+.wizard-step.active .ws-text strong{color:var(--green-700)}
+.wizard-step.done .ws-text strong{color:var(--ink-500)}
+.wizard-step.done .ws-text span{color:var(--ink-400)}
+.wizard-step .ws-check{display:none;color:var(--green-500);font-size:11px;flex-shrink:0}
+.wizard-step.done .ws-check{display:block}
+.wizard-step .ws-badge{display:none;font-size:8px;font-weight:600;padding:2px 6px;border-radius:999px;flex-shrink:0}
+.wizard-step.done .ws-badge.saved{display:inline-block;background:var(--green-50);color:var(--green-700)}
+.wizard-step.pending .ws-badge.pending-badge{display:inline-block;background:var(--ink-100);color:var(--ink-400)}
+
+/* ── WIZARD BODY ── */
+.wizard-body{min-height:400px}
+.wizard-page{display:none}
+.wizard-page.active{display:block;animation: fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.wizard-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:16px;border-top:1px solid var(--ink-150)}
+.wizard-nav .wn-left{display:flex;gap:8px}
+.wizard-nav .wn-right{display:flex;gap:8px}
+
+/* ── TYPE SELECTOR CARDS ── */
+.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.type-card{border:2px solid var(--ink-150);border-radius:var(--radius-lg);padding:20px;text-align:center;cursor:pointer;transition:all .15s;background:#fff}
+.type-card:hover{border-color:var(--ink-250);box-shadow:var(--shadow-md)}
+.type-card.selected{border-color:var(--green-500);background:var(--green-50)}
+.type-card .tc-icon{width:48px;height:48px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 10px;color:#fff}
+.type-card.selected .tc-icon{box-shadow:0 0 0 3px rgba(66,170,66,.2)}
+.type-card h4{font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:4px}
+.type-card p{font-size:11px;color:var(--ink-500)}
+.type-card .tc-check{display:none;margin-top:8px;font-size:10px;font-weight:600;color:var(--green-700);background:var(--green-100);padding:3px 8px;border-radius:999px;align-items:center;gap:4px;justify-content:center}
+.type-card.selected .tc-check{display:inline-flex}
+
+/* ── COMPANY QUICK FORM ── */
+.quick-form{max-width:680px;margin:0 auto}
+.quick-form .form-group{margin-bottom:16px}
+.quick-form label{display:block;font-size:10px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.quick-form input,.quick-form select{width:100%;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;border:1px solid var(--ink-200);border-radius:var(--radius-sm);outline:none;background:#fff;color:var(--ink-900);transition:border-color .15s}
+.quick-form input:focus,.quick-form select:focus{border-color:var(--green-500);box-shadow:0 0 0 3px rgba(66,170,66,.1)}
+.quick-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.quick-form .hint{font-size:10px;color:var(--ink-400);margin-top:3px}
+
+/* ── CONFIG PAGES (steps 2-4) ── */
+.config-page{max-width:900px}
+.config-section-card{background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-md);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.config-section-card h4{font-size:13px;font-weight:700;color:var(--ink-900);display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.config-section-card h4 i{color:var(--green-500);font-size:14px}
+.config-section-card .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.config-section-card .form-group{margin-bottom:14px}
+.config-section-card .form-group:last-child{margin-bottom:0}
+.config-section-card label{display:block;font-size:10px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.config-section-card input,.config-section-card select{width:100%;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;border:1px solid var(--ink-200);border-radius:var(--radius-sm);outline:none;background:#fff;color:var(--ink-900);transition:border-color .15s}
+.config-section-card input:focus,.config-section-card select:focus{border-color:var(--green-500);box-shadow:0 0 0 3px rgba(66,170,66,.1)}
+
+/* ── MODULE TOGGLES (step 3) ── */
+.modules-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.module-toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--ink-150);cursor:pointer;transition:all .12s;background:#fff}
+.module-toggle:hover{background:var(--ink-50)}
+.module-toggle.active{background:var(--green-50);border-color:var(--green-100)}
+.module-toggle.inactive{opacity:.5}
+.module-toggle .mt-icon{width:30px;height:30px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.module-toggle.active .mt-icon{background:var(--green-500);color:#fff}
+.module-toggle.inactive .mt-icon{background:var(--ink-200);color:var(--ink-400)}
+.module-toggle .mt-info{flex:1;min-width:0}
+.module-toggle .mt-info p{font-size:12px;font-weight:600;color:var(--ink-900)}
+.module-toggle .mt-info span{font-size:10px;color:var(--ink-500)}
+.module-toggle .mt-switch, .model-switch{width:38px;height:20px;border-radius:999px;background:var(--ink-200);position:relative;cursor:pointer;transition:all .15s;flex-shrink:0}
+.module-toggle.active .mt-switch, .model-item.active .model-switch{background:var(--green-500)}
+.module-toggle .mt-switch::after, .model-switch::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:all .15s;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.module-toggle.active .mt-switch::after, .model-item.active .model-switch::after{left:20px}
+.module-toggle .mt-required{font-size:8px;color:var(--ink-400);font-weight:600;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0}
+
+/* ── COENGINE MODELS ── */
+.model-list{display:flex;flex-direction:column;gap:6px}
+.model-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
+.model-item:hover{background:var(--ink-50)}
+.model-item.active{background:var(--ink-50)}
+.model-item.inactive{opacity:.5}
+.model-item .md-icon{width:26px;height:26px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.model-item.active .md-icon{background:var(--green-500);color:#fff}
+.model-item.inactive .md-icon{background:var(--ink-200);color:var(--ink-400)}
+.model-item .md-info{flex:1;min-width:0}
+.model-item .md-info p{font-size:12px;font-weight:600;color:var(--ink-900)}
+.model-item .md-info span{font-size:10px;color:var(--ink-500)}
+
+/* ── MASTER USER ── */
+.master-card{max-width:600px}
+.master-summary{background:var(--green-50);border:1px solid var(--green-100);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.master-summary i{font-size:16px;color:var(--green-500)}
+
+/* ── VIEW PANELS ── */
+.view-panel{display:none}
+.view-panel.active{display:block}
+
+/* ── COMPANY DETAIL ── */
+.detail-view{display:none}
+.detail-view.active{display:block}
+.dh-avatar.banco{background:var(--green-500)}
+.dh-avatar.cit{background:var(--amber)}
+.dh-avatar.corp{background:var(--purple)}
+.dh-avatar.bcv{background:var(--teal)}
+.dt-section{margin-bottom:20px}
+.dt-card{background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-md);padding:20px;box-shadow:var(--shadow)}
+.dt-card h4{font-size:13px;font-weight:700;color:var(--ink-900);display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--ink-100)}
+.dt-card h4 i{color:var(--green-500);font-size:14px}
+.dt-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.dt-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.dt-field{margin-bottom:14px}
+.dt-field:last-child{margin-bottom:0}
+.dt-label{font-size:9px;font-weight:700;color:var(--ink-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.dt-value{font-size:13px;color:var(--ink-800);line-height:1.4}
+.dt-value strong{font-weight:700;color:var(--ink-900)}
+.dt-value.mono{font-family:'JetBrains Mono',monospace}
+.dt-module-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dt-module{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);transition:all .1s}
+.dt-module.on{background:var(--green-50);border:1px solid var(--green-100)}
+.dt-module.off{opacity:.4;border:1px solid transparent}
+.dt-module .dtm-icon{width:26px;height:26px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.dt-module.on .dtm-icon{background:var(--green-500);color:#fff}
+.dt-module.off .dtm-icon{background:var(--ink-200);color:var(--ink-400)}
+.dt-module .dtm-info{flex:1;min-width:0}
+.dt-module .dtm-info p{font-size:12px;font-weight:600;color:var(--ink-900)}
+.dt-module .dtm-info span{font-size:10px;color:var(--ink-500)}
+.dt-model-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:3px 8px;border-radius:999px;font-weight:500}
+.dt-model-badge.on{background:var(--green-50);color:var(--green-700);border:1px solid var(--green-100)}
+.dt-model-badge.off{background:var(--ink-50);color:var(--ink-400);border:1px solid var(--ink-150)}
+.dt-model-toggle{display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:4px 10px;border-radius:999px;font-weight:500;cursor:pointer;transition:all .1s}
+.dt-model-toggle.on{background:var(--green-50);color:var(--green-700);border:1px solid var(--green-100)}
+.dt-model-toggle.off{background:var(--ink-50);color:var(--ink-500);border:1px solid var(--ink-150)}
+.dt-model-toggle:hover{box-shadow:var(--shadow-md)}
+.dt-model-toggle-switch{display:inline-flex;align-items:center;margin-left:2px}
+.dt-input{width:100%;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;border:1px solid var(--ink-200);border-radius:var(--radius-sm);outline:none;background:#fff;color:var(--ink-900);transition:border-color .15s}
+.dt-input:focus{border-color:var(--green-500);box-shadow:0 0 0 3px rgba(66,170,66,.1)}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:10px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;color:#fff;box-shadow:var(--shadow-md);animation: slideUp .3s ease;display:flex;align-items:center;gap:8px}
+.toast-success{background:var(--green-700)}
+.toast-error{background:var(--danger)}
+.toast-info{background:var(--info)}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CONFIG BADGE ── */
+.config-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:4px}
+.config-badge.done{background:var(--green-50);color:var(--green-700)}
+.config-badge.pending{background:var(--ink-100);color:var(--ink-500)}
+
+/* ── DASHBOARD ── */
+.db-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.db-card{background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow)}
+.db-card .db-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px}
+.db-card .db-label{font-size:10px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.db-card .db-value{font-size:22px;font-weight:700;color:var(--ink-900);font-family:'JetBrains Mono',monospace}
+.db-card .db-sub{font-size:11px;color:var(--ink-500);margin-top:2px}
+.db-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.db-panel{background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow)}
+.db-panel h4{font-size:12px;font-weight:700;color:var(--ink-900);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.db-panel h4 i{color:var(--green-500);font-size:13px}
+.db-bar-container{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.db-bar-label{font-size:11px;font-weight:600;color:var(--ink-700);width:100px;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.db-bar-track{flex:1;height:18px;background:var(--ink-100);border-radius:999px;overflow:hidden}
+.db-bar-fill{height:100%;border-radius:999px;transition:width .4s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:9px;font-weight:700;color:#fff;min-width:24px}
+.db-bar-count{font-size:11px;font-weight:600;color:var(--ink-500);width:30px;text-align:right;font-family:'JetBrains Mono',monospace}
+.db-mini-table{width:100%;border-collapse:collapse}
+.db-mini-table td{padding:6px 0;font-size:11px;color:var(--ink-700);border-bottom:1px solid var(--ink-100)}
+.db-mini-table td:last-child{text-align:right;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-500)}
+.db-mini-table tr:last-child td{border-bottom:none}
+.db-tag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:600;padding:1px 6px;border-radius:999px}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <h1><i class="fa-solid fa-cube"></i>BackOffice</h1>
+    <p>COE Suite <span>Admin Panel</span></p>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-sec">Gestión</div>
+    <a class="sb-link" href="#" onclick="showView('dashboard')"><i class="fa-solid fa-chart-pie"></i>Dashboard</a>
+    <a class="sb-link active" href="#" onclick="showView('list')"><i class="fa-solid fa-building"></i>Empresas<span class="sb-count" id="company-count">0</span></a>
+    <div class="sb-sec" style="margin-top:12px">Sistema</div>
+    <a class="sb-link" href="#" onclick="showToast('Panel de control del sistema en desarrollo','info')"><i class="fa-solid fa-cog"></i>Configuración</a>
+    <a class="sb-link" href="#" onclick="showToast('Log de auditoría próximo','info')"><i class="fa-solid fa-history"></i>Auditoría</a>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+  <header class="topbar">
+    <h2><i class="fa-solid fa-compass"></i> <span id="topbar-title">Panel de Administración</span></h2>
+    <div class="stats" id="topbar-stats">
+      <span>Total empresas <b id="stats-total">0</b></span>
+      <span><i class="fa-solid fa-circle" style="color:var(--green-500);font-size:8px"></i> Activas <b id="stats-activas">0</b></span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ═══════ DASHBOARD ═══════ -->
+    <div id="view-dashboard" class="view-panel">
+      <div class="list-header">
+        <h3><i class="fa-solid fa-chart-pie" style="color:var(--green-500);margin-right:6px"></i> Dashboard de Gestión</h3>
+      </div>
+
+      <div class="db-grid" id="db-stats"></div>
+
+      <div class="db-row">
+        <div class="db-panel">
+          <h4><i class="fa-solid fa-building"></i> Empresas por Tipo</h4>
+          <div id="db-by-type"></div>
+        </div>
+        <div class="db-panel">
+          <h4><i class="fa-solid fa-puzzle-piece"></i> Módulos más Contratados</h4>
+          <div id="db-top-modules"></div>
+        </div>
+      </div>
+
+      <div class="db-row">
+        <div class="db-panel">
+          <h4><i class="fa-solid fa-brain"></i> Adopción COENGINE</h4>
+          <div id="db-coengine"></div>
+        </div>
+        <div class="db-panel">
+          <h4><i class="fa-solid fa-file-contract"></i> Planes Contratados</h4>
+          <div id="db-plans"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ COMPANY LIST ═══════ -->
+    <div id="view-list" class="view-panel">
+      <div class="list-header">
+        <h3><i class="fa-solid fa-building" style="color:var(--green-500);margin-right:6px"></i> Empresas Contratantes</h3>
+        <div class="list-actions">
+          <button class="btn btn-primary" onclick="showView('wizard')"><i class="fa-solid fa-plus"></i> Nueva Empresa</button>
+        </div>
+      </div>
+      <table class="company-table" id="company-table">
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Tipo</th>
+            <th>RIF</th>
+            <th>Plan</th>
+            <th>Estado</th>
+            <th>Renovación</th>
+            <th style="text-align:right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="company-tbody">
+        </tbody>
+      </table>
+      <div class="empty-state" id="empty-state">
+        <i class="fa-regular fa-building"></i>
+        <p>No hay empresas registradas</p>
+        <button class="btn btn-primary" onclick="showView('wizard')"><i class="fa-solid fa-plus"></i> Crear primera empresa</button>
+      </div>
+    </div>
+
+    <!-- ═══════ WIZARD: CREAR EMPRESA ═══════ -->
+    <div id="view-wizard" class="view-panel wizard-panel">
+      <div class="list-header">
+        <h3><i class="fa-solid fa-plus-circle" style="color:var(--green-500);margin-right:6px"></i> <span id="wizard-title">Nueva Empresa</span></h3>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary" onclick="showView('list')"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+        </div>
+      </div>
+
+      <input type="hidden" id="edit-id" value="">
+
+      <!-- Progress Steps -->
+      <div class="wizard-steps" id="wizard-steps">
+        <div class="wizard-step active" data-step="1" onclick="goWizardStep(1)">
+          <div class="ws-number">1</div>
+          <div class="ws-text"><strong>Datos básicos</strong><span>Tipo, RIF y razón social</span></div>
+          <i class="fa-solid fa-check ws-check"></i>
+          <span class="ws-badge saved"><i class="fa-solid fa-check"></i> Guardado</span>
+          <span class="ws-badge pending-badge">Pendiente</span>
+        </div>
+        <div class="wizard-step" data-step="2" onclick="goWizardStep(2)">
+          <div class="ws-number">2</div>
+          <div class="ws-text"><strong>Plan y suscripción</strong><span>COE Suite + COENGINE</span></div>
+          <i class="fa-solid fa-check ws-check"></i>
+          <span class="ws-badge saved"><i class="fa-solid fa-check"></i> Guardado</span>
+          <span class="ws-badge pending-badge">Pendiente</span>
+        </div>
+        <div class="wizard-step" data-step="3" onclick="goWizardStep(3)">
+          <div class="ws-number">3</div>
+          <div class="ws-text"><strong>Módulos</strong><span>Activar según el plan</span></div>
+          <i class="fa-solid fa-check ws-check"></i>
+          <span class="ws-badge saved"><i class="fa-solid fa-check"></i> Guardado</span>
+          <span class="ws-badge pending-badge">Pendiente</span>
+        </div>
+        <div class="wizard-step" data-step="4" onclick="goWizardStep(4)">
+          <div class="ws-number">4</div>
+          <div class="ws-text"><strong>Usuario Master</strong><span>Admin principal</span></div>
+          <i class="fa-solid fa-check ws-check"></i>
+          <span class="ws-badge saved"><i class="fa-solid fa-check"></i> Guardado</span>
+          <span class="ws-badge pending-badge">Pendiente</span>
+        </div>
+      </div>
+
+      <div class="wizard-body">
+
+        <!-- ══ PAGE 1: DATOS BÁSICOS ══ -->
+        <div class="wizard-page active" data-page="1">
+          <div class="quick-form">
+            <div class="config-section-card" style="margin-bottom:20px">
+              <h4><i class="fa-solid fa-tag"></i> Tipo de Empresa</h4>
+              <p style="font-size:12px;color:var(--ink-500);margin-bottom:14px">Selecciona el tipo de empresa para preconfigurar los módulos disponibles</p>
+              <div class="type-grid" id="type-grid">
+                <div class="type-card selected" data-tipo="banco" onclick="selectTipo('banco')">
+                  <div class="tc-icon" style="background:var(--green-500)"><i class="fa-solid fa-landmark"></i></div>
+                  <h4>Banco</h4>
+                  <p>Banca universal, microfinanciera</p>
+                  <span class="tc-check"><i class="fa-solid fa-check"></i> Seleccionado</span>
+                </div>
+                <div class="type-card" data-tipo="cit" onclick="selectTipo('cit')">
+                  <div class="tc-icon" style="background:var(--amber)"><i class="fa-solid fa-truck"></i></div>
+                  <h4>Transportista</h4>
+                  <p>CIT, logística de valores</p>
+                  <span class="tc-check"><i class="fa-solid fa-check"></i> Seleccionado</span>
+                </div>
+                <div class="type-card" data-tipo="corp" onclick="selectTipo('corp')">
+                  <div class="tc-icon" style="background:var(--purple)"><i class="fa-solid fa-building"></i></div>
+                  <h4>Corporativo</h4>
+                  <p>Empresas, tesorería corporativa</p>
+                  <span class="tc-check"><i class="fa-solid fa-check"></i> Seleccionado</span>
+                </div>
+                <div class="type-card" data-tipo="bcv" onclick="selectTipo('bcv')">
+                  <div class="tc-icon" style="background:var(--teal)"><i class="fa-solid fa-landmark"></i></div>
+                  <h4>BCV</h4>
+                  <p>Banco Central / Regulador</p>
+                  <span class="tc-check"><i class="fa-solid fa-check"></i> Seleccionado</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-section-card">
+              <h4><i class="fa-solid fa-building"></i> Datos de la Empresa</h4>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Razón Social <span style="color:var(--danger)">*</span></label>
+                  <input type="text" id="f-razonSocial" placeholder="Ej: Banco Ávila C.A.">
+                </div>
+                <div class="form-group">
+                  <label>Nombre Comercial</label>
+                  <input type="text" id="f-nombreComercial" placeholder="Ej: Banco Ávila">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>RIF <span style="color:var(--danger)">*</span></label>
+                  <input type="text" id="f-rif" placeholder="J-12345678-9">
+                </div>
+                <div class="form-group">
+                  <label>País</label>
+                  <input type="text" id="f-pais" placeholder="Venezuela">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="wizard-nav">
+              <div class="wn-left"></div>
+              <div class="wn-right">
+                <button class="btn btn-primary" onclick="goWizardStep(2)"><i class="fa-solid fa-arrow-right"></i> Siguiente: Plan y Suscripción</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ PAGE 2: PLAN Y SUSCRIPCIÓN + COENGINE ══ -->
+        <div class="wizard-page" data-page="2">
+          <div class="config-page">
+            <div class="config-section-card">
+              <h4><i class="fa-solid fa-file-contract"></i> Suscripción COE Suite</h4>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Plan</label>
+                  <select id="f-plan">
+                    <option value="COE Suite Enterprise">COE Suite Enterprise</option>
+                    <option value="COE Suite Professional">COE Suite Professional</option>
+                    <option value="COE Suite Starter">COE Suite Starter</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Contrato</label>
+                  <input type="text" id="f-contrato" placeholder="COE-2024-001">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Inicio</label>
+                  <input type="text" id="f-fechaInicio" placeholder="01/03/2024">
+                </div>
+                <div class="form-group">
+                  <label>Renovación</label>
+                  <input type="text" id="f-fechaRenovacion" placeholder="01/03/2027">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Versión</label>
+                  <input type="text" id="f-version" value="3.2.1">
+                </div>
+                <div class="form-group">
+                  <label>Soporte</label>
+                  <select id="f-soporte">
+                    <option value="24/7 Premium">24/7 Premium</option>
+                    <option value="12/5 Estándar">12/5 Estándar</option>
+                    <option value="Correo Electrónico">Correo Electrónico</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Contacto Comercial</label>
+                <input type="text" id="f-contactoComercial" placeholder="Claudia Moreno — claudia.moreno@coe.tech">
+              </div>
+            </div>
+
+            <div class="config-section-card">
+              <h4><i class="fa-solid fa-brain"></i> COENGINE <span style="margin-left:auto;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--green-50);color:var(--green-700)">Activo</span></h4>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Plan COENGINE</label>
+                  <select id="f-coengine-plan" onchange="updateCoengineCapacidad()">
+                    <option value="COENGINE Enterprise">COENGINE Enterprise</option>
+                    <option value="COENGINE Professional">COENGINE Professional</option>
+                    <option value="COENGINE Starter">COENGINE Starter</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Versión</label>
+                  <input type="text" id="f-coengine-version" value="2.4.0">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Motor</label>
+                  <input type="text" id="f-coengine-motor" value="COE Neural Engine v3">
+                </div>
+                <div class="form-group">
+                  <label>Activación</label>
+                  <input type="text" id="f-coengine-activacion" placeholder="15/06/2024">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Capacidad del Plan</label>
+                <div style="font-size:12px;color:var(--ink-600);background:var(--ink-50);border:1px solid var(--ink-150);border-radius:var(--radius-sm);padding:8px 10px;line-height:1.5" id="coengine-capacidad-display">
+                  <i class="fa-solid fa-gauge-high" style="color:var(--green-500);margin-right:6px"></i>
+                  <span id="coengine-capacidad-text">Procesamiento: 100K ops/día · Latencia: &lt;500ms · Throughput: 50 tps</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Modelos COENGINE</label>
+                <p style="font-size:11px;color:var(--ink-500);margin-bottom:8px">Activa o desactiva modelos según el plan contratado</p>
+                <div class="model-list" id="coengine-models-list"></div>
+              </div>
+            </div>
+
+            <div class="config-section-card">
+              <h4><i class="fa-solid fa-check-circle"></i> Estado de la Suscripción</h4>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Estado</label>
+                  <select id="f-estado">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="Suspendido">Suspendido</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-nav">
+              <div class="wn-left">
+                <button class="btn btn-secondary" onclick="goWizardStep(1)"><i class="fa-solid fa-arrow-left"></i> Datos básicos</button>
+              </div>
+              <div class="wn-right">
+                <button class="btn btn-primary" onclick="goWizardStep(3)"><i class="fa-solid fa-arrow-right"></i> Siguiente: Módulos</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ PAGE 3: MÓDULOS ══ -->
+        <div class="wizard-page" data-page="3">
+          <div class="config-page">
+            <div class="config-section-card">
+              <h4><i class="fa-solid fa-puzzle-piece"></i> Módulos del Sistema</h4>
+              <p style="font-size:12px;color:var(--ink-500);margin-bottom:14px">Los módulos marcados como <strong>Requeridos</strong> son obligatorios para este tipo de empresa. Puedes activar/desactivar el resto según el plan contratado o promociones especiales.</p>
+              <div class="modules-config-grid" id="modules-grid"></div>
+            </div>
+
+            <div class="wizard-nav">
+              <div class="wn-left">
+                <button class="btn btn-secondary" onclick="goWizardStep(2)"><i class="fa-solid fa-arrow-left"></i> Plan y suscripción</button>
+              </div>
+              <div class="wn-right">
+                <button class="btn btn-primary" onclick="goWizardStep(4)"><i class="fa-solid fa-arrow-right"></i> Siguiente: Usuario Master</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ PAGE 4: USUARIO MASTER ══ -->
+        <div class="wizard-page" data-page="4">
+          <div class="config-page">
+            <div class="config-section-card master-card">
+              <h4><i class="fa-solid fa-user-shield"></i> Usuario Master</h4>
+              <p style="font-size:12px;color:var(--ink-500);margin-bottom:16px">Este será el primer usuario administrador de la empresa. Podrá gestionar usuarios y roles después del registro.</p>
+              <div class="master-summary" id="master-summary">
+                <i class="fa-solid fa-info-circle"></i>
+                <div>
+                  <strong style="font-size:12px;color:var(--green-700)">Resumen de la empresa</strong>
+                  <p style="font-size:11px;color:var(--green-600);margin-top:2px" id="master-summary-text">Banco · Razón Social pendiente</p>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Nombre Completo <span style="color:var(--danger)">*</span></label>
+                  <input type="text" id="f-master-nombre" placeholder="Ej: Carlos Millán">
+                </div>
+                <div class="form-group">
+                  <label>Email <span style="color:var(--danger)">*</span></label>
+                  <input type="email" id="f-master-email" placeholder="carlos.millan@empresa.com">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Usuario</label>
+                  <input type="text" id="f-master-usuario" placeholder="cmillan">
+                </div>
+                <div class="form-group">
+                  <label>Teléfono</label>
+                  <input type="text" id="f-master-telefono" placeholder="+58 412-555-1234">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Contraseña temporal</label>
+                  <input type="text" id="f-master-pass" value="CoeMaster2024!">
+                </div>
+                <div class="form-group">
+                  <label>MFA / 2FA</label>
+                  <div class="module-toggle active" id="f-master-mfa-card" onclick="toggleMasterMfa()" style="margin:0;padding:6px 10px;">
+                    <div class="mt-icon" style="width:26px;height:26px;font-size:11px;background:var(--green-500);color:#fff"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="mt-info" style="min-width:0">
+                      <p style="font-size:11px">Autenticación de dos factores</p>
+                      <span style="font-size:9px">El usuario tiene MFA habilitado</span>
+                    </div>
+                    <div class="mt-switch" id="f-master-mfa-switch"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-nav">
+              <div class="wn-left">
+                <button class="btn btn-secondary" onclick="goWizardStep(3)"><i class="fa-solid fa-arrow-left"></i> Módulos</button>
+              </div>
+              <div class="wn-right">
+                <button class="btn btn-secondary" onclick="showView('list')" style="margin-right:4px"><i class="fa-solid fa-times"></i> Cancelar</button>
+                <button class="btn btn-primary" onclick="saveCompany()"><i class="fa-solid fa-check"></i> <span id="wizard-submit-text">Crear Empresa</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /wizard-body -->
+    </div><!-- /view-wizard -->
+
+    <!-- ═══════ COMPANY DETAIL ═══════ -->
+    <div id="view-detail" class="view-panel detail-view">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-lg);padding:20px 24px;box-shadow:var(--shadow)">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="dh-avatar banco" id="detail-avatar" style="width:52px;height:52px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;flex-shrink:0"><i class="fa-solid fa-landmark"></i></div>
+          <div>
+            <h2 id="detail-name" style="font-size:20px;font-weight:700;color:var(--ink-900)">Banco Ávila C.A.</h2>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+              <span class="tipo-badge" id="detail-tipo-badge"><i class="fa-solid fa-landmark"></i> Banco</span>
+              <span class="status-badge" id="detail-status-badge">Activo</span>
+              <span style="font-size:12px;color:var(--ink-400);font-family:'JetBrains Mono',monospace" id="detail-rif">RIF: J-12345678-9</span>
+            </div>
+            <p style="font-size:12px;color:var(--ink-500);margin-top:3px" id="detail-subtitle">Contrato COE-2024-001 · Plan COE Suite Enterprise · v3.2.1</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="goBackFromDetail()"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div id="detail-body"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ══ TOAST CONTAINER ══ -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────
+
+const MODULOS_POR_TIPO = {
+  banco: [
+    { id:"dashboard", nombre:"Dashboard", descripcion:"Panel general y monitoreo", icono:"fa-chart-line", activo:true, requerido:true },
+    { id:"inventario", nombre:"Inventario", descripcion:"Control de efectivo y bóvedas", icono:"fa-piggy-bank", activo:true, requerido:true },
+    { id:"operaciones", nombre:"Operaciones", descripcion:"Gestión de operaciones diarias", icono:"fa-gears", activo:true, requerido:true },
+    { id:"war-room", nombre:"War Room", descripcion:"Tesorería en tiempo real", icono:"fa-shield-halved", activo:true, requerido:true },
+    { id:"kpi", nombre:"KPIs", descripcion:"Indicadores estratégicos y operativos", icono:"fa-chart-simple", activo:true, requerido:false },
+    { id:"coengine", nombre:"COENGINE", descripcion:"Modelos predictivos e IA", icono:"fa-cog", activo:true, requerido:false },
+    { id:"reportes", nombre:"Reportes", descripcion:"Reportes operativos y regulatorios", icono:"fa-chart-column", activo:true, requerido:true },
+    { id:"georef", nombre:"Georreferenciación", descripcion:"Mapa interactivo del ecosistema", icono:"fa-location-dot", activo:true, requerido:false },
+    { id:"config", nombre:"Configuración", descripcion:"Parámetros del sistema", icono:"fa-sliders", activo:true, requerido:true },
+    { id:"integraciones", nombre:"Integraciones", descripcion:"Conexiones con sistemas externos", icono:"fa-puzzle-piece", activo:true, requerido:false },
+    { id:"roles", nombre:"Roles y Permisos", descripcion:"Perfilamiento y control de acceso", icono:"fa-users", activo:true, requerido:true },
+  ],
+  cit: [
+    { id:"dashboard", nombre:"Dashboard", descripcion:"Panel general y monitoreo", icono:"fa-chart-line", activo:true, requerido:true },
+    { id:"operaciones", nombre:"Operaciones", descripcion:"Gestión de rutas y flota", icono:"fa-truck", activo:true, requerido:true },
+    { id:"reportes", nombre:"Reportes", descripcion:"Reportes operativos", icono:"fa-chart-column", activo:true, requerido:true },
+    { id:"georef", nombre:"Georreferenciación", descripcion:"Seguimiento de unidades", icono:"fa-location-dot", activo:true, requerido:true },
+    { id:"config", nombre:"Configuración", descripcion:"Parámetros del sistema", icono:"fa-sliders", activo:true, requerido:true },
+    { id:"roles", nombre:"Roles y Permisos", descripcion:"Perfilamiento y control de acceso", icono:"fa-users", activo:true, requerido:true },
+  ],
+  corp: [
+    { id:"dashboard", nombre:"Dashboard", descripcion:"Panel general", icono:"fa-chart-line", activo:true, requerido:true },
+    { id:"operaciones", nombre:"Operaciones", descripcion:"Solicitudes y movimientos", icono:"fa-building", activo:true, requerido:true },
+    { id:"reportes", nombre:"Reportes", descripcion:"Reportes corporativos", icono:"fa-chart-column", activo:true, requerido:true },
+    { id:"config", nombre:"Configuración", descripcion:"Parámetros del sistema", icono:"fa-sliders", activo:true, requerido:true },
+  ],
+  bcv: [
+    { id:"dashboard", nombre:"Dashboard", descripcion:"Panel general", icono:"fa-chart-line", activo:true, requerido:true },
+    { id:"reportes", nombre:"Reportes", descripcion:"Reportes regulatorios", icono:"fa-chart-column", activo:true, requerido:true },
+    { id:"coengine", nombre:"COENGINE", descripcion:"Modelos predictivos", icono:"fa-cog", activo:true, requerido:false },
+    { id:"config", nombre:"Configuración", descripcion:"Parámetros del sistema", icono:"fa-sliders", activo:true, requerido:true },
+  ],
+};
+
+const TIPO_INFO = {
+  banco: { label:"Banco", icono:"fa-landmark", color:"tipo-banco", avatarClass:"banco" },
+  cit: { label:"Transportista", icono:"fa-truck", color:"tipo-cit", avatarClass:"cit" },
+  corp: { label:"Corporativo", icono:"fa-building", color:"tipo-corp", avatarClass:"corp" },
+  bcv: { label:"BCV", icono:"fa-landmark", color:"tipo-bcv", avatarClass:"bcv" },
+};
+
+const COENGINE_MODELS = [
+  { id:"pronostico", nombre:"Pronóstico de Demanda", desc:"Predicción de flujo de efectivo", icono:"fa-chart-simple", activo:true },
+  { id:"optimizacion", nombre:"Optimización de Rutas", desc:"Ruteo inteligente de transporte", icono:"fa-location-crosshairs", activo:true },
+  { id:"anomalias", nombre:"Detección de Anomalías", desc:"Alertas tempranas de irregularidades", icono:"fa-brain", activo:true },
+  { id:"clasificacion", nombre:"Clasificación Inteligente", desc:"Taxonomía automática de operaciones", icono:"fa-microchip", activo:false },
+  { id:"recomendador", nombre:"Recomendador de Acciones", desc:"Sugerencias predictivas de tesorería", icono:"fa-cog", activo:false },
+];
+
+// ─── DEMO COMPANY ─────────────────────────────────────
+
+const EMPRESA_DEMO = {
+  id:"demo-001",
+  razonSocial:"Banco Ávila C.A.",
+  nombreComercial:"Banco Ávila",
+  rif:"J-12345678-9",
+  nit:"NIT-987654321-0",
+  tipo:"banco",
+  subTipo:"Banco Universal",
+  organismoRegulador:"SUDEBAN — Superintendencia de Bancos",
+  licencia:"BAN-001-2020",
+  fechaRegistro:"15/01/2020",
+  direccion:"Av. Francisco de Miranda, Edif. Banco Ávila, Piso 12, Chacao, Caracas 1060, Venezuela",
+  telefono:"+58 212 555.1234",
+  email:"contacto@bancoavila.com",
+  sitioWeb:"www.bancoavila.com",
+  pais:"Venezuela",
+  monedaBase:"VED (Bolívar)",
+  plan:"COE Suite Enterprise",
+  contrato:"COE-2024-001",
+  fechaInicio:"01/03/2024",
+  fechaRenovacion:"01/03/2027",
+  estado:"Activo",
+  version:"3.2.1",
+  soporte:"24/7 Premium",
+  contactoComercial:"Claudia Moreno — claudia.moreno@coe.tech",
+  coenginePlan:"COENGINE Enterprise",
+  coengineVersion:"2.4.0",
+  coengineMotor:"COE Neural Engine v3",
+  coengineActivacion:"15/06/2024",
+  coengineCapacidad:"Procesamiento: 100K ops/día · Latencia: <500ms · Throughput: 50 tps",
+  coengineModelos: COENGINE_MODELS.map(m=>({...m})),
+  modulos: MODULOS_POR_TIPO.banco.map(m=>({...m})),
+  master:{ nombre:"Carlos Millán", email:"carlos.millan@coe.tech", usuario:"cmillan", pass:"CoeMaster2024!", telefono:"+58 412-600-1234", mfa:true },
+};
+
+let companies = [];
+let nextId = 1;
+let currentView = 'list';
+let currentDetailId = null;
+let wizardCurrentStep = 1;
+let selectedTipo = 'banco';
+let wizardModules = [];
+let wizardCoengineModels = [];
+let stepSaved = {1: false, 2: false, 3: false, 4: false};
+let wizardDataCache = {};
+let masterMfa = true;
+
+// ─── INIT ─────────────────────────────────────────────
+
+function init() {
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  companies[0].id = 'emp-' + (nextId++);
+
+  // Banco Mercantil del Centro — Professional
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  const bmc = companies[companies.length-1];
+  bmc.id = 'emp-' + (nextId++);
+  bmc.razonSocial = 'Banco Mercantil del Centro C.A.';
+  bmc.nombreComercial = 'Banco Mercantil';
+  bmc.rif = 'J-20098765-4';
+  bmc.subTipo = 'Banco Comercial';
+  bmc.plan = 'COE Suite Professional';
+  bmc.contrato = 'COE-2023-045';
+  bmc.fechaInicio = '10/06/2023';
+  bmc.fechaRenovacion = '10/06/2026';
+  bmc.estado = 'Activo';
+  bmc.soporte = '12/5 Estándar';
+  bmc.contactoComercial = 'Ricardo Palma — ricardo.palma@coe.tech';
+  bmc.coenginePlan = 'COENGINE Professional';
+  bmc.coengineCapacidad = 'Procesamiento: 50K ops/día · Latencia: <800ms · Throughput: 25 tps';
+  bmc.coengineActivacion = '01/08/2023';
+  bmc.coengineModelos = COENGINE_MODELS.map((m,i) => ({...m, activo: i < 3}));
+  bmc.modulos = MODULOS_POR_TIPO.banco.map((m,i) => ({...m, activo: i !== 4 && i !== 7 && i !== 9}));
+  bmc.master = { nombre:"Alejandro Rivas", email:"a.rivas@mercantil.com", usuario:"arivas", pass:"Mercantil2024!", telefono:"+58 212-555-2345", mfa:true };
+
+  // Banco Nacional de Desarrollo — Starter
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  const bnd = companies[companies.length-1];
+  bnd.id = 'emp-' + (nextId++);
+  bnd.razonSocial = 'Banco Nacional de Desarrollo S.A.';
+  bnd.nombreComercial = 'BND';
+  bnd.rif = 'J-30456789-1';
+  bnd.subTipo = 'Banco de Desarrollo';
+  bnd.plan = 'COE Suite Starter';
+  bnd.contrato = 'COE-2025-012';
+  bnd.fechaInicio = '01/02/2025';
+  bnd.fechaRenovacion = '01/02/2028';
+  bnd.estado = 'Activo';
+  bnd.soporte = 'Correo Electrónico';
+  bnd.contactoComercial = 'Laura Méndez — laura.mendez@coe.tech';
+  bnd.coenginePlan = 'COENGINE Starter';
+  bnd.coengineCapacidad = 'Procesamiento: 10K ops/día · Latencia: <1s · Throughput: 5 tps';
+  bnd.coengineActivacion = '15/03/2025';
+  bnd.coengineModelos = COENGINE_MODELS.map((m,i) => ({...m, activo: i < 2}));
+  bnd.modulos = MODULOS_POR_TIPO.banco.map((m,i) => ({...m, activo: i < 4}));
+  bnd.master = { nombre:"Diana Castro", email:"dcastro@bnd.gob.ve", usuario:"dcastro", pass:"BndDesarrollo2025!", telefono:"+58 251-770-3456", mfa:false };
+
+  // ── Transportistas ──
+
+  // CIT Logística de Valores — Professional
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  const cit1 = companies[companies.length-1];
+  cit1.id = 'emp-' + (nextId++);
+  cit1.tipo = 'cit';
+  cit1.subTipo = 'CIT — Logística de Valores';
+  cit1.razonSocial = 'CIT Logística de Valores C.A.';
+  cit1.nombreComercial = 'CIT Logival';
+  cit1.rif = 'J-40123456-7';
+  cit1.plan = 'COE Suite Professional';
+  cit1.contrato = 'COE-2024-078';
+  cit1.fechaInicio = '15/04/2024';
+  cit1.fechaRenovacion = '15/04/2027';
+  cit1.estado = 'Activo';
+  cit1.soporte = '12/5 Estándar';
+  cit1.contactoComercial = 'Mario Rangel — mario.rangel@coe.tech';
+  cit1.coenginePlan = 'COENGINE Professional';
+  cit1.coengineCapacidad = 'Procesamiento: 50K ops/día · Latencia: <800ms · Throughput: 25 tps';
+  cit1.coengineActivacion = '20/05/2024';
+  cit1.coengineModelos = COENGINE_MODELS.map((m,i) => ({...m, activo: i === 0 || i === 2}));
+  cit1.modulos = MODULOS_POR_TIPO.cit.map(m => ({...m}));
+  cit1.master = { nombre:"Fernando Aguilera", email:"faguilera@citlogival.com", usuario:"faguilera", pass:"Logival2024!", telefono:"+58 241-822-4567", mfa:true };
+
+  // Transporte Blindado del Sur — Enterprise
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  const cit2 = companies[companies.length-1];
+  cit2.id = 'emp-' + (nextId++);
+  cit2.tipo = 'cit';
+  cit2.subTipo = 'CIT — Transporte Blindado';
+  cit2.razonSocial = 'Transporte Blindado del Sur S.A.';
+  cit2.nombreComercial = 'TBSur';
+  cit2.rif = 'J-50987654-3';
+  cit2.plan = 'COE Suite Enterprise';
+  cit2.contrato = 'COE-2022-033';
+  cit2.fechaInicio = '01/09/2022';
+  cit2.fechaRenovacion = '01/09/2025';
+  cit2.estado = 'Activo';
+  cit2.soporte = '24/7 Premium';
+  cit2.contactoComercial = 'Claudia Moreno — claudia.moreno@coe.tech';
+  cit2.coenginePlan = 'COENGINE Enterprise';
+  cit2.coengineCapacidad = 'Procesamiento: 100K ops/día · Latencia: <500ms · Throughput: 50 tps';
+  cit2.coengineActivacion = '15/10/2022';
+  cit2.coengineModelos = COENGINE_MODELS.map(m => ({...m, activo: true}));
+  cit2.modulos = MODULOS_POR_TIPO.cit.map(m => ({...m}));
+  cit2.master = { nombre:"Sofía Mendoza", email:"smendoza@tbsur.com", usuario:"smendoza", pass:"TBSur2024!", telefono:"+58 261-733-5678", mfa:true };
+
+  // ── Retail (Corporativo) ──
+
+  // Mercado Retail C.A. — Professional
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  const ret1 = companies[companies.length-1];
+  ret1.id = 'emp-' + (nextId++);
+  ret1.tipo = 'corp';
+  ret1.subTipo = 'Retail — Cadena de Tiendas';
+  ret1.razonSocial = 'Mercado Retail C.A.';
+  ret1.nombreComercial = 'Mercado Retail';
+  ret1.rif = 'J-60789012-5';
+  ret1.plan = 'COE Suite Professional';
+  ret1.contrato = 'COE-2025-008';
+  ret1.fechaInicio = '01/01/2025';
+  ret1.fechaRenovacion = '01/01/2028';
+  ret1.estado = 'Activo';
+  ret1.soporte = '12/5 Estándar';
+  ret1.contactoComercial = 'Ricardo Palma — ricardo.palma@coe.tech';
+  ret1.coenginePlan = 'COENGINE Starter';
+  ret1.coengineCapacidad = 'Procesamiento: 10K ops/día · Latencia: <1s · Throughput: 5 tps';
+  ret1.coengineActivacion = '15/02/2025';
+  ret1.coengineModelos = COENGINE_MODELS.map((m,i) => ({...m, activo: i === 0}));
+  ret1.modulos = MODULOS_POR_TIPO.corp.map(m => ({...m}));
+  ret1.master = { nombre:"Carolina Uribe", email:"curibe@mercadoretail.com", usuario:"curibe", pass:"Retail2025!", telefono:"+58 414-908-6789", mfa:false };
+
+  // Supermayorista Éxito — Starter
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  const ret2 = companies[companies.length-1];
+  ret2.id = 'emp-' + (nextId++);
+  ret2.tipo = 'corp';
+  ret2.subTipo = 'Retail — Supermayorista';
+  ret2.razonSocial = 'Supermayorista Éxito S.A.';
+  ret2.nombreComercial = 'Éxito Mayorista';
+  ret2.rif = 'J-70123456-8';
+  ret2.plan = 'COE Suite Starter';
+  ret2.contrato = 'COE-2025-019';
+  ret2.fechaInicio = '01/04/2025';
+  ret2.fechaRenovacion = '01/04/2028';
+  ret2.estado = 'Inactivo';
+  ret2.soporte = 'Correo Electrónico';
+  ret2.contactoComercial = 'Laura Méndez — laura.mendez@coe.tech';
+  ret2.coenginePlan = 'COENGINE Starter';
+  ret2.coengineCapacidad = 'Procesamiento: 10K ops/día · Latencia: <1s · Throughput: 5 tps';
+  ret2.coengineActivacion = '—';
+  ret2.coengineModelos = COENGINE_MODELS.map(m => ({...m, activo: false}));
+  ret2.modulos = MODULOS_POR_TIPO.corp.map((m,i) => ({...m, activo: i < 3}));
+  ret2.master = { nombre:"Pedro Castillo", email:"pcastillo@exitomayorista.com", usuario:"pcastillo", pass:"Exito2025!", telefono:"+58 424-600-7890", mfa:false };
+
+  renderList();
+  updateStats();
+  showView('list');
+}
+
+// ─── VIEWS ────────────────────────────────────────────
+
+function showView(view, param) {
+  document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(el => el.classList.remove('active'));
+  currentView = view;
+
+  if (view === 'dashboard') {
+    document.getElementById('view-dashboard').classList.add('active');
+    document.querySelector('.sb-link[onclick*="dashboard"]').classList.add('active');
+    document.getElementById('topbar-title').textContent = 'Dashboard de Gestión';
+    renderDashboard();
+  } else if (view === 'list') {
+    document.getElementById('view-list').classList.add('active');
+    document.querySelector('.sb-link[onclick*="list"]').classList.add('active');
+    document.getElementById('topbar-title').textContent = 'Panel de Administración';
+    renderList();
+  } else if (view === 'wizard') {
+    document.getElementById('view-wizard').classList.add('active');
+    document.getElementById('topbar-title').textContent = 'Nueva Empresa';
+    if (!param) resetWizard();
+  } else if (view === 'detail') {
+    document.getElementById('view-detail').classList.add('active');
+    document.getElementById('topbar-title').textContent = 'Detalle de Empresa';
+    renderDetail(param);
+    currentDetailId = param;
+  }
+}
+
+// ─── DASHBOARD ─────────────────────────────────────────
+
+function renderDashboard() {
+  const total = companies.length;
+  const activas = companies.filter(c => c.estado === 'Activo').length;
+  const inactivas = total - activas;
+  const planes = { 'COE Suite Enterprise': 0, 'COE Suite Professional': 0, 'COE Suite Starter': 0 };
+  let totalModulosActivos = 0;
+  let coengineActivos = 0;
+  const typeCount = { banco: 0, cit: 0, corp: 0, bcv: 0 };
+  const moduleCount = {};
+
+  companies.forEach(c => {
+    if (planes[c.plan] !== undefined) planes[c.plan]++;
+    if (typeCount[c.tipo] !== undefined) typeCount[c.tipo]++;
+    (c.modulos || []).forEach(m => {
+      if (m.activo) {
+        totalModulosActivos++;
+        moduleCount[m.nombre] = (moduleCount[m.nombre] || 0) + 1;
+      }
+    });
+    const cm = c.coengineModelos || [];
+    if (cm.some(m => m.activo)) coengineActivos++;
+  });
+
+  // Stat cards
+  const colors = { enterprise: 'bg-green-500', prof: 'bg-blue-500', starter: 'bg-amber-500' };
+  document.getElementById('db-stats').innerHTML = `
+    <div class="db-card"><div class="db-icon" style="background:var(--green-50);color:var(--green-700)"><i class="fa-solid fa-building"></i></div><div class="db-label">Total Empresas</div><div class="db-value">${total}</div><div class="db-sub">${activas} activas · ${inactivas} inactivas</div></div>
+    <div class="db-card"><div class="db-icon" style="background:#E0F4FC;color:var(--info)"><i class="fa-solid fa-puzzle-piece"></i></div><div class="db-label">Módulos Activos</div><div class="db-value">${totalModulosActivos}</div><div class="db-sub">en ${total} empresas</div></div>
+    <div class="db-card"><div class="db-icon" style="background:#F2E6FE;color:var(--purple)"><i class="fa-solid fa-brain"></i></div><div class="db-label">COENGINE Activo</div><div class="db-value">${coengineActivos}</div><div class="db-sub">de ${total} empresas (${total ? Math.round(coengineActivos/total*100) : 0}%)</div></div>
+    <div class="db-card"><div class="db-icon" style="background:#FFF4DC;color:#A76B00"><i class="fa-solid fa-file-contract"></i></div><div class="db-label">Plan Enterprise</div><div class="db-value">${planes['COE Suite Enterprise']}</div><div class="db-sub">${planes['COE Suite Professional']} Professional · ${planes['COE Suite Starter']} Starter</div></div>
+  `;
+
+  // By type
+  const typeColors = { banco: 'var(--green-500)', cit: 'var(--amber)', corp: 'var(--purple)', bcv: 'var(--teal)' };
+  const typeLabels = { banco: 'Banco', cit: 'Transportista', corp: 'Corporativo', bcv: 'BCV' };
+  const typeIcons = { banco: 'fa-landmark', cit: 'fa-truck', corp: 'fa-building', bcv: 'fa-landmark' };
+  const maxType = Math.max(...Object.values(typeCount), 1);
+  document.getElementById('db-by-type').innerHTML = Object.entries(typeCount).map(([k, v]) => `
+    <div class="db-bar-container">
+      <span class="db-bar-label"><i class="fa-solid ${typeIcons[k]}" style="color:${typeColors[k]}"></i> ${typeLabels[k]}</span>
+      <div class="db-bar-track"><div class="db-bar-fill" style="width:${v/maxType*100}%;background:${typeColors[k]}">${v > 0 ? v : ''}</div></div>
+      <span class="db-bar-count">${v}</span>
+    </div>
+  `).join('');
+
+  // Top modules
+  const sortedMods = Object.entries(moduleCount).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const maxMod = sortedMods.length ? sortedMods[0][1] : 1;
+  document.getElementById('db-top-modules').innerHTML = sortedMods.length
+    ? sortedMods.map(([name, count]) => `
+      <div class="db-bar-container">
+        <span class="db-bar-label" style="width:120px">${name}</span>
+        <div class="db-bar-track"><div class="db-bar-fill" style="width:${count/maxMod*100}%;background:var(--green-500)">${count > 0 ? count : ''}</div></div>
+        <span class="db-bar-count">${count}</span>
+      </div>
+    `).join('')
+    : '<p style="font-size:12px;color:var(--ink-400);padding:12px 0;text-align:center">Sin datos de módulos</p>';
+
+  // COENGINE adoption
+  const totalModels = COENGINE_MODELS.length;
+  const modelAdoption = COENGINE_MODELS.map(base => {
+    let count = 0;
+    companies.forEach(c => {
+      const m = (c.coengineModelos || []).find(x => x.id === base.id);
+      if (m && m.activo) count++;
+    });
+    return { ...base, count };
+  });
+  const maxModel = Math.max(...modelAdoption.map(m => m.count), 1);
+  document.getElementById('db-coengine').innerHTML = modelAdoption.map(m => `
+    <div class="db-bar-container">
+      <span class="db-bar-label" style="width:140px"><i class="fa-solid ${m.icono}" style="color:var(--green-500)"></i> ${m.nombre}</span>
+      <div class="db-bar-track"><div class="db-bar-fill" style="width:${m.count/maxModel*100}%;background:var(--purple)">${m.count > 0 ? m.count : ''}</div></div>
+      <span class="db-bar-count">${m.count}</span>
+    </div>
+  `).join('');
+
+  // Plans distribution
+  const planKeys = Object.keys(planes);
+  const maxPlan = Math.max(...Object.values(planes), 1);
+  const planColors = { 'COE Suite Enterprise': 'var(--green-500)', 'COE Suite Professional': 'var(--info)', 'COE Suite Starter': 'var(--amber)' };
+  document.getElementById('db-plans').innerHTML = planKeys.map(k => `
+    <div class="db-bar-container">
+      <span class="db-bar-label" style="width:140px">${k.replace('COE Suite ','')}</span>
+      <div class="db-bar-track"><div class="db-bar-fill" style="width:${planes[k]/maxPlan*100}%;background:${planColors[k] || 'var(--green-500)'}">${planes[k] > 0 ? planes[k] : ''}</div></div>
+      <span class="db-bar-count">${planes[k]}</span>
+    </div>
+  `).join('');
+}
+
+// ─── LIST ─────────────────────────────────────────────
+
+function renderList() {
+  const tbody = document.getElementById('company-tbody');
+  const empty = document.getElementById('empty-state');
+  const table = document.getElementById('company-table');
+
+  if (companies.length === 0) {
+    tbody.innerHTML = '';
+    table.style.display = 'none';
+    empty.style.display = 'block';
+  } else {
+    table.style.display = '';
+    empty.style.display = 'none';
+    tbody.innerHTML = companies.map(c => {
+      const tipo = TIPO_INFO[c.tipo] || TIPO_INFO.banco;
+      const statusClass = c.estado === 'Activo' ? 'status-activo' : c.estado === 'Suspendido' ? 'status-suspendido' : 'status-inactivo';
+      return `<tr>
+        <td><strong style="color:var(--ink-900)">${c.razonSocial}</strong><br><span style="font-size:11px;color:var(--ink-500)">${c.nombreComercial||''}</span></td>
+        <td><span class="tipo-badge ${tipo.color}"><i class="fa-solid ${tipo.icono}"></i> ${tipo.label}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${c.rif}</td>
+        <td><span class="plan-badge">${c.plan}</span></td>
+        <td><span class="status-badge ${statusClass}">${c.estado}</span></td>
+        <td style="font-size:11px">${c.fechaRenovacion||'-'}</td>
+        <td style="text-align:right">
+          <div class="cell-actions" style="justify-content:flex-end">
+            <button class="btn btn-secondary btn-sm" onclick="showDetailAndEdit('${c.id}')"><i class="fa-solid fa-eye"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCompany('${c.id}')"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('company-count').textContent = companies.length;
+}
+
+function updateStats() {
+  document.getElementById('stats-total').textContent = companies.length;
+  document.getElementById('stats-activas').textContent = companies.filter(c => c.estado === 'Activo').length;
+}
+
+// ─── WIZARD NAVIGATION ────────────────────────────────
+
+function getCoengineCapacidadByPlan(plan) {
+  const specs = {
+    'COENGINE Enterprise': 'Procesamiento: 100K ops/día · Latencia: &lt;500ms · Throughput: 50 tps',
+    'COENGINE Professional': 'Procesamiento: 50K ops/día · Latencia: &lt;800ms · Throughput: 25 tps',
+    'COENGINE Starter': 'Procesamiento: 10K ops/día · Latencia: &lt;1s · Throughput: 5 tps',
+  };
+  return specs[plan] || specs['COENGINE Enterprise'];
+}
+
+function updateCoengineCapacidad() {
+  const plan = document.getElementById('f-coengine-plan').value;
+  const text = getCoengineCapacidadByPlan(plan);
+  document.getElementById('coengine-capacidad-text').innerHTML = text;
+}
+
+function saveCurrentStep() {
+  const s = wizardCurrentStep;
+  if (s === 1) {
+    const rs = document.getElementById('f-razonSocial').value.trim();
+    const rif = document.getElementById('f-rif').value.trim();
+    if (!rs || !rif) return false;
+    wizardDataCache[1] = {
+      razonSocial: rs,
+      nombreComercial: document.getElementById('f-nombreComercial').value.trim(),
+      rif: rif,
+      pais: document.getElementById('f-pais').value.trim(),
+      tipo: selectedTipo,
+    };
+  }
+  if (s === 2) {
+    wizardDataCache[2] = {
+      plan: document.getElementById('f-plan').value,
+      contrato: document.getElementById('f-contrato').value.trim(),
+      fechaInicio: document.getElementById('f-fechaInicio').value.trim(),
+      fechaRenovacion: document.getElementById('f-fechaRenovacion').value.trim(),
+      version: document.getElementById('f-version').value.trim(),
+      soporte: document.getElementById('f-soporte').value,
+      contactoComercial: document.getElementById('f-contactoComercial').value.trim(),
+      coenginePlan: document.getElementById('f-coengine-plan').value,
+      coengineVersion: document.getElementById('f-coengine-version').value.trim(),
+      coengineMotor: document.getElementById('f-coengine-motor').value.trim(),
+      coengineActivacion: document.getElementById('f-coengine-activacion').value.trim(),
+      coengineCapacidad: getCoengineCapacidadByPlan(document.getElementById('f-coengine-plan').value),
+      estado: document.getElementById('f-estado').value,
+      coengineModelos: getWizardCoengineModelsState(),
+    };
+  }
+  if (s === 3) {
+    wizardDataCache[3] = {
+      modulos: getWizardModulesState(),
+    };
+  }
+  if (s === 4) {
+    wizardDataCache[4] = {
+      masterNombre: document.getElementById('f-master-nombre').value.trim(),
+      masterEmail: document.getElementById('f-master-email').value.trim(),
+      masterUsuario: document.getElementById('f-master-usuario').value.trim(),
+      masterTelefono: document.getElementById('f-master-telefono').value.trim(),
+      masterPass: document.getElementById('f-master-pass').value,
+      masterMfa: masterMfa,
+    };
+  }
+  stepSaved[s] = true;
+  updateStepBar();
+  return true;
+}
+
+function getWizardModulesState() {
+  return wizardModules.map(m => {
+    const el = document.querySelector(`.module-toggle[data-mid="${m.id}"]`);
+    return { ...m, activo: el ? el.classList.contains('active') : m.activo };
+  });
+}
+
+function getWizardCoengineModelsState() {
+  return wizardCoengineModels.map(m => {
+    const el = document.querySelector(`.model-item[data-cmid="${m.id}"]`);
+    return { ...m, activo: el ? el.classList.contains('active') : m.activo };
+  });
+}
+
+function updateStepBar() {
+  document.querySelectorAll('.wizard-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.remove('active', 'done', 'pending', 'clickable');
+    if (s === wizardCurrentStep) {
+      el.classList.add('active');
+      if (stepSaved[s]) el.classList.add('done', 'clickable');
+    } else if (stepSaved[s]) {
+      el.classList.add('done', 'clickable');
+    } else {
+      el.classList.add('pending');
+    }
+  });
+  // Show appropriate badges
+  document.querySelectorAll('.wizard-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    const savedBadge = el.querySelector('.ws-badge.saved');
+    const pendingBadge = el.querySelector('.ws-badge.pending-badge');
+    if (savedBadge) savedBadge.style.display = stepSaved[s] ? 'inline-block' : 'none';
+    if (pendingBadge) pendingBadge.style.display = (!stepSaved[s] && s !== wizardCurrentStep) ? 'inline-block' : 'none';
+  });
+}
+
+function goWizardStep(step) {
+  if (step < 1 || step > 4) return;
+
+  // If navigating forward, save current step first
+  if (step > wizardCurrentStep) {
+    if (wizardCurrentStep === 1) {
+      const rs = document.getElementById('f-razonSocial').value.trim();
+      const rif = document.getElementById('f-rif').value.trim();
+      if (!rs || !rif) {
+        showToast('Completa la Razón Social y el RIF antes de continuar', 'error');
+        document.getElementById('f-razonSocial').focus();
+        return;
+      }
+    }
+    if (!saveCurrentStep()) {
+      showToast('Completa los campos requeridos antes de continuar', 'error');
+      return;
+    }
+    showToast(`Paso ${wizardCurrentStep} guardado`, 'success');
+  }
+
+  wizardCurrentStep = step;
+
+  // Restore cached data if going back to a saved step
+  if (wizardDataCache[step]) {
+    restoreStepData(step);
+  }
+
+  // Update steps bar
+  updateStepBar();
+
+  // Update pages
+  document.querySelectorAll('.wizard-page').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.page) === step);
+  });
+
+  // Update summary on last page
+  if (step === 4) {
+    const tipo = TIPO_INFO[selectedTipo] || TIPO_INFO.banco;
+    const rs = document.getElementById('f-razonSocial').value.trim() || 'Razón Social pendiente';
+    document.getElementById('master-summary-text').textContent = `${tipo.label} · ${rs}`;
+  }
+
+  // Render modules when entering step 3
+  if (step === 3 && !wizardDataCache[3]) {
+    renderWizardModules();
+  }
+}
+
+function restoreStepData(step) {
+  const d = wizardDataCache[step];
+  if (!d) return;
+  if (step === 1) {
+    document.getElementById('f-razonSocial').value = d.razonSocial || '';
+    document.getElementById('f-nombreComercial').value = d.nombreComercial || '';
+    document.getElementById('f-rif').value = d.rif || '';
+    document.getElementById('f-pais').value = d.pais || '';
+    if (d.tipo) {
+      selectedTipo = d.tipo;
+      document.querySelectorAll('.type-card').forEach(el => el.classList.toggle('selected', el.dataset.tipo === d.tipo));
+    }
+  }
+  if (step === 2 && d.plan) {
+    document.getElementById('f-plan').value = d.plan;
+    document.getElementById('f-contrato').value = d.contrato || '';
+    document.getElementById('f-fechaInicio').value = d.fechaInicio || '';
+    document.getElementById('f-fechaRenovacion').value = d.fechaRenovacion || '';
+    document.getElementById('f-version').value = d.version || '3.2.1';
+    document.getElementById('f-soporte').value = d.soporte || '24/7 Premium';
+    document.getElementById('f-contactoComercial').value = d.contactoComercial || '';
+    document.getElementById('f-coengine-plan').value = d.coenginePlan || 'COENGINE Enterprise';
+    document.getElementById('f-coengine-version').value = d.coengineVersion || '2.4.0';
+    document.getElementById('f-coengine-motor').value = d.coengineMotor || 'COE Neural Engine v3';
+    document.getElementById('f-coengine-activacion').value = d.coengineActivacion || '';
+    updateCoengineCapacidad();
+    document.getElementById('f-estado').value = d.estado || 'Activo';
+    if (d.coengineModelos) renderWizardCoengineModelsFromState(d.coengineModelos);
+  }
+  if (step === 3 && d.modulos) {
+    renderWizardModulesFromState(d.modulos);
+  }
+  if (step === 4 && d.masterNombre !== undefined) {
+    document.getElementById('f-master-nombre').value = d.masterNombre;
+    document.getElementById('f-master-email').value = d.masterEmail || '';
+    document.getElementById('f-master-usuario').value = d.masterUsuario || '';
+    document.getElementById('f-master-telefono').value = d.masterTelefono || '';
+    document.getElementById('f-master-pass').value = d.masterPass || 'CoeMaster2024!';
+    if (d.masterMfa !== undefined) { masterMfa = d.masterMfa; updateMasterMfaUI(); }
+  }
+}
+
+// ─── TYPE SELECTION ────────────────────────────────────
+
+function selectTipo(tipo) {
+  selectedTipo = tipo;
+  document.querySelectorAll('.type-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.tipo === tipo);
+  });
+  document.getElementById('f-tipo').value = tipo;
+}
+
+// ─── WIZARD: MODULES (step 3) ─────────────────────────
+
+function renderWizardModules() {
+  const tipo = selectedTipo;
+  const base = MODULOS_POR_TIPO[tipo] || MODULOS_POR_TIPO.banco;
+  wizardModules = base.map(m => ({...m}));
+  renderWizardModulesDOM();
+}
+
+function renderWizardModulesDOM() {
+  const grid = document.getElementById('modules-grid');
+  grid.innerHTML = wizardModules.map(m => `
+    <div class="module-toggle ${m.activo ? 'active' : 'inactive'}" data-mid="${m.id}" onclick="wizToggleModule('${m.id}')">
+      <div class="mt-icon"><i class="fa-solid ${m.icono}"></i></div>
+      <div class="mt-info">
+        <p>${m.nombre}</p>
+        <span>${m.descripcion}</span>
+      </div>
+      ${m.requerido ? '<span class="mt-required">Requerido</span>' : '<div class="mt-switch"></div>'}
+    </div>
+  `).join('');
+}
+
+function renderWizardModulesFromState(modulos) {
+  wizardModules = modulos.map(m => ({...m}));
+  renderWizardModulesDOM();
+}
+
+function renderWizardCoengineModelsFromState(modelos) {
+  wizardCoengineModels = modelos.map(m => ({...m}));
+  renderWizardCoengineModelsDOM();
+}
+
+function wizToggleModule(id) {
+  const idx = wizardModules.findIndex(m => m.id === id);
+  if (idx === -1) return;
+  if (wizardModules[idx].requerido) {
+    showToast('Este módulo es requerido para este tipo de empresa', 'info');
+    return;
+  }
+  wizardModules[idx].activo = !wizardModules[idx].activo;
+  const el = document.querySelector(`.module-toggle[data-mid="${id}"]`);
+  if (el) {
+    el.classList.toggle('active', wizardModules[idx].activo);
+    el.classList.toggle('inactive', !wizardModules[idx].activo);
+  }
+}
+
+// ─── WIZARD: COENGINE MODELS (step 2) ─────────────────
+
+function renderWizardCoengineModels() {
+  wizardCoengineModels = COENGINE_MODELS.map(m => ({...m}));
+  renderWizardCoengineModelsDOM();
+}
+
+function renderWizardCoengineModelsDOM() {
+  const list = document.getElementById('coengine-models-list');
+  list.innerHTML = wizardCoengineModels.map(m => `
+    <div class="model-item ${m.activo ? 'active' : 'inactive'}" data-cmid="${m.id}" onclick="wizToggleCoengineModel('${m.id}')">
+      <div class="md-icon"><i class="fa-solid ${m.icono}"></i></div>
+      <div class="md-info">
+        <p>${m.nombre}</p>
+        <span>${m.desc}</span>
+      </div>
+      <div class="model-switch"></div>
+    </div>
+  `).join('');
+}
+
+function wizToggleCoengineModel(id) {
+  const idx = wizardCoengineModels.findIndex(m => m.id === id);
+  if (idx === -1) return;
+  wizardCoengineModels[idx].activo = !wizardCoengineModels[idx].activo;
+  const el = document.querySelector(`.model-item[data-cmid="${id}"]`);
+  if (el) {
+    el.classList.toggle('active', wizardCoengineModels[idx].activo);
+    el.classList.toggle('inactive', !wizardCoengineModels[idx].activo);
+  }
+}
+
+function toggleMasterMfa() {
+  masterMfa = !masterMfa;
+  const card = document.getElementById('f-master-mfa-card');
+  const text = card.querySelector('.mt-info span');
+  if (card) {
+    card.classList.toggle('active', masterMfa);
+    card.classList.toggle('inactive', !masterMfa);
+  }
+  if (text) text.textContent = masterMfa ? 'El usuario tiene MFA habilitado' : 'MFA deshabilitado';
+}
+
+function updateMasterMfaUI() {
+  const card = document.getElementById('f-master-mfa-card');
+  const text = card?.querySelector('.mt-info span');
+  if (card) {
+    card.classList.toggle('active', masterMfa);
+    card.classList.toggle('inactive', !masterMfa);
+  }
+  if (text) text.textContent = masterMfa ? 'El usuario tiene MFA habilitado' : 'MFA deshabilitado';
+}
+
+// ─── RESET WIZARD ──────────────────────────────────────
+
+function resetWizard() {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('wizard-title').textContent = 'Nueva Empresa';
+  document.getElementById('wizard-submit-text').textContent = 'Crear Empresa';
+
+  selectedTipo = 'banco';
+  wizardCurrentStep = 1;
+  stepSaved = {1: false, 2: false, 3: false, 4: false};
+  wizardDataCache = {};
+
+  document.querySelectorAll('.type-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.tipo === 'banco');
+  });
+
+  document.getElementById('f-razonSocial').value = '';
+  document.getElementById('f-nombreComercial').value = '';
+  document.getElementById('f-rif').value = '';
+  document.getElementById('f-pais').value = 'Venezuela';
+
+
+  document.getElementById('f-plan').value = 'COE Suite Enterprise';
+  document.getElementById('f-contrato').value = '';
+  document.getElementById('f-fechaInicio').value = '';
+  document.getElementById('f-fechaRenovacion').value = '';
+  document.getElementById('f-version').value = '3.2.1';
+  document.getElementById('f-soporte').value = '24/7 Premium';
+  document.getElementById('f-contactoComercial').value = '';
+
+  document.getElementById('f-coengine-plan').value = 'COENGINE Enterprise';
+  document.getElementById('f-coengine-version').value = '2.4.0';
+  document.getElementById('f-coengine-motor').value = 'COE Neural Engine v3';
+  document.getElementById('f-coengine-activacion').value = '';
+  updateCoengineCapacidad();
+
+  document.getElementById('f-estado').value = 'Activo';
+  document.getElementById('f-master-nombre').value = '';
+  document.getElementById('f-master-email').value = '';
+  document.getElementById('f-master-usuario').value = '';
+  document.getElementById('f-master-telefono').value = '';
+  document.getElementById('f-master-pass').value = 'CoeMaster2024!';
+  masterMfa = true;
+  updateMasterMfaUI();
+
+  renderWizardCoengineModels();
+  updateStepBar();
+  goWizardStep(1);
+}
+
+// ─── SAVE ─────────────────────────────────────────────
+
+function saveCompany() {
+  const editId = document.getElementById('edit-id').value;
+
+  // Save last step before submitting
+  if (wizardCurrentStep === 4) saveCurrentStep();
+
+  // Get current modules state from DOM
+  const currentModules = getWizardModulesState();
+  // Get current coengine models state from DOM
+  const currentCoengineModels = getWizardCoengineModelsState();
+
+  const rs = document.getElementById('f-razonSocial').value.trim();
+  const rif = document.getElementById('f-rif').value.trim();
+  const masterName = document.getElementById('f-master-nombre').value.trim();
+  const masterEmail = document.getElementById('f-master-email').value.trim();
+
+  if (!rs || !rif) {
+    showToast('Completa Razón Social y RIF', 'error');
+    return;
+  }
+
+  const data = {
+    razonSocial: rs,
+    nombreComercial: document.getElementById('f-nombreComercial').value.trim(),
+    rif: rif,
+    nit: '',
+    tipo: selectedTipo,
+    subTipo: selectedTipo === 'banco' ? 'Banco Universal' : '',
+    organismoRegulador: '',
+    licencia: '',
+    fechaRegistro: '',
+    direccion: '',
+    telefono: '',
+    email: '',
+    sitioWeb: '',
+    pais: document.getElementById('f-pais').value.trim(),
+    monedaBase: '',
+    plan: document.getElementById('f-plan').value,
+    contrato: document.getElementById('f-contrato').value.trim(),
+    fechaInicio: document.getElementById('f-fechaInicio').value.trim(),
+    fechaRenovacion: document.getElementById('f-fechaRenovacion').value.trim(),
+    estado: document.getElementById('f-estado').value,
+    version: document.getElementById('f-version').value.trim(),
+    soporte: document.getElementById('f-soporte').value,
+    contactoComercial: document.getElementById('f-contactoComercial').value.trim(),
+    coenginePlan: document.getElementById('f-coengine-plan').value,
+    coengineVersion: document.getElementById('f-coengine-version').value.trim(),
+    coengineMotor: document.getElementById('f-coengine-motor').value.trim(),
+    coengineActivacion: document.getElementById('f-coengine-activacion').value.trim(),
+    coengineCapacidad: getCoengineCapacidadByPlan(document.getElementById('f-coengine-plan').value),
+    coengineModelos: currentCoengineModels,
+    modulos: currentModules,
+    master: {
+      nombre: masterName,
+      email: masterEmail,
+      usuario: document.getElementById('f-master-usuario').value.trim(),
+      pass: document.getElementById('f-master-pass').value,
+      telefono: document.getElementById('f-master-telefono').value.trim(),
+      mfa: masterMfa,
+    },
+  };
+
+  if (editId) {
+    const idx = companies.findIndex(c => c.id === editId);
+    if (idx !== -1) {
+      companies[idx] = { ...companies[idx], ...data };
+      showToast(`Empresa "${data.razonSocial}" actualizada`, 'success');
+    }
+  } else {
+    data.id = 'emp-' + (nextId++);
+    companies.push(data);
+    showToast(`Empresa "${data.razonSocial}" creada exitosamente`, 'success');
+  }
+
+  renderList();
+  updateStats();
+  showView('list');
+}
+
+// ─── EDIT ─────────────────────────────────────────────
+
+function editCompany(id) {
+  const c = companies.find(x => x.id === id);
+  if (!c) return;
+
+  document.getElementById('edit-id').value = id;
+  document.getElementById('wizard-title').textContent = 'Editar Empresa';
+  document.getElementById('wizard-submit-text').textContent = 'Guardar Cambios';
+
+  selectedTipo = c.tipo;
+  document.querySelectorAll('.type-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.tipo === c.tipo);
+  });
+
+  document.getElementById('f-razonSocial').value = c.razonSocial;
+  document.getElementById('f-nombreComercial').value = c.nombreComercial || '';
+  document.getElementById('f-rif').value = c.rif;
+  document.getElementById('f-pais').value = c.pais || '';
+
+
+  document.getElementById('f-plan').value = c.plan;
+  document.getElementById('f-contrato').value = c.contrato || '';
+  document.getElementById('f-fechaInicio').value = c.fechaInicio || '';
+  document.getElementById('f-fechaRenovacion').value = c.fechaRenovacion || '';
+  document.getElementById('f-version').value = c.version || '3.2.1';
+  document.getElementById('f-soporte').value = c.soporte || '24/7 Premium';
+  document.getElementById('f-contactoComercial').value = c.contactoComercial || '';
+
+  document.getElementById('f-coengine-plan').value = c.coenginePlan || 'COENGINE Enterprise';
+  document.getElementById('f-coengine-version').value = c.coengineVersion || '2.4.0';
+  document.getElementById('f-coengine-motor').value = c.coengineMotor || 'COE Neural Engine v3';
+  document.getElementById('f-coengine-activacion').value = c.coengineActivacion || '';
+  updateCoengineCapacidad();
+
+  document.getElementById('f-estado').value = c.estado;
+  document.getElementById('f-master-nombre').value = c.master?.nombre || '';
+  document.getElementById('f-master-email').value = c.master?.email || '';
+  document.getElementById('f-master-usuario').value = c.master?.usuario || '';
+  document.getElementById('f-master-telefono').value = c.master?.telefono || '';
+  document.getElementById('f-master-pass').value = c.master?.pass || 'CoeMaster2024!';
+  masterMfa = c.master?.mfa !== false;
+  updateMasterMfaUI();
+
+  wizardCoengineModels = (c.coengineModelos || COENGINE_MODELS).map(m => ({...m}));
+  renderWizardCoengineModelsDOM();
+
+  // Set modules data for step 3
+  wizardModules = (c.modulos || MODULOS_POR_TIPO[c.tipo] || MODULOS_POR_TIPO.banco).map(m => ({...m}));
+  renderWizardModulesDOM();
+
+  // Mark all steps as saved since we're editing existing data
+  stepSaved = {1: true, 2: true, 3: true, 4: true};
+  wizardDataCache = {1: {}, 2: {}, 3: {}, 4: {}};
+
+  showView('wizard');
+  updateStepBar();
+  goWizardStep(1);
+}
+
+function showDetailAndEdit(id) {
+  document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-detail').classList.add('active');
+  document.getElementById('topbar-title').textContent = 'Detalle de Empresa';
+  currentDetailId = id;
+  detailEditMode = true;
+  detailHasChanges = false;
+  const c = companies.find(x => x.id === id);
+  if (!c) { showView('list'); return; }
+  detailOriginalSnapshot = JSON.parse(JSON.stringify(cleanSnapshot(c)));
+  const tipo = TIPO_INFO[c.tipo] || TIPO_INFO.banco;
+  const statusClass = c.estado === 'Activo' ? 'status-activo' : c.estado === 'Suspendido' ? 'status-suspendido' : 'status-inactivo';
+  document.getElementById('detail-avatar').className = `dh-avatar ${tipo.avatarClass}`;
+  document.getElementById('detail-avatar').innerHTML = `<i class="fa-solid ${tipo.icono}"></i>`;
+  document.getElementById('detail-name').textContent = c.razonSocial;
+  document.getElementById('detail-tipo-badge').className = `tipo-badge ${tipo.color}`;
+  document.getElementById('detail-tipo-badge').innerHTML = `<i class="fa-solid ${tipo.icono}"></i> ${tipo.label} · ${c.subTipo || ''}`;
+  document.getElementById('detail-status-badge').className = `status-badge ${statusClass}`;
+  document.getElementById('detail-status-badge').textContent = c.estado;
+  document.getElementById('detail-rif').textContent = `RIF: ${c.rif}`;
+  document.getElementById('detail-subtitle').textContent = `Contrato ${c.contrato || '-'} · Plan ${c.plan} · v${c.version || '-'}`;
+  renderDetailBody(c, tipo);
+}
+
+function cleanSnapshot(c) {
+  return {
+    razonSocial: c.razonSocial,
+    nombreComercial: c.nombreComercial || '',
+    rif: c.rif,
+    subTipo: c.subTipo || '',
+    pais: c.pais || '',
+    telefono: c.telefono || '',
+    email: c.email || '',
+    direccion: c.direccion || '',
+    plan: c.plan,
+    contrato: c.contrato || '',
+    fechaInicio: c.fechaInicio || '',
+    fechaRenovacion: c.fechaRenovacion || '',
+    soporte: c.soporte || '',
+    estado: c.estado,
+    coenginePlan: c.coenginePlan || '',
+    coengineVersion: c.coengineVersion || '',
+    coengineMotor: c.coengineMotor || '',
+    coengineActivacion: c.coengineActivacion || '',
+    contactoComercial: c.contactoComercial || '',
+    tipo: c.tipo,
+    masterNombre: (c.master && c.master.nombre) || '',
+    masterEmail: (c.master && c.master.email) || '',
+    masterUsuario: (c.master && c.master.usuario) || '',
+    masterTelefono: (c.master && c.master.telefono) || '',
+    masterMfa: !!(c.master && c.master.mfa),
+  };
+}
+
+function getChangedFields() {
+  if (!detailOriginalSnapshot) return [];
+  const changed = [];
+  const orig = detailOriginalSnapshot;
+  const f = [
+    ['de-razonSocial','razonSocial','Razón Social'],
+    ['de-nombreComercial','nombreComercial','Nombre Comercial'],
+    ['de-rif','rif','RIF'],
+    ['de-subTipo','subTipo','Subtipo'],
+    ['de-pais','pais','País'],
+    ['de-telefono','telefono','Teléfono'],
+    ['de-email','email','Email'],
+    ['de-direccion','direccion','Dirección'],
+    ['de-plan','plan','Plan'],
+    ['de-contrato','contrato','Contrato'],
+    ['de-fechaInicio','fechaInicio','Inicio'],
+    ['de-fechaRenovacion','fechaRenovacion','Renovación'],
+    ['de-soporte','soporte','Soporte'],
+    ['de-estado','estado','Estado'],
+    ['de-coenginePlan','coenginePlan','Plan COENGINE'],
+    ['de-coengineVersion','coengineVersion','Versión COENGINE'],
+    ['de-coengineMotor','coengineMotor','Motor'],
+    ['de-coengineActivacion','coengineActivacion','Activación COENGINE'],
+    ['de-contactoComercial','contactoComercial','Contacto Comercial'],
+    ['de-tipo','tipo','Tipo de Empresa'],
+    ['de-masterNombre','masterNombre','Master Nombre'],
+    ['de-masterEmail','masterEmail','Master Email'],
+    ['de-masterUsuario','masterUsuario','Master Usuario'],
+    ['de-masterTelefono','masterTelefono','Master Teléfono'],
+    ['de-masterMfa','masterMfa','Master MFA'],
+  ];
+  f.forEach(([elId, key, label]) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (el.value.trim() !== (orig[key] || '')) changed.push(label);
+  });
+  return changed;
+}
+
+function detailToggleModule(id) {
+  const c = companies.find(x => x.id === currentDetailId);
+  if (!c) return;
+  const idx = (c.modulos || []).findIndex(m => m.id === id);
+  if (idx === -1) return;
+  if (c.modulos[idx].requerido) { showToast('Módulo requerido, no puede desactivarse', 'info'); return; }
+  c.modulos[idx].activo = !c.modulos[idx].activo;
+  renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
+}
+
+function detailToggleMasterMfa() {
+  const c = companies.find(x => x.id === currentDetailId);
+  if (!c) return;
+  if (!c.master) c.master = {};
+  c.master.mfa = !c.master.mfa;
+  renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
+}
+
+function detailToggleCoengineModel(id) {
+  const c = companies.find(x => x.id === currentDetailId);
+  if (!c) return;
+  const idx = (c.coengineModelos || []).findIndex(m => m.id === id);
+  if (idx === -1) return;
+  c.coengineModelos[idx].activo = !c.coengineModelos[idx].activo;
+  renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
+}
+
+function detailUpdateCoengineCapacidad() {
+  const plan = document.getElementById('de-coenginePlan')?.value;
+  if (!plan) return;
+  const txt = getCoengineCapacidadByPlan(plan);
+  const el = document.getElementById('de-coengineCapacidadText');
+  if (el) el.innerHTML = txt;
+}
+
+function detailCancelEdit() {
+  if (getChangedFields().length > 0) {
+    if (!confirm('Hay cambios sin guardar. ¿Descartarlos?')) return;
+  }
+  detailEditMode = false;
+  detailOriginalSnapshot = null;
+  showView('list');
+}
+
+function detailSaveEdit() {
+  const c = companies.find(x => x.id === currentDetailId);
+  if (!c) return;
+
+  const changed = getChangedFields();
+  if (changed.length === 0) {
+    showToast('No hay cambios para guardar', 'info');
+    return;
+  }
+  if (!confirm(`Se detectaron cambios en:\n• ${changed.join('\n• ')}\n\n¿Guardar cambios?`)) return;
+
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const sel = id => document.getElementById(id)?.value || '';
+
+  c.razonSocial = val('de-razonSocial') || c.razonSocial;
+  c.nombreComercial = val('de-nombreComercial');
+  c.rif = val('de-rif') || c.rif;
+  c.subTipo = val('de-subTipo');
+  c.pais = val('de-pais');
+  c.telefono = val('de-telefono');
+  c.email = val('de-email');
+  c.direccion = val('de-direccion');
+  c.plan = sel('de-plan');
+  c.contrato = val('de-contrato');
+  c.fechaInicio = val('de-fechaInicio');
+  c.fechaRenovacion = val('de-fechaRenovacion');
+  c.soporte = sel('de-soporte');
+  c.estado = sel('de-estado');
+  c.coenginePlan = sel('de-coenginePlan');
+  c.coengineVersion = val('de-coengineVersion');
+  c.coengineMotor = val('de-coengineMotor');
+  c.coengineActivacion = val('de-coengineActivacion');
+  c.coengineCapacidad = getCoengineCapacidadByPlan(c.coenginePlan);
+  c.contactoComercial = val('de-contactoComercial');
+  if (!c.master) c.master = {};
+  c.master.nombre = val('de-masterNombre');
+  c.master.email = val('de-masterEmail');
+  c.master.usuario = val('de-masterUsuario');
+  c.master.telefono = val('de-masterTelefono');
+
+  // Tipo change
+  const newTipo = document.getElementById('de-tipo')?.value;
+  if (newTipo && newTipo !== c.tipo) {
+    c.tipo = newTipo;
+    const baseMods = MODULOS_POR_TIPO[newTipo] || MODULOS_POR_TIPO.banco;
+    c.modulos = baseMods.map(m => ({...m}));
+  }
+
+  renderList();
+  updateStats();
+  detailOriginalSnapshot = JSON.parse(JSON.stringify(cleanSnapshot(c)));
+  showToast(`Empresa "${c.razonSocial}" actualizada`, 'success');
+  renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
+  // Re-render header
+  const tipo = TIPO_INFO[c.tipo] || TIPO_INFO.banco;
+  const statusClass = c.estado === 'Activo' ? 'status-activo' : c.estado === 'Suspendido' ? 'status-suspendido' : 'status-inactivo';
+  document.getElementById('detail-avatar').className = `dh-avatar ${tipo.avatarClass}`;
+  document.getElementById('detail-avatar').innerHTML = `<i class="fa-solid ${tipo.icono}"></i>`;
+  document.getElementById('detail-name').textContent = c.razonSocial;
+  document.getElementById('detail-tipo-badge').className = `tipo-badge ${tipo.color}`;
+  document.getElementById('detail-tipo-badge').innerHTML = `<i class="fa-solid ${tipo.icono}"></i> ${tipo.label} · ${c.subTipo || ''}`;
+  document.getElementById('detail-status-badge').className = `status-badge ${statusClass}`;
+  document.getElementById('detail-status-badge').textContent = c.estado;
+  document.getElementById('detail-rif').textContent = `RIF: ${c.rif}`;
+  document.getElementById('detail-subtitle').textContent = `Contrato ${c.contrato || '-'} · Plan ${c.plan} · v${c.version || '-'}`;
+}
+
+function goBackFromDetail() {
+  if (detailEditMode && getChangedFields().length > 0) {
+    if (!confirm('Hay cambios sin guardar. ¿Descartarlos y volver?')) return;
+  }
+  detailEditMode = false;
+  detailOriginalSnapshot = null;
+  showView('list');
+}
+
+// ─── DELETE ───────────────────────────────────────────
+
+function deleteCompany(id) {
+  if (!confirm('¿Estás seguro de eliminar esta empresa? Esta acción no se puede deshacer.')) return;
+  companies = companies.filter(c => c.id !== id);
+  renderList();
+  updateStats();
+  showToast('Empresa eliminada', 'info');
+  if (currentDetailId === id) showView('list');
+}
+
+// ─── DETAIL ───────────────────────────────────────────
+
+let detailEditMode = false;
+let detailOriginalSnapshot = null;
+let detailHasChanges = false;
+
+function renderDetail(id) {
+  const c = companies.find(x => x.id === id);
+  if (!c) { showView('list'); return; }
+  currentDetailId = id;
+
+  const tipo = TIPO_INFO[c.tipo] || TIPO_INFO.banco;
+  const statusClass = c.estado === 'Activo' ? 'status-activo' : c.estado === 'Suspendido' ? 'status-suspendido' : 'status-inactivo';
+
+  document.getElementById('detail-avatar').className = `dh-avatar ${tipo.avatarClass}`;
+  document.getElementById('detail-avatar').innerHTML = `<i class="fa-solid ${tipo.icono}"></i>`;
+  document.getElementById('detail-name').textContent = c.razonSocial;
+  document.getElementById('detail-tipo-badge').className = `tipo-badge ${tipo.color}`;
+  document.getElementById('detail-tipo-badge').innerHTML = `<i class="fa-solid ${tipo.icono}"></i> ${tipo.label} · ${c.subTipo || ''}`;
+  document.getElementById('detail-status-badge').className = `status-badge ${statusClass}`;
+  document.getElementById('detail-status-badge').textContent = c.estado;
+  document.getElementById('detail-rif').textContent = `RIF: ${c.rif}`;
+  document.getElementById('detail-subtitle').textContent = `Contrato ${c.contrato || '-'} · Plan ${c.plan} · v${c.version || '-'}`;
+
+  detailEditMode = false;
+  renderDetailBody(c, tipo);
+}
+
+function renderDetailBody(c, tipo) {
+  const modulosActivos = (c.modulos || []).filter(m => m.activo);
+  const coengineModelosActivos = (c.coengineModelos || []).filter(m => m.activo);
+  const planCapacity = getCoengineCapacidadByPlan(c.coenginePlan || 'COENGINE Enterprise');
+
+  const edit = detailEditMode;
+
+  document.getElementById('detail-body').innerHTML = `
+    <!-- Info + Contacto -->
+    <div class="dt-section">
+      <div class="dt-card">
+        <h4><i class="fa-solid fa-building"></i> Información General</h4>
+        <div class="dt-grid-3">
+          <div>
+            <div class="dt-field"><div class="dt-label">Razón Social</div>${edit ? `<input class="dt-input" id="de-razonSocial" value="${escHtml(c.razonSocial)}">` : `<div class="dt-value"><strong>${escHtml(c.razonSocial)}</strong></div>`}</div>
+            <div class="dt-field"><div class="dt-label">Nombre Comercial</div>${edit ? `<input class="dt-input" id="de-nombreComercial" value="${escHtml(c.nombreComercial||'')}">` : `<div class="dt-value">${escHtml(c.nombreComercial) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">RIF</div>${edit ? `<input class="dt-input" id="de-rif" value="${escHtml(c.rif)}">` : `<div class="dt-value mono">${escHtml(c.rif)}</div>`}</div>
+          </div>
+          <div>
+            <div class="dt-field"><div class="dt-label">Tipo de Empresa</div>${edit ? `<select class="dt-input" id="de-tipo">${['banco','cit','corp','bcv'].map(t => `<option value="${t}" ${t===c.tipo?'selected':''}>${TIPO_INFO[t].label}</option>`).join('')}</select>` : `<div class="dt-value"><span class="tipo-badge ${tipo.color}"><i class="fa-solid ${tipo.icono}"></i> ${tipo.label}</span></div>`}</div>
+            <div class="dt-field"><div class="dt-label">Subtipo</div>${edit ? `<input class="dt-input" id="de-subTipo" value="${escHtml(c.subTipo||'')}">` : `<div class="dt-value">${escHtml(c.subTipo) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">País</div>${edit ? `<input class="dt-input" id="de-pais" value="${escHtml(c.pais||'')}">` : `<div class="dt-value">${escHtml(c.pais) || '-'}</div>`}</div>
+          </div>
+          <div>
+            <div class="dt-field"><div class="dt-label">Teléfono</div>${edit ? `<input class="dt-input" id="de-telefono" value="${escHtml(c.telefono||'')}">` : `<div class="dt-value">${escHtml(c.telefono) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">Email</div>${edit ? `<input class="dt-input" id="de-email" value="${escHtml(c.email||'')}">` : `<div class="dt-value">${escHtml(c.email) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">Dirección</div>${edit ? `<input class="dt-input" id="de-direccion" value="${escHtml(c.direccion||'')}">` : `<div class="dt-value" style="font-size:12px">${escHtml(c.direccion) || '-'}</div>`}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suscripción -->
+    <div class="dt-section">
+      <div class="dt-card">
+        <h4><i class="fa-solid fa-file-contract"></i> Suscripción COE Suite</h4>
+        <div class="dt-grid-3">
+          <div>
+            <div class="dt-field"><div class="dt-label">Plan</div>${edit ? `<select class="dt-input" id="de-plan"><option value="COE Suite Enterprise" ${c.plan==='COE Suite Enterprise'?'selected':''}>COE Suite Enterprise</option><option value="COE Suite Professional" ${c.plan==='COE Suite Professional'?'selected':''}>COE Suite Professional</option><option value="COE Suite Starter" ${c.plan==='COE Suite Starter'?'selected':''}>COE Suite Starter</option></select>` : `<div class="dt-value"><strong>${escHtml(c.plan)}</strong></div>`}</div>
+            <div class="dt-field"><div class="dt-label">Contrato</div>${edit ? `<input class="dt-input" id="de-contrato" value="${escHtml(c.contrato||'')}">` : `<div class="dt-value mono">${escHtml(c.contrato) || '-'}</div>`}</div>
+          </div>
+          <div>
+            <div class="dt-field"><div class="dt-label">Inicio</div>${edit ? `<input class="dt-input" id="de-fechaInicio" value="${escHtml(c.fechaInicio||'')}">` : `<div class="dt-value">${escHtml(c.fechaInicio) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">Renovación</div>${edit ? `<input class="dt-input" id="de-fechaRenovacion" value="${escHtml(c.fechaRenovacion||'')}">` : `<div class="dt-value">${escHtml(c.fechaRenovacion) || '-'}</div>`}</div>
+          </div>
+          <div>
+            <div class="dt-field"><div class="dt-label">Soporte</div>${edit ? `<select class="dt-input" id="de-soporte"><option value="24/7 Premium" ${c.soporte==='24/7 Premium'?'selected':''}>24/7 Premium</option><option value="12/5 Estándar" ${c.soporte==='12/5 Estándar'?'selected':''}>12/5 Estándar</option><option value="Correo Electrónico" ${c.soporte==='Correo Electrónico'?'selected':''}>Correo Electrónico</option></select>` : `<div class="dt-value">${escHtml(c.soporte) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">Estado</div>${edit ? `<select class="dt-input" id="de-estado"><option value="Activo" ${c.estado==='Activo'?'selected':''}>Activo</option><option value="Inactivo" ${c.estado==='Inactivo'?'selected':''}>Inactivo</option><option value="Suspendido" ${c.estado==='Suspendido'?'selected':''}>Suspendido</option></select>` : `<span class="status-badge ${statusClass}">${c.estado}</span>`}</div>
+          </div>
+        </div>
+        ${edit ? '' : `<div class="dt-field" style="margin-top:6px"><div class="dt-label">Contacto Comercial</div><div class="dt-value" style="font-size:12px">${escHtml(c.contactoComercial) || '-'}</div></div>`}
+      </div>
+    </div>
+
+    <!-- COENGINE -->
+    <div class="dt-section">
+      <div class="dt-card">
+        <h4><i class="fa-solid fa-brain"></i> COENGINE <span style="margin-left:auto;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--green-50);color:var(--green-700)">${coengineModelosActivos.length}/${(c.coengineModelos||[]).length} modelos activos</span></h4>
+        <div class="dt-grid-2">
+          <div>
+            <div class="dt-field"><div class="dt-label">Plan</div>${edit ? `<select class="dt-input" id="de-coenginePlan" onchange="detailUpdateCoengineCapacidad()"><option value="COENGINE Enterprise" ${c.coenginePlan==='COENGINE Enterprise'?'selected':''}>COENGINE Enterprise</option><option value="COENGINE Professional" ${c.coenginePlan==='COENGINE Professional'?'selected':''}>COENGINE Professional</option><option value="COENGINE Starter" ${c.coenginePlan==='COENGINE Starter'?'selected':''}>COENGINE Starter</option></select>` : `<div class="dt-value"><strong>${escHtml(c.coenginePlan) || '-'}</strong></div>`}</div>
+            <div class="dt-field"><div class="dt-label">Versión</div>${edit ? `<input class="dt-input" id="de-coengineVersion" value="${escHtml(c.coengineVersion||'')}">` : `<div class="dt-value mono">v${escHtml(c.coengineVersion) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">Motor</div>${edit ? `<input class="dt-input" id="de-coengineMotor" value="${escHtml(c.coengineMotor||'')}">` : `<div class="dt-value mono">${escHtml(c.coengineMotor) || '-'}</div>`}</div>
+          </div>
+          <div>
+            <div class="dt-field"><div class="dt-label">Activación</div>${edit ? `<input class="dt-input" id="de-coengineActivacion" value="${escHtml(c.coengineActivacion||'')}">` : `<div class="dt-value">${escHtml(c.coengineActivacion) || '-'}</div>`}</div>
+            <div class="dt-field"><div class="dt-label">Capacidad</div><div class="dt-value" style="font-size:12px;color:var(--ink-500)"><i class="fa-solid fa-gauge-high" style="color:var(--green-500);margin-right:4px"></i><span id="de-coengineCapacidadText">${planCapacity}</span></div></div>
+            <div class="dt-field"><div class="dt-label">Contacto Comercial</div>${edit ? `<input class="dt-input" id="de-contactoComercial" value="${escHtml(c.contactoComercial||'')}">` : `<div class="dt-value" style="font-size:12px">${escHtml(c.contactoComercial) || '-'}</div>`}</div>
+          </div>
+        </div>
+        <div class="dt-field" style="margin-top:10px">
+          <div class="dt-label" style="margin-bottom:6px">Modelos</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            ${(c.coengineModelos||[]).map(m => edit
+              ? `<label class="dt-model-toggle ${m.activo?'on':'off'}" data-cmid="${m.id}" onclick="detailToggleCoengineModel('${m.id}')">
+                   <i class="fa-solid ${m.icono}"></i> ${m.nombre}
+                   <span class="dt-model-toggle-switch">${m.activo ? '<i class="fa-solid fa-toggle-on" style="color:var(--green-500);font-size:16px"></i>' : '<i class="fa-solid fa-toggle-off" style="color:var(--ink-300);font-size:16px"></i>'}</span>
+                 </label>`
+              : `<span class="dt-model-badge ${m.activo?'on':'off'}"><i class="fa-solid ${m.icono}" style="font-size:8px"></i> ${m.nombre}</span>`
+            ).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Módulos -->
+    <div class="dt-section">
+      <div class="dt-card">
+        <h4><i class="fa-solid fa-puzzle-piece"></i> Módulos <span style="margin-left:auto;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--green-50);color:var(--green-700)">${modulosActivos.length}/${(c.modulos||[]).length} activos</span></h4>
+        <div class="dt-module-grid">
+          ${(c.modulos||[]).map(m => edit
+            ? `<div class="dt-module ${m.activo?'on':'off'}" style="cursor:pointer" onclick="detailToggleModule('${m.id}')">
+                <div class="dtm-icon"><i class="fa-solid ${m.icono}"></i></div>
+                <div class="dtm-info"><p>${m.nombre}</p><span>${m.descripcion}</span></div>
+                ${m.requerido ? '<span style="font-size:8px;color:var(--ink-400);font-weight:600;text-transform:uppercase">Req.</span>' : `<i class="fa-solid ${m.activo?'fa-toggle-on':'fa-toggle-off'}" style="font-size:18px;color:${m.activo?'var(--green-500)':'var(--ink-300)'};flex-shrink:0"></i>`}
+              </div>`
+            : `<div class="dt-module ${m.activo?'on':'off'}">
+                <div class="dtm-icon"><i class="fa-solid ${m.icono}"></i></div>
+                <div class="dtm-info"><p>${m.nombre}</p><span>${m.descripcion}</span></div>
+                ${m.activo ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--green-500);flex-shrink:0"></span>' : ''}
+              </div>`
+          ).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Usuario Master -->
+    <div class="dt-section">
+      <div class="dt-card">
+        <h4><i class="fa-solid fa-user-shield"></i> Usuario Master</h4>
+        <div class="dt-grid-3">
+          <div class="dt-field"><div class="dt-label">Nombre</div>${edit ? `<input class="dt-input" id="de-masterNombre" value="${escHtml(c.master?.nombre||'')}">` : `<div class="dt-value"><strong>${escHtml(c.master?.nombre) || '-'}</strong></div>`}</div>
+          <div class="dt-field"><div class="dt-label">Email</div>${edit ? `<input class="dt-input" id="de-masterEmail" value="${escHtml(c.master?.email||'')}">` : `<div class="dt-value">${escHtml(c.master?.email) || '-'}</div>`}</div>
+          <div class="dt-field"><div class="dt-label">Usuario</div>${edit ? `<input class="dt-input" id="de-masterUsuario" value="${escHtml(c.master?.usuario||'')}">` : `<div class="dt-value mono">${escHtml(c.master?.usuario) || '-'}</div>`}</div>
+        </div>
+        <div class="dt-grid-3" style="margin-top:12px">
+          <div class="dt-field"><div class="dt-label">Teléfono</div>${edit ? `<input class="dt-input" id="de-masterTelefono" value="${escHtml(c.master?.telefono||'')}">` : `<div class="dt-value">${escHtml(c.master?.telefono) || '-'}</div>`}</div>
+          <div class="dt-field"><div class="dt-label">MFA / 2FA</div>${edit
+            ? `<div class="module-toggle ${c.master?.mfa ? 'active' : 'inactive'}" onclick="detailToggleMasterMfa()" style="margin:0;padding:6px 10px;width:100%">
+                 <div class="mt-icon" style="width:26px;height:26px;font-size:11px;background:var(--green-500);color:#fff"><i class="fa-solid fa-shield-halved"></i></div>
+                 <div class="mt-info"><p style="font-size:11px">MFA</p><span style="font-size:9px">${c.master?.mfa ? 'Habilitado' : 'Deshabilitado'}</span></div>
+                 <div class="mt-switch"></div>
+               </div>`
+            : `<div class="dt-value">${c.master?.mfa
+                ? '<span class="status-badge status-activo"><i class="fa-solid fa-shield-halved"></i> Activado</span>'
+                : '<span class="status-badge status-inactivo"><i class="fa-solid fa-shield-halved"></i> Desactivado</span>'}</div>`}</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    ${edit ? `
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--ink-150);margin-top:8px">
+      <button class="btn btn-secondary" onclick="detailCancelEdit()"><i class="fa-solid fa-times"></i> Cancelar</button>
+      <button class="btn btn-primary" onclick="detailSaveEdit()"><i class="fa-solid fa-check"></i> Guardar Cambios</button>
+    </div>` : ''}
+  `;
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── TOAST ────────────────────────────────────────────
+
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  const icons = { success:'fa-check-circle', error:'fa-times-circle', info:'fa-info-circle' };
+  toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i> ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ─── BOOT ─────────────────────────────────────────────
+
+init();
+</script>
+</body>
+</html>
