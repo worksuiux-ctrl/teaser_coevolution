@@ -1,0 +1,173 @@
+{
+  "version": 2,
+  "actualizado": "2026-09-18",
+  "nota": "Fuente única de visibilidad. La edita el BackOffice; el prototipo (coe-suite) la consume por fetch. `subseccionesPorTipo` define cada tipo; `empresas[].subsecciones` (opcional) sobreescribe por empresa; si no, la empresa hereda de su tipo.",
+  "subseccionesPorTipo": {
+    "banco": [
+      "dashboard-main",
+      "estado-agencia",
+      "estado-central",
+      "operaciones-main",
+      "operaciones-conteo",
+      "inventario",
+      "war-room",
+      "kpi-gerencial",
+      "kpi-operativo",
+      "coengine-config",
+      "coengine-activity",
+      "reportes-main",
+      "georef",
+      "config-organizacion",
+      "config-unidades",
+      "config-dispositivos",
+      "config-divisas",
+      "config-proveedores",
+      "config-clientes",
+      "config-bancos-externos",
+      "config-grupos",
+      "config-motor-transacciones",
+      "config-calendario-financiero",
+      "config-parametros",
+      "integrations",
+      "interfaces",
+      "roles-main",
+      "coe-tickets",
+      "faq",
+      "audit"
+    ],
+    "cit": [
+      "dashboard-main",
+      "estado-agencia",
+      "estado-central",
+      "operaciones-main",
+      "operaciones-conteo",
+      "inventario",
+      "war-room",
+      "kpi-gerencial",
+      "kpi-operativo",
+      "coengine-config",
+      "coengine-activity",
+      "reportes-main",
+      "georef",
+      "config-organizacion",
+      "config-unidades",
+      "config-dispositivos",
+      "config-divisas",
+      "config-proveedores",
+      "config-clientes",
+      "config-bancos-externos",
+      "config-grupos",
+      "config-motor-transacciones",
+      "config-calendario-financiero",
+      "config-parametros",
+      "integrations",
+      "interfaces",
+      "roles-main"
+    ],
+    "corp": [
+      "operaciones-main",
+      "operaciones-conteo",
+      "config-organizacion",
+      "config-unidades",
+      "config-dispositivos",
+      "config-divisas",
+      "config-proveedores",
+      "config-clientes",
+      "config-bancos-externos",
+      "config-grupos",
+      "config-motor-transacciones",
+      "config-calendario-financiero",
+      "config-parametros"
+    ],
+    "bcv": [
+      "dashboard-main",
+      "estado-agencia",
+      "estado-central",
+      "operaciones-main",
+      "operaciones-conteo",
+      "inventario",
+      "war-room",
+      "kpi-gerencial",
+      "kpi-operativo",
+      "coengine-config",
+      "coengine-activity",
+      "reportes-main",
+      "georef",
+      "config-organizacion",
+      "config-unidades",
+      "config-dispositivos",
+      "config-divisas",
+      "config-proveedores",
+      "config-clientes",
+      "config-bancos-externos",
+      "config-grupos",
+      "config-motor-transacciones",
+      "config-calendario-financiero",
+      "config-parametros",
+      "integrations",
+      "interfaces",
+      "roles-main"
+    ]
+  },
+  "tiposAutoritativos": [
+    "corp",
+    "banco"
+  ],
+  "empresasConfig": {},
+  "empresas": [
+    {
+      "id": "emp-1",
+      "nombre": "Banco Ávila",
+      "razonSocial": "Banco Ávila C.A.",
+      "tipo": "banco"
+    },
+    {
+      "id": "emp-2",
+      "nombre": "Banco Mercantil",
+      "razonSocial": "Banco Mercantil del Centro C.A.",
+      "tipo": "banco"
+    },
+    {
+      "id": "emp-3",
+      "nombre": "BND",
+      "razonSocial": "Banco Nacional de Desarrollo S.A.",
+      "tipo": "banco"
+    },
+    {
+      "id": "emp-4",
+      "nombre": "CIT Logival",
+      "razonSocial": "CIT Logística de Valores C.A.",
+      "tipo": "cit"
+    },
+    {
+      "id": "emp-5",
+      "nombre": "TBSur",
+      "razonSocial": "Transporte Blindado del Sur S.A.",
+      "tipo": "cit"
+    },
+    {
+      "id": "emp-6",
+      "nombre": "Mercado Retail",
+      "razonSocial": "Mercado Retail C.A.",
+      "tipo": "corp"
+    },
+    {
+      "id": "emp-7",
+      "nombre": "Éxito Mayorista",
+      "razonSocial": "Supermayorista Éxito S.A.",
+      "tipo": "corp"
+    },
+    {
+      "id": "emp-8",
+      "nombre": "BCV",
+      "razonSocial": "Banco Central de Venezuela",
+      "tipo": "bcv"
+    },
+    {
+      "id": "emp-9",
+      "nombre": "Farmatodo",
+      "razonSocial": "Farmatodo C.A.",
+      "tipo": "corp"
+    }
+  ]
+}
