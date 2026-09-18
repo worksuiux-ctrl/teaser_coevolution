@@ -1129,8 +1129,9 @@ const MODULOS_POR_TIPO = {
   corp: [
     { id:"dashboard", nombre:"Dashboard", descripcion:"Panel general", icono:"fa-chart-line", activo:true, requerido:true },
     { id:"operaciones", nombre:"Operaciones", descripcion:"Solicitudes y movimientos", icono:"fa-building", activo:true, requerido:true },
+    { id:"inventario", nombre:"Inventario", descripcion:"Inventario propio y sucursales", icono:"fa-piggy-bank", activo:true, requerido:false },
     { id:"reportes", nombre:"Reportes", descripcion:"Reportes corporativos", icono:"fa-chart-column", activo:true, requerido:true },
-    { id:"config", nombre:"Configuración", descripcion:"Parámetros del sistema", icono:"fa-sliders", activo:true, requerido:true },
+    { id:"config", nombre:"Configuración", descripcion:"Sucursales y parámetros", icono:"fa-sliders", activo:true, requerido:true },
   ],
   bcv: [
     { id:"dashboard", nombre:"Dashboard", descripcion:"Panel general", icono:"fa-chart-line", activo:true, requerido:true },
@@ -2048,6 +2049,7 @@ function renderConfig() {
   const cfg = appConfig.tickets;
   document.getElementById("config-body").innerHTML = `
     <div style="width:100%">
+      <div id="cfg-modulos-tipos" style="margin-bottom:16px"></div>
       <div class="config-section-card">
         <h4><i class="fa-solid fa-ticket"></i> COE Tickets</h4>
         <p style="font-size:12px;color:var(--ink-500);margin-bottom:14px">Configuración global del módulo de tickets de soporte.</p>
@@ -2232,6 +2234,388 @@ function renderConfig() {
   `;
   setTimeout(cfgPreviewId, 0);
   cfgRestoreAccordionState();
+  renderConfigModulos();
+}
+
+// ─── CONFIG: SECCIONES Y SUBSECCIONES POR TIPO DE EMPRESA (integración con el prototipo) ───
+// La configuración se publica en `coe-suite/public/config-modulos.json`, que el
+// prototipo consume por fetch. Si el backoffice se abre servido por el dev server
+// de coe-suite, "Guardar" persiste el archivo vía POST /api/config-modulos.
+const CFG_MODULOS_URL = "config-modulos.json";
+// Apunta siempre al dev server de coe-suite salvo que el backoffice ya venga de él.
+// Cubre file://, Live Server en otro puerto, etc. (CORS habilitado en el server).
+const CFG_API_URL = (location.protocol === "file:" || location.port !== "5173")
+  ? "http://localhost:5173/api/config-modulos"
+  : "/api/config-modulos";
+const CFG_LS_KEY = "coe-backoffice-config-modulos";
+let cfgServidorConectado = null; // null = desconocido
+
+// Catálogo de secciones y subsecciones — espeja exactamente navigation.ts del prototipo
+// (mismos nombres; íconos mapeados a Font Awesome).
+const SECCIONES_CATALOGO = [
+  { id:"inicio", nombre:"Inicio", icono:"fa-house", subsecciones:[
+    { id:"dashboard-main", nombre:"Panel General" },
+    { id:"estado-agencia", nombre:"Estado de Agencia" },
+    { id:"estado-central", nombre:"Estado de Central" },
+    { id:"war-room", nombre:"War Room · Tesorería" },
+    { id:"kpi-gerencial", nombre:"KPIs Estratégicos" },
+    { id:"kpi-operativo", nombre:"KPIs Operativos" },
+  ]},
+  { id:"operaciones", nombre:"Operaciones", icono:"fa-building", subsecciones:[
+    { id:"operaciones-main", nombre:"Panel de Operaciones" },
+    { id:"operaciones-conteo", nombre:"Mesa de Conteo" },
+    { id:"inventario", nombre:"Inventario" },
+  ]},
+  { id:"coengine", nombre:"COENGINE", icono:"fa-microchip", subsecciones:[
+    { id:"coengine-config", nombre:"Configuración del Engine" },
+    { id:"coengine-activity", nombre:"Actividad del Engine" },
+  ]},
+  { id:"reportes", nombre:"Reportes", icono:"fa-file-lines", subsecciones:[
+    { id:"reportes-main", nombre:"Reportes" },
+  ]},
+  { id:"georreferenciacion", nombre:"Georreferenciación", icono:"fa-location-dot", subsecciones:[
+    { id:"georef", nombre:"Mapa Interactivo" },
+  ]},
+  { id:"configuracion", nombre:"Configuración", icono:"fa-gear", subsecciones:[
+    { id:"config-organizacion", nombre:"Mi Organización" },
+    { id:"config-unidades", nombre:"Mi Infraestructura" },
+    { id:"config-dispositivos", nombre:"Dispositivos" },
+    { id:"config-divisas", nombre:"Divisas" },
+    { id:"config-proveedores", nombre:"Proveedores" },
+    { id:"config-clientes", nombre:"Clientes" },
+    { id:"config-bancos-externos", nombre:"Bancos Externos" },
+    { id:"config-grupos", nombre:"Grupos" },
+    { id:"config-motor-transacciones", nombre:"Motor Transacciones" },
+    { id:"config-calendario-financiero", nombre:"Calendario Financiero" },
+    { id:"config-parametros", nombre:"Parámetros y Tropicalización" },
+  ]},
+  { id:"soporte", nombre:"Soporte y Ayuda", icono:"fa-circle-question", subsecciones:[
+    { id:"coe-tickets", nombre:"COE Tickets" },
+    { id:"faq", nombre:"Preguntas Frecuentes" },
+  ]},
+  { id:"integraciones", nombre:"Integraciones", icono:"fa-puzzle-piece", subsecciones:[
+    { id:"integrations", nombre:"Panel de Integraciones" },
+    { id:"interfaces", nombre:"Interfaces" },
+  ]},
+  { id:"auditoria", nombre:"Auditoría y Seguridad", icono:"fa-shield-halved", subsecciones:[
+    { id:"audit", nombre:"Log de Auditoría" },
+  ]},
+  { id:"roles-permisos", nombre:"Roles y Permisos", icono:"fa-key", subsecciones:[
+    { id:"roles-main", nombre:"Gestión de Roles" },
+  ]},
+];
+
+// Módulos de alto nivel del wizard → subsecciones (expansión legacy).
+const CFG_MODULO_A_SUBSECCIONES = {
+  dashboard: ["dashboard-main","estado-agencia","estado-central"],
+  inventario: ["inventario"],
+  operaciones: ["operaciones-main","operaciones-conteo"],
+  "war-room": ["war-room"],
+  kpi: ["kpi-gerencial","kpi-operativo"],
+  coengine: ["coengine-config","coengine-activity"],
+  reportes: ["reportes-main"],
+  georef: ["georef"],
+  config: SECCIONES_CATALOGO.find(s => s.id === "configuracion").subsecciones.map(s => s.id),
+  integraciones: ["integrations","interfaces"],
+  roles: ["roles-main"],
+};
+
+let cfgModulosConfig = null;
+let cfgModulosTipoActivo = "banco";
+
+function cfgSubseccionesDeModulos(modulos) {
+  const out = new Set();
+  (modulos || []).forEach(id => (CFG_MODULO_A_SUBSECCIONES[id] || []).forEach(s => out.add(s)));
+  return [...out];
+}
+
+function cfgMigrarConfig(old) {
+  const subseccionesPorTipo = {};
+  Object.keys(TIPO_INFO).forEach(tipo => {
+    if (Array.isArray(old.subseccionesPorTipo?.[tipo])) subseccionesPorTipo[tipo] = old.subseccionesPorTipo[tipo];
+    else if (Array.isArray(old.modulosPorTipo?.[tipo])) subseccionesPorTipo[tipo] = cfgSubseccionesDeModulos(old.modulosPorTipo[tipo]);
+  });
+  return {
+    version: 2,
+    actualizado: old.actualizado,
+    nota: old.nota,
+    subseccionesPorTipo,
+    tiposAutoritativos: Array.isArray(old.tiposAutoritativos) ? old.tiposAutoritativos : [],
+    empresasConfig: (old.empresasConfig && typeof old.empresasConfig === "object") ? old.empresasConfig : {},
+    empresas: Array.isArray(old.empresas) ? old.empresas.map(e => ({
+      id: e.id, nombre: e.nombre, razonSocial: e.razonSocial, tipo: e.tipo,
+      subsecciones: Array.isArray(e.subsecciones) ? e.subsecciones : cfgSubseccionesDeModulos(e.modulos),
+    })) : [],
+  };
+}
+
+function cfgLeerLocal() {
+  try {
+    const t = localStorage.getItem(CFG_LS_KEY);
+    return t ? JSON.parse(t) : null;
+  } catch (e) { return null; }
+}
+
+function cfgGuardarLocal() {
+  try { localStorage.setItem(CFG_LS_KEY, JSON.stringify(cfgModulosConfig)); } catch (e) { /* ignore */ }
+}
+
+// Carga la configuración compartida (una sola vez). Reutilizable por el detalle de empresa.
+async function cfgCargarConfig() {
+  if (cfgModulosConfig) return cfgModulosConfig;
+  // 1) API del dev server de coe-suite (persistencia real que consume el prototipo)
+  try {
+    const res = await fetch(CFG_API_URL, { cache: "no-store" });
+    if (res.ok) { cfgModulosConfig = await res.json(); cfgServidorConectado = true; }
+  } catch (e) { /* sin servidor */ }
+  // 2) archivo estático servido junto al backoffice
+  if (!cfgModulosConfig) {
+    try {
+      const res = await fetch(CFG_MODULOS_URL, { cache: "no-store" });
+      if (res.ok) cfgModulosConfig = await res.json();
+    } catch (e) { /* ignore */ }
+  }
+  // 3) respaldo local (para no perder cambios si no hay servidor)
+  if (!cfgModulosConfig) {
+    const local = cfgLeerLocal();
+    if (local) cfgModulosConfig = local;
+  }
+  if (!cfgModulosConfig || typeof cfgModulosConfig !== "object") cfgModulosConfig = {};
+  if (cfgModulosConfig.version !== 2) cfgModulosConfig = cfgMigrarConfig(cfgModulosConfig);
+  if (!cfgModulosConfig.subseccionesPorTipo) cfgModulosConfig.subseccionesPorTipo = {};
+  if (!Array.isArray(cfgModulosConfig.tiposAutoritativos)) cfgModulosConfig.tiposAutoritativos = [];
+  if (!cfgModulosConfig.empresasConfig || typeof cfgModulosConfig.empresasConfig !== "object") cfgModulosConfig.empresasConfig = {};
+  Object.keys(TIPO_INFO).forEach(tipo => {
+    if (!Array.isArray(cfgModulosConfig.subseccionesPorTipo[tipo])) {
+      cfgModulosConfig.subseccionesPorTipo[tipo] = cfgSubseccionesDeModulos((MODULOS_POR_TIPO[tipo] || []).filter(m => m.activo).map(m => m.id));
+    }
+  });
+  return cfgModulosConfig;
+}
+
+async function renderConfigModulos() {
+  const cont = document.getElementById("cfg-modulos-tipos");
+  if (!cont) return;
+  await cfgCargarConfig();
+  cfgRenderModulosTipos();
+}
+
+/* Subsecciones permitidas por la configuración del BackOffice para un tipo. */
+function cfgSubseccionesPermitidas(tipo) {
+  if (cfgModulosConfig && Array.isArray(cfgModulosConfig.subseccionesPorTipo?.[tipo])) {
+    return cfgModulosConfig.subseccionesPorTipo[tipo];
+  }
+  return cfgSubseccionesDeModulos((MODULOS_POR_TIPO[tipo] || []).filter(m => m.activo).map(m => m.id));
+}
+
+/* Subsecciones efectivas de una empresa: override propio o las permitidas por su tipo. */
+function cfgSubseccionesEmpresa(id) {
+  const c = (typeof companies !== "undefined" ? companies : []).find(x => x.id === id);
+  const tipo = c ? c.tipo : "banco";
+  const override = cfgModulosConfig && cfgModulosConfig.empresasConfig && cfgModulosConfig.empresasConfig[id];
+  if (override && Array.isArray(override.subsecciones)) return override.subsecciones;
+  return cfgSubseccionesPermitidas(tipo);
+}
+
+function cfgEmpresaTieneOverride(id) {
+  return !!(cfgModulosConfig && cfgModulosConfig.empresasConfig && cfgModulosConfig.empresasConfig[id] && Array.isArray(cfgModulosConfig.empresasConfig[id].subsecciones));
+}
+
+function cfgBannerConexionHtml() {
+  if (cfgServidorConectado === true) {
+    return `<div id="cfg-modulos-conexion" style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green-700);background:var(--green-50);border:1px solid var(--green-100);border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:12px"><i class="fa-solid fa-circle" style="font-size:7px"></i> Conectado — guardado automático activo y sincronización en vivo.</div>`;
+  }
+  if (cfgServidorConectado === false) {
+    return `<div id="cfg-modulos-conexion" style="display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#A76B00;background:#FFF4DC;border:1px solid #F3D08A;border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:12px"><i class="fa-solid fa-triangle-exclamation" style="margin-top:2px"></i> <span>Sin servidor: los cambios se guardan <strong>solo en este navegador</strong> y el prototipo no los verá. Ejecuta <code>npm run dev</code> en <code>coe-suite</code> (debe quedar en <code>http://localhost:5173</code>) y recarga.</span></div>`;
+  }
+  return `<div id="cfg-modulos-conexion" style="font-size:11px;color:var(--ink-400);margin-bottom:12px">Comprobando conexión…</div>`;
+}
+
+function cfgActualizarBanner() {
+  const el = document.getElementById("cfg-modulos-conexion");
+  if (el) el.outerHTML = cfgBannerConexionHtml();
+}
+
+function cfgSubseccionesTipoActual() {
+  if (!Array.isArray(cfgModulosConfig.subseccionesPorTipo[cfgModulosTipoActivo])) {
+    cfgModulosConfig.subseccionesPorTipo[cfgModulosTipoActivo] = [];
+  }
+  return cfgModulosConfig.subseccionesPorTipo[cfgModulosTipoActivo];
+}
+
+function cfgRenderModulosTipos() {
+  const cont = document.getElementById("cfg-modulos-tipos");
+  if (!cont) return;
+  const activas = cfgSubseccionesTipoActual();
+  const autoritativos = cfgModulosConfig.tiposAutoritativos || [];
+  const tipoLabel = (TIPO_INFO[cfgModulosTipoActivo] || {}).label || cfgModulosTipoActivo;
+
+  const tabs = Object.entries(TIPO_INFO).map(([tipo, info]) => {
+    const activo = tipo === cfgModulosTipoActivo;
+    return `<button class="btn btn-sm" onclick="cfgSetModulosTipo('${tipo}')"
+      style="${activo ? 'background:var(--green-500);color:#fff;border:none' : 'background:#fff;color:var(--ink-700);border:1px solid var(--ink-200)'}">
+      <i class="fa-solid ${info.icono}"></i> ${info.label}${autoritativos.includes(tipo) ? ' <span style="font-size:9px;opacity:.75">· auto</span>' : ''}
+    </button>`;
+  }).join("");
+
+  const secciones = SECCIONES_CATALOGO.map(sec => {
+    const subs = sec.subsecciones;
+    const activasSec = subs.filter(s => activas.includes(s.id));
+    const todas = activasSec.length === subs.length;
+    const algunas = activasSec.length > 0 && !todas;
+    const toggles = subs.map(s => {
+      const on = activas.includes(s.id);
+      return `<div class="dt-module ${on ? 'on' : 'off'}" style="cursor:pointer" onclick="cfgToggleSubseccion('${s.id}')">
+          <div class="dtm-info"><p>${s.nombre}</p><span>${sec.nombre}</span></div>
+          <i class="fa-solid ${on ? 'fa-toggle-on' : 'fa-toggle-off'}" style="font-size:18px;color:${on ? 'var(--green-500)' : 'var(--ink-300)'};flex-shrink:0"></i>
+        </div>`;
+    }).join("");
+    return `<div style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <i class="fa-solid ${sec.icono}" style="color:var(--green-500);font-size:12px;width:16px;text-align:center"></i>
+        <span style="font-size:12px;font-weight:700;color:var(--ink-900);flex:1">${sec.nombre}</span>
+        <span style="font-size:10px;color:${algunas ? 'var(--amber)' : 'var(--ink-400)'}">${activasSec.length}/${subs.length}</span>
+        <button class="btn btn-secondary btn-sm" onclick="cfgToggleSeccion('${sec.id}')" style="padding:2px 8px;font-size:10px">${todas ? 'Quitar todo' : 'Todo'}</button>
+      </div>
+      <div class="dt-module-grid">${toggles}</div>
+    </div>`;
+  }).join("");
+
+  cont.innerHTML = `
+    <div class="config-section-card">
+      <h4><i class="fa-solid fa-puzzle-piece"></i> Plantilla de módulos por tipo de empresa</h4>
+      <p style="font-size:12px;color:var(--ink-500);margin-bottom:14px">
+        Define qué secciones y subsecciones <strong>puede</strong> ver cada tipo de empresa. El ajuste específico de cada
+        empresa (habilitar/deshabilitar) se hace en <strong>Empresas › detalle del cliente › Módulos</strong>. Se guarda solo
+        y el prototipo COE lo refleja en vivo (<code>coe-suite/public/config-modulos.json</code>).
+      </p>
+      ${cfgBannerConexionHtml()}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">${tabs}</div>
+      <p style="font-size:11px;color:var(--ink-400);margin-bottom:14px">
+        Editando la plantilla del tipo <strong>${tipoLabel}</strong>. Al tocar una casilla, el tipo pasa a modo autoritativo («· auto»).
+      </p>
+      ${secciones}
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" onclick="cfgExportModulos()"><i class="fa-solid fa-download"></i> Exportar copia</button>
+      </div>
+      <p id="cfg-modulos-status" style="font-size:11px;color:var(--ink-400);margin-top:8px;text-align:right">Los cambios se guardan automáticamente y se reflejan en vivo en el prototipo.</p>
+    </div>`;
+}
+
+function cfgSetModulosTipo(tipo) {
+  cfgModulosTipoActivo = tipo;
+  cfgRenderModulosTipos();
+}
+
+function cfgMarcarTipoAutoritativo(tipo) {
+  if (!Array.isArray(cfgModulosConfig.tiposAutoritativos)) cfgModulosConfig.tiposAutoritativos = [];
+  if (!cfgModulosConfig.tiposAutoritativos.includes(tipo)) cfgModulosConfig.tiposAutoritativos.push(tipo);
+}
+
+function cfgToggleSubseccion(id) {
+  const arr = cfgSubseccionesTipoActual();
+  const idx = arr.indexOf(id);
+  if (idx === -1) arr.push(id); else arr.splice(idx, 1);
+  cfgMarcarTipoAutoritativo(cfgModulosTipoActivo);
+  cfgRenderModulosTipos();
+  cfgAutosaveModulos();
+}
+
+function cfgToggleSeccion(secId) {
+  const sec = SECCIONES_CATALOGO.find(s => s.id === secId);
+  if (!sec) return;
+  const arr = cfgSubseccionesTipoActual();
+  const ids = sec.subsecciones.map(s => s.id);
+  const todasActivas = ids.every(id => arr.includes(id));
+  if (todasActivas) {
+    ids.forEach(id => { const i = arr.indexOf(id); if (i !== -1) arr.splice(i, 1); });
+  } else {
+    ids.forEach(id => { if (!arr.includes(id)) arr.push(id); });
+  }
+  cfgMarcarTipoAutoritativo(cfgModulosTipoActivo);
+  cfgRenderModulosTipos();
+  cfgAutosaveModulos();
+}
+
+function cfgModulosPayload() {
+  const empresas = (typeof companies !== "undefined" ? companies : []).map(c => {
+    const override = cfgModulosConfig.empresasConfig && cfgModulosConfig.empresasConfig[c.id];
+    const empresa = {
+      id: c.id,
+      nombre: c.nombreComercial || c.razonSocial,
+      razonSocial: c.razonSocial,
+      tipo: c.tipo,
+    };
+    // Solo si hay configuración explícita por empresa; si no, hereda del tipo.
+    if (override && Array.isArray(override.subsecciones)) {
+      empresa.subsecciones = override.subsecciones;
+    }
+    return empresa;
+  });
+  return JSON.stringify({
+    version: 2,
+    actualizado: new Date().toISOString().slice(0, 10),
+    nota: "Fuente única de visibilidad. La edita el BackOffice; el prototipo (coe-suite) la consume por fetch. `subseccionesPorTipo` define cada tipo; `empresas[].subsecciones` (opcional) sobreescribe por empresa; si no, la empresa hereda de su tipo.",
+    subseccionesPorTipo: cfgModulosConfig.subseccionesPorTipo,
+    tiposAutoritativos: cfgModulosConfig.tiposAutoritativos || [],
+    empresasConfig: cfgModulosConfig.empresasConfig || {},
+    empresas,
+  }, null, 2);
+}
+
+// Autoguardado: cada cambio se persiste y se notifica al prototipo en vivo.
+let cfgAutosaveTimer = null;
+
+function cfgAutosaveModulos() {
+  clearTimeout(cfgAutosaveTimer);
+  const status = document.getElementById("cfg-modulos-status");
+  if (status) { status.textContent = "Guardando…"; status.style.color = "var(--ink-400)"; }
+  cfgAutosaveTimer = setTimeout(cfgSaveModulos, 350);
+}
+
+function cfgNotificarPrototipo(payload) {
+  try {
+    const canal = new BroadcastChannel("coe-config-modulos");
+    canal.postMessage({ tipo: "actualizado", config: JSON.parse(payload), ts: Date.now() });
+    canal.close();
+  } catch (e) { /* BroadcastChannel no disponible (p. ej. file://) */ }
+}
+
+async function cfgSaveModulos() {
+  const status = document.getElementById("cfg-modulos-status");
+  cfgGuardarLocal();
+  const payload = cfgModulosPayload();
+  // Notifica en vivo primero: el prototipo se actualiza aunque falle el guardado en archivo.
+  cfgNotificarPrototipo(payload);
+  try {
+    const res = await fetch(CFG_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    cfgServidorConectado = true;
+    if (status) { status.textContent = "Guardado automáticamente ✓ — el prototipo se actualiza en vivo"; status.style.color = "var(--green-700)"; }
+  } catch (e) {
+    cfgServidorConectado = false;
+    if (status) { status.textContent = "Sin servidor: guardado local. El prototipo no lo verá hasta conectar el dev server."; status.style.color = "var(--amber)"; }
+  }
+  cfgActualizarBanner();
+}
+
+function cfgExportModulos() {
+  cfgDownloadJson(cfgModulosPayload(), "config-modulos.json");
+}
+
+function cfgDownloadJson(text, filename) {
+  const blob = new Blob([text], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function cfgRestoreAccordionState() {
@@ -2770,6 +3154,30 @@ function init() {
   bcv.coengineModelos = COENGINE_MODELS.map(m => ({...m, activo: true}));
   bcv.modulos = MODULOS_POR_TIPO.bcv.map(m => ({...m}));
   bcv.master = { nombre:"Alejandro Linares", email:"alinares@bcv.gob.ve", usuario:"alinares", pass:"BCV2023!", telefono:"+58 212-801-8111", mfa:true };
+
+  // Farmatodo — Corporativo
+  companies.push(JSON.parse(JSON.stringify(EMPRESA_DEMO)));
+  const fama = companies[companies.length-1];
+  fama.id = 'emp-' + (nextId++);
+  fama.tipo = 'corp';
+  fama.subTipo = 'Corporativo';
+  fama.razonSocial = 'Farmatodo C.A.';
+  fama.nombreComercial = 'Farmatodo';
+  fama.rif = 'J-30542124-7';
+  fama.pais = 'Venezuela';
+  fama.plan = 'COE Suite Professional';
+  fama.contrato = 'COE-2025-031';
+  fama.fechaInicio = '01/04/2025';
+  fama.fechaRenovacion = '01/04/2028';
+  fama.estado = 'Activo';
+  fama.soporte = '12/5 Estándar';
+  fama.contactoComercial = 'Ricardo Palma — ricardo.palma@coe.tech';
+  fama.coenginePlan = 'COENGINE Professional';
+  fama.coengineCapacidad = 'Procesamiento: 50K ops/día · Latencia: <800ms · Throughput: 25 tps';
+  fama.coengineActivacion = '01/04/2025';
+  fama.coengineModelos = COENGINE_MODELS.map((m,i) => ({...m, activo: i < 2}));
+  fama.modulos = MODULOS_POR_TIPO.corp.map(m => ({...m}));
+  fama.master = { nombre:"María Fernanda López", email:"mf.lopez@farmatodo.com", usuario:"mlopez", pass:"Farmatodo2025!", telefono:"+58 212-202-3000", mfa:true };
 
   tkInit();
   syncTicketConfig();
@@ -3669,6 +4077,24 @@ function detailToggleModule(id) {
   renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
 }
 
+/* Habilita/deshabilita una subsección para el cliente. Consume lo permitido por su tipo. */
+function detailToggleSubseccion(subId) {
+  const c = companies.find(x => x.id === currentDetailId);
+  if (!c) return;
+  if (!cfgModulosConfig) { showToast('Cargando configuración…', 'info'); cfgCargarConfig().then(() => renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco)); return; }
+  if (!cfgModulosConfig.empresasConfig) cfgModulosConfig.empresasConfig = {};
+  if (!cfgEmpresaTieneOverride(c.id)) {
+    // Parte de lo permitido por el tipo la primera vez que se personaliza.
+    cfgModulosConfig.empresasConfig[c.id] = { subsecciones: [...cfgSubseccionesPermitidas(c.tipo)] };
+  }
+  const arr = cfgModulosConfig.empresasConfig[c.id].subsecciones;
+  const idx = arr.indexOf(subId);
+  if (idx === -1) arr.push(subId); else arr.splice(idx, 1);
+  cfgGuardarLocal();
+  cfgAutosaveModulos();
+  renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
+}
+
 function detailToggleMasterMfa() {
   const c = companies.find(x => x.id === currentDetailId);
   if (!c) return;
@@ -3817,9 +4243,18 @@ function renderDetail(id) {
 }
 
 function renderDetailBody(c, tipo) {
-  const modulosActivos = (c.modulos || []).filter(m => m.activo);
   const coengineModelosActivos = (c.coengineModelos || []).filter(m => m.activo);
   const planCapacity = getCoengineCapacidadByPlan(c.coenginePlan || 'COENGINE Enterprise');
+  const subsPermitidas = cfgSubseccionesPermitidas(c.tipo);
+  const subsEmpresa = cfgSubseccionesEmpresa(c.id);
+
+  // Si la configuración compartida aún no se cargó, se renderiza con el fallback y se refresca al llegar.
+  if (!cfgModulosConfig) {
+    cfgCargarConfig().then(() => {
+      const cc = companies.find(x => x.id === c.id);
+      if (cc) renderDetailBody(cc, TIPO_INFO[cc.tipo] || TIPO_INFO.banco);
+    });
+  }
 
   const edit = detailEditMode;
 
@@ -3901,24 +4336,40 @@ function renderDetailBody(c, tipo) {
       </div>
     </div>
 
-    <!-- Módulos -->
+    <!-- Módulos: permitidos por el tipo, habilitables por cliente -->
     <div class="dt-section">
       <div class="dt-card">
-        <h4><i class="fa-solid fa-puzzle-piece"></i> Módulos <span style="margin-left:auto;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--green-50);color:var(--green-700)">${modulosActivos.length}/${(c.modulos||[]).length} activos</span></h4>
-        <div class="dt-module-grid">
-          ${(c.modulos||[]).map(m => edit
-            ? `<div class="dt-module ${m.activo?'on':'off'}" style="cursor:pointer" onclick="detailToggleModule('${m.id}')">
-                <div class="dtm-icon"><i class="fa-solid ${m.icono}"></i></div>
-                <div class="dtm-info"><p>${m.nombre}</p><span>${m.descripcion}</span></div>
-                ${m.requerido ? '<span style="font-size:8px;color:var(--ink-400);font-weight:600;text-transform:uppercase">Req.</span>' : `<i class="fa-solid ${m.activo?'fa-toggle-on':'fa-toggle-off'}" style="font-size:18px;color:${m.activo?'var(--green-500)':'var(--ink-300)'};flex-shrink:0"></i>`}
-              </div>`
-            : `<div class="dt-module ${m.activo?'on':'off'}">
-                <div class="dtm-icon"><i class="fa-solid ${m.icono}"></i></div>
-                <div class="dtm-info"><p>${m.nombre}</p><span>${m.descripcion}</span></div>
-                ${m.activo ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--green-500);flex-shrink:0"></span>' : ''}
-              </div>`
-          ).join('')}
-        </div>
+        <h4><i class="fa-solid fa-puzzle-piece"></i> Módulos
+          <span style="margin-left:auto;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--green-50);color:var(--green-700)">
+            ${subsEmpresa.filter(s => subsPermitidas.includes(s)).length}/${subsPermitidas.length} activos · permitidos por ${tipo.label}
+          </span>
+        </h4>
+        <p style="font-size:11px;color:var(--ink-400);margin-bottom:10px">
+          Los módulos permitidos los define la configuración del BackOffice para el tipo <strong>${tipo.label}</strong>.
+          ${edit ? `Aquí habilitas o deshabilitas para <strong>${escHtml(c.nombreComercial || c.razonSocial)}</strong>.` : `Estado habilitado para <strong>${escHtml(c.nombreComercial || c.razonSocial)}</strong>.`}
+          ${cfgEmpresaTieneOverride(c.id) ? '<span class="config-badge done" style="margin-left:4px">Config propia</span>' : `<span class="config-badge pending" style="margin-left:4px">Hereda de ${tipo.label}</span>`}
+        </p>
+        ${SECCIONES_CATALOGO.map(sec => {
+          const permitidas = sec.subsecciones.filter(s => subsPermitidas.includes(s.id));
+          if (permitidas.length === 0) return "";
+          const toggles = permitidas.map(s => {
+            const on = subsEmpresa.includes(s.id);
+            if (edit) {
+              return `<div class="dt-module ${on?'on':'off'}" style="cursor:pointer" onclick="detailToggleSubseccion('${s.id}')">
+                  <div class="dtm-info"><p>${s.nombre}</p><span>${sec.nombre}</span></div>
+                  <i class="fa-solid ${on?'fa-toggle-on':'fa-toggle-off'}" style="font-size:18px;color:${on?'var(--green-500)':'var(--ink-300)'};flex-shrink:0"></i>
+                </div>`;
+            }
+            return `<div class="dt-module ${on?'on':'off'}">
+                <div class="dtm-info"><p>${s.nombre}</p><span>${sec.nombre}</span></div>
+                ${on ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--green-500);flex-shrink:0"></span>' : ''}
+              </div>`;
+          }).join("");
+          return `<div style="margin-bottom:12px">
+            <div class="dt-label" style="margin-bottom:6px">${sec.nombre}</div>
+            <div class="dt-module-grid">${toggles}</div>
+          </div>`;
+        }).join("") || '<p style="font-size:11px;color:var(--ink-400)">El tipo no tiene módulos permitidos en la configuración.</p>'}
       </div>
     </div>
 
