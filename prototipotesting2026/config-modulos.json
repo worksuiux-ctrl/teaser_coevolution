@@ -1,22 +1,10 @@
 {
   "version": 2,
-  "actualizado": "2026-09-18",
+  "actualizado": "2026-09-21",
   "nota": "Fuente única de visibilidad. La edita el BackOffice; el prototipo (coe-suite) la consume por fetch. `subseccionesPorTipo` define cada tipo; `empresas[].subsecciones` (opcional) sobreescribe por empresa; si no, la empresa hereda de su tipo.",
   "subseccionesPorTipo": {
     "banco": [
-      "dashboard-main",
-      "estado-agencia",
-      "estado-central",
-      "operaciones-main",
-      "operaciones-conteo",
-      "inventario",
-      "war-room",
-      "kpi-gerencial",
-      "kpi-operativo",
-      "coengine-config",
-      "coengine-activity",
       "reportes-main",
-      "georef",
       "config-organizacion",
       "config-unidades",
       "config-dispositivos",
@@ -33,7 +21,19 @@
       "roles-main",
       "coe-tickets",
       "faq",
-      "audit"
+      "audit",
+      "dashboard-main",
+      "estado-agencia",
+      "estado-central",
+      "war-room",
+      "kpi-gerencial",
+      "kpi-operativo",
+      "operaciones-main",
+      "operaciones-conteo",
+      "inventario",
+      "coengine-config",
+      "coengine-activity",
+      "georef"
     ],
     "cit": [
       "dashboard-main",
@@ -47,8 +47,6 @@
       "kpi-operativo",
       "coengine-config",
       "coengine-activity",
-      "reportes-main",
-      "georef",
       "config-organizacion",
       "config-unidades",
       "config-dispositivos",
@@ -67,17 +65,14 @@
     "corp": [
       "operaciones-main",
       "operaciones-conteo",
-      "config-organizacion",
-      "config-unidades",
-      "config-dispositivos",
-      "config-divisas",
-      "config-proveedores",
-      "config-clientes",
-      "config-bancos-externos",
-      "config-grupos",
-      "config-motor-transacciones",
-      "config-calendario-financiero",
-      "config-parametros"
+      "inventario",
+      "georef",
+      "dashboard-main",
+      "estado-agencia",
+      "estado-central",
+      "war-room",
+      "kpi-gerencial",
+      "kpi-operativo"
     ],
     "bcv": [
       "dashboard-main",
@@ -111,9 +106,18 @@
   },
   "tiposAutoritativos": [
     "corp",
-    "banco"
+    "banco",
+    "cit"
   ],
-  "empresasConfig": {},
+  "empresasConfig": {
+    "emp-9": {
+      "subsecciones": [
+        "operaciones-main",
+        "inventario",
+        "georef"
+      ]
+    }
+  },
   "empresas": [
     {
       "id": "emp-1",
@@ -167,7 +171,12 @@
       "id": "emp-9",
       "nombre": "Farmatodo",
       "razonSocial": "Farmatodo C.A.",
-      "tipo": "corp"
+      "tipo": "corp",
+      "subsecciones": [
+        "operaciones-main",
+        "inventario",
+        "georef"
+      ]
     }
   ]
 }
