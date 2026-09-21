@@ -22,12 +22,11 @@
   </style>
   <script>
     (function() {
-      var path = location.pathname;
-      var esPrototipo = path === '/prototipotesting2026' || path.indexOf('/prototipotesting2026/') === 0;
-      if (esPrototipo) {
-        sessionStorage.redirect = location.href;
-        location.href = '/prototipotesting2026/';
-      }
+      // La app (SPA) se sirve desde /prototipotesting2026/ pero sus rutas son de raíz
+      // (/dashboard, /estado-central, /monitor...). GitHub Pages entrega este 404 para
+      // esas rutas: guardamos la URL y redirigimos al prototipo, que restaura la ruta.
+      sessionStorage.redirect = location.href;
+      location.replace('/prototipotesting2026/');
     })();
   </script>
 </head>
