@@ -7,7 +7,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;600;700&family=Inclusive+Sans&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/prototipotesting2026/assets/index-qFKShFoT.js"></script>
+    <script>
+      // SPA en hosting estático (GitHub Pages): 404.html guarda la URL original y redirige
+      // a la raíz. Aquí restauramos la ruta antes de que React Router la lea.
+      (function () {
+        try {
+          var redirect = sessionStorage.getItem("redirect");
+          if (!redirect) return;
+          sessionStorage.removeItem("redirect");
+          var url = new URL(redirect);
+          var destino = url.pathname + url.search + url.hash;
+          if (url.origin === location.origin && destino !== location.pathname + location.search + location.hash) {
+            history.replaceState(null, "", destino);
+          }
+        } catch (e) { /* noop */ }
+      })();
+    </script>
+    <script type="module" crossorigin src="/prototipotesting2026/assets/index-D_RG5A2-.js"></script>
     <link rel="modulepreload" crossorigin href="/prototipotesting2026/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="stylesheet" crossorigin href="/prototipotesting2026/assets/index-p5T6IRwk.css">
   </head>
