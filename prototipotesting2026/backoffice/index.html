@@ -171,6 +171,13 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--ink-50);color
 .config-section-card label{display:block;font-size:10px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
 .config-section-card input,.config-section-card select{width:100%;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;border:1px solid var(--ink-200);border-radius:var(--radius-sm);outline:none;background:#fff;color:var(--ink-900);transition:border-color .15s}
 .config-section-card input:focus,.config-section-card select:focus{border-color:var(--green-500);box-shadow:0 0 0 3px rgba(66,170,66,.1)}
+.config-section-card.collapsible>.csc-header{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding-bottom:16px}
+.config-section-card.collapsible>.csc-header h4{margin-bottom:0;flex:1}
+.config-section-card.collapsible>.csc-header .csc-chevron{font-size:13px;color:var(--ink-400);transition:transform .18s;flex-shrink:0}
+.config-section-card.collapsible>.csc-header:hover .csc-chevron{color:var(--ink-700)}
+.config-section-card.collapsible.collapsed>.csc-header{padding-bottom:0}
+.config-section-card.collapsible.collapsed>.csc-header .csc-chevron{transform:rotate(-90deg)}
+.config-section-card.collapsible.collapsed>.csc-body{display:none}
 
 /* ── MODULE TOGGLES (step 3) ── */
 .modules-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -384,6 +391,65 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--ink-50);color
 .tk-empty{text-align:center;padding:60px 20px;color:var(--ink-400)}
 .tk-empty i{font-size:36px;margin-bottom:12px;display:block}
 
+/* ── AUDITORÍA ── */
+.au-stats{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;margin-bottom:14px}
+.au-stat-total{background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-md);padding:9px 16px;box-shadow:var(--shadow);min-width:96px}
+.au-stat-total .n{font-size:20px;font-weight:700;color:var(--ink-900);font-family:'JetBrains Mono',monospace;line-height:1.1}
+.au-stat-total .l{font-size:9px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.6px}
+.au-chip{display:inline-flex;align-items:center;gap:6px;padding:0 14px;border-radius:var(--radius-md);border:1px solid var(--ink-150);background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:var(--ink-700);transition:all .12s;box-shadow:var(--shadow);font-family:'Inter',sans-serif}
+.au-chip:hover{border-color:var(--ink-250)}
+.au-chip.active{border-width:2px}
+.au-chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.au-chip .c{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink-900)}
+.au-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.au-filters input[type=text]{flex:1;min-width:200px;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;border:1px solid var(--ink-200);border-radius:var(--radius-sm);outline:none;background:#fff;color:var(--ink-900)}
+.au-filters input[type=text]:focus{border-color:var(--green-500);box-shadow:0 0 0 3px rgba(66,170,66,.1)}
+.au-filters select{padding:7px 10px;font-size:11px;font-family:'Inter',sans-serif;border:1px solid var(--ink-200);border-radius:var(--radius-sm);outline:none;background:#fff;color:var(--ink-900)}
+.au-date-group{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--ink-200);border-radius:var(--radius-sm);padding:3px 8px}
+.au-date-group label{font-size:9px;font-weight:700;color:var(--ink-400);text-transform:uppercase;letter-spacing:.5px}
+.au-date-group input{border:none;outline:none;font-size:11px;font-family:'Inter',sans-serif;color:var(--ink-900);background:transparent}
+.au-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.au-table th{padding:9px 12px;text-align:left;font-size:9px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.7px;background:var(--ink-50);border-bottom:1px solid var(--ink-150);white-space:nowrap}
+.au-table th.sortable{cursor:pointer;user-select:none}
+.au-table th.sortable:hover{color:var(--ink-900)}
+.au-table th .au-sort{color:var(--green-500);margin-left:4px;font-size:9px}
+.au-table td{padding:9px 12px;font-size:11px;color:var(--ink-700);border-bottom:1px solid var(--ink-100);vertical-align:top}
+.au-table tr:last-child td{border-bottom:none}
+.au-table tbody tr{cursor:pointer}
+.au-table tbody tr:hover td{background:var(--ink-50)}
+.au-level{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.au-user{display:flex;align-items:center;gap:6px}
+.au-user .au-avatar{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0}
+.au-user .au-user-meta{min-width:0}
+.au-user .au-user-meta strong{display:block;font-size:11px;color:var(--ink-900);font-weight:600;white-space:nowrap}
+.au-user .au-user-meta span{font-size:9px;color:var(--ink-400)}
+.au-mono{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-500)}
+.au-pagination{display:flex;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:8px}
+.au-pagination .au-page-info{font-size:10px;color:var(--ink-400)}
+.au-pagination .au-page-btns{display:flex;gap:4px;align-items:center}
+.au-page-btn{min-width:26px;height:26px;padding:0 7px;border:1px solid var(--ink-200);background:#fff;border-radius:var(--radius-sm);font-size:11px;font-weight:600;color:var(--ink-600);cursor:pointer;font-family:'Inter',sans-serif}
+.au-page-btn:hover:not(:disabled){background:var(--ink-50)}
+.au-page-btn.active{background:var(--green-500);border-color:var(--green-500);color:#fff}
+.au-page-btn:disabled{opacity:.4;cursor:default}
+.au-drawer-overlay{position:fixed;inset:0;background:rgba(16,24,40,.35);opacity:0;visibility:hidden;transition:opacity .2s;z-index:200}
+.au-drawer-overlay.open{opacity:1;visibility:visible}
+.au-drawer{position:fixed;top:0;right:0;height:100vh;width:460px;max-width:92vw;background:#fff;box-shadow:-4px 0 24px rgba(16,24,40,.14);transform:translateX(100%);transition:transform .25s ease;z-index:201;display:flex;flex-direction:column}
+.au-drawer.open{transform:translateX(0)}
+.au-drawer-head{padding:18px 20px;border-bottom:1px solid var(--ink-150);display:flex;align-items:flex-start;gap:12px}
+.au-drawer-head h3{font-size:14px;font-weight:700;color:var(--ink-900);flex:1;margin:6px 0 3px}
+.au-drawer-head .au-close{background:none;border:none;font-size:16px;color:var(--ink-400);cursor:pointer;padding:2px 7px;border-radius:6px}
+.au-drawer-head .au-close:hover{background:var(--ink-100);color:var(--ink-700)}
+.au-drawer-body{padding:18px 20px;overflow-y:auto;flex:1}
+.au-detail-block{margin-bottom:18px}
+.au-detail-block h5{font-size:9px;font-weight:700;color:var(--ink-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.au-detail-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--ink-100);font-size:12px}
+.au-detail-row:last-child{border-bottom:none}
+.au-detail-row .k{color:var(--ink-400);font-weight:500;flex-shrink:0}
+.au-detail-row .v{color:var(--ink-800);font-weight:600;text-align:right;word-break:break-word}
+.au-detail-desc{font-size:12px;color:var(--ink-700);line-height:1.5;background:var(--ink-50);border:1px solid var(--ink-150);border-radius:var(--radius-sm);padding:12px}
+.au-tech{background:var(--ink-900);border-radius:var(--radius-sm);padding:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#B4F0A0;line-height:1.6;word-break:break-all}
+.au-tech .au-tech-k{color:#7DD3FC}
+
 /* ── CUSTOM SELECT (PAÍS) ── */
 .custom-select-wrapper{position:relative;width:100%}
 .custom-select-trigger{position:relative;width:100%;cursor:pointer}
@@ -419,7 +485,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--ink-50);color
     <a class="sb-link" href="#" data-view="tickets" onclick="showTicketsView()"><i class="fa-solid fa-ticket"></i>COE Tickets<span class="sb-count" id="ticket-count">0</span></a>
     <div class="sb-sec" style="margin-top:12px">Sistema</div>
     <a class="sb-link" href="#" onclick="showView('config')"><i class="fa-solid fa-cog"></i>Configuración</a>
-    <a class="sb-link" href="#" onclick="showToast('Log de auditoría próximo','info')"><i class="fa-solid fa-history"></i>Auditoría</a>
+    <a class="sb-link" href="#" data-view="audit" onclick="showAuditView()"><i class="fa-solid fa-history"></i>Auditoría<span class="sb-count" id="audit-count">0</span></a>
   </div>
 </nav>
 
@@ -1095,8 +1161,38 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--ink-50);color
       <div id="config-body"></div>
     </div>
 
+    <!-- ═══════ AUDITORÍA ═══════ -->
+    <div id="view-audit" class="view-panel">
+      <div class="list-header">
+        <h3><i class="fa-solid fa-history" style="color:var(--green-500);margin-right:6px"></i> Log de Auditoría</h3>
+        <div class="list-actions">
+          <button class="btn btn-secondary btn-sm" onclick="auExportCSV()"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
+        </div>
+      </div>
+
+      <div class="au-stats" id="au-stats"></div>
+
+      <div class="au-filters">
+        <input type="text" id="au-search" placeholder="Buscar por usuario, acción, detalle, módulo, entidad o IP..." oninput="auOnFilterChange()">
+        <div class="au-date-group">
+          <label>Desde</label>
+          <input type="date" id="au-desde" onchange="auOnFilterChange()">
+          <label>Hasta</label>
+          <input type="date" id="au-hasta" onchange="auOnFilterChange()">
+        </div>
+        <select id="au-tipo" onchange="auOnFilterChange()"><option value="">Todos los tipos</option></select>
+        <button class="btn btn-secondary btn-sm" id="au-clear-btn" onclick="auClearFilters()" style="display:none"><i class="fa-solid fa-eraser"></i> Limpiar</button>
+      </div>
+
+      <div id="au-table-container"></div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
+
+<!-- ══ AUDITORÍA: DETALLE ══ -->
+<div class="au-drawer-overlay" id="au-drawer-overlay" onclick="auCloseDetail()"></div>
+<aside class="au-drawer" id="au-drawer"></aside>
 
 <!-- ══ TOAST CONTAINER ══ -->
 <div class="toast-container" id="toast-container"></div>
@@ -1574,6 +1670,7 @@ function tkSendComment(id) {
   }
   textarea.value = "";
   tkPendingAttachments = [];
+  auLogEvent({ tipo:"ticket-comentario", modulo:"COE Tickets", accion:"Comentario en ticket", detalle:`Ticket ${t.id}: se agregó un comentario en la conversación.`, entidad:t.id });
   renderTicketDetail(t);
   showToast("Mensaje enviado", "success");
 }
@@ -1753,6 +1850,7 @@ function tkAssignPerson(id) {
     timestamp: new Date().toISOString()
   });
   sel.value = "";
+  auLogEvent({ tipo:"ticket-asignado", modulo:"COE Tickets", accion:"Asignación de ticket", detalle:`Ticket ${t.id}: asignado a ${name}.`, entidad:t.id });
   renderTicketDetail(t);
   showToast(`${name} asignado al ticket`, "success");
 }
@@ -1774,6 +1872,7 @@ function tkChangeStatus(id) {
     timestamp: new Date().toISOString()
   });
   sel.value = "";
+  auLogEvent({ tipo:"ticket-estado", modulo:"COE Tickets", accion:"Cambio de estado de ticket", detalle:`Ticket ${t.id}: estado cambiado de "${oldLabel}" a "${TK_STATUS_LABELS[newStatus]}".`, entidad:t.id });
   renderTicketDetail(t);
   renderTicketDashboard();
   showToast(`Estado cambiado a "${TK_STATUS_LABELS[newStatus]}"`, "success");
@@ -1791,6 +1890,7 @@ function tkReopenTicket(id) {
     detalle: `Ticket reactivado de "${oldLabel}" a "${TK_STATUS_LABELS["abierto"]}"`,
     timestamp: new Date().toISOString()
   });
+  auLogEvent({ tipo:"ticket-estado", modulo:"COE Tickets", accion:"Reapertura de ticket", detalle:`Ticket ${t.id}: reactivado de "${oldLabel}" a "Abierto".`, entidad:t.id });
   renderTicketDetail(t);
   renderTicketDashboard();
   showToast("Ticket reactivado", "success");
@@ -1798,7 +1898,9 @@ function tkReopenTicket(id) {
 
 function tkDeleteTicket(id) {
   if (!confirm("¿Eliminar este ticket? Esta acción no se puede deshacer.")) return;
+  const tkDel = tickets.find(t => t.id === id);
   tickets = tickets.filter(t => t.id !== id);
+  if (tkDel) auLogEvent({ tipo:"ticket-eliminado", modulo:"COE Tickets", accion:"Ticket eliminado", detalle:`Se eliminó el ticket ${tkDel.id} ("${tkDel.titulo}").`, entidad:tkDel.id });
   renderTicketDashboard();
   if (currentTicketId === id) tkBackToList();
   else renderTicketList();
@@ -1854,6 +1956,7 @@ function tkExportList(format) {
     String(t.comentarios ? t.comentarios.length : 0)
   ]);
   rows.unshift(["ID","Empresa","Título","Prioridad","Estado","Categoría","Departamento","Creado por","Asignado a","Creado","SLA Vencimiento","Fecha cierre","Comentarios"]);
+  auLogEvent({ tipo:"exportacion", modulo:"COE Tickets", accion:"Exportación de tickets", detalle:`Se exportaron ${filtered.length} tickets a ${format.toUpperCase()} desde el listado filtrado.` });
   if (format === "xlsx") tkExportCSV(rows, "tickets-" + Date.now());
   else tkExportPDF(rows, "Tickets - Listado", "Listado de tickets filtrados");
 }
@@ -1892,6 +1995,7 @@ function tkExportDetail(id, format) {
       rows.push([a.autor + " " + tkFormatDateShort(a.timestamp), a.detalle]);
     });
   }
+  auLogEvent({ tipo:"exportacion", modulo:"COE Tickets", accion:"Exportación de ticket", detalle:`Se exportó el ticket ${t.id} a ${format.toUpperCase()}.`, entidad:t.id });
   if (format === "xlsx") tkExportCSV(rows, "ticket-" + t.id);
   else tkExportPDF(rows, "Ticket " + t.id, t.titulo);
 }
@@ -2050,8 +2154,12 @@ function renderConfig() {
   document.getElementById("config-body").innerHTML = `
     <div style="width:100%">
       <div id="cfg-modulos-tipos" style="margin-bottom:16px"></div>
-      <div class="config-section-card">
-        <h4><i class="fa-solid fa-ticket"></i> COE Tickets</h4>
+      <div class="config-section-card collapsible ${cfgCardState["cfg-tickets-card"] === false ? 'collapsed' : ''}" id="cfg-tickets-card">
+        <div class="csc-header" onclick="cfgToggleCard('cfg-tickets-card')">
+          <h4><i class="fa-solid fa-ticket"></i> COE Tickets</h4>
+          <i class="fa-solid fa-chevron-down csc-chevron"></i>
+        </div>
+        <div class="csc-body">
         <p style="font-size:12px;color:var(--ink-500);margin-bottom:14px">Configuración global del módulo de tickets de soporte.</p>
 
         <div style="border-bottom:1px solid var(--ink-150);padding-bottom:14px;margin-bottom:14px">
@@ -2229,11 +2337,13 @@ function renderConfig() {
           <button class="btn btn-secondary" onclick="cfgRestoreDefaults()"><i class="fa-solid fa-rotate-left"></i> Restaurar valores</button>
           <button class="btn btn-primary" onclick="cfgSaveTickets()"><i class="fa-solid fa-check"></i> Guardar configuración</button>
         </div>
+        </div>
       </div>
     </div>
   `;
   setTimeout(cfgPreviewId, 0);
   cfgRestoreAccordionState();
+  cfgRestoreCardState();
   renderConfigModulos();
 }
 
@@ -2242,11 +2352,22 @@ function renderConfig() {
 // prototipo consume por fetch. Si el backoffice se abre servido por el dev server
 // de coe-suite, "Guardar" persiste el archivo vía POST /api/config-modulos.
 const CFG_MODULOS_URL = "../config-modulos.json";
-// Apunta siempre al dev server de coe-suite salvo que el backoffice ya venga de él.
-// Cubre file://, Live Server en otro puerto, etc. (CORS habilitado en el server).
-const CFG_API_URL = (location.protocol === "file:" || location.port !== "5173")
-  ? "http://localhost:5173/api/config-modulos"
-  : "/api/config-modulos";
+// Entorno local: el backoffice lo sirve el dev server de coe-suite (cualquier puerto),
+// Live Server, o se abre como file://.
+const CFG_ES_LOCAL = location.protocol === "file:"
+  || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+// Candidatos al API del dev server de coe-suite:
+// - Servido por el dev server (p. ej. 5174): MISMO origen y mismo puerto.
+// - file://: no hay origen, se prueban los puertos locales típicos.
+const CFG_API_URLS = location.protocol === "file:"
+  ? [
+      "http://localhost:5173/api/config-modulos",
+      "http://localhost:5174/api/config-modulos",
+      "http://localhost:5175/api/config-modulos",
+      "http://localhost:5176/api/config-modulos",
+    ]
+  : ["/api/config-modulos"];
+let cfgApiActiva = null; // URL del API que respondió OK
 const CFG_LS_KEY = "coe-backoffice-config-modulos";
 let cfgServidorConectado = null; // null = desconocido
 
@@ -2279,6 +2400,7 @@ const SECCIONES_CATALOGO = [
   { id:"configuracion", nombre:"Configuración", icono:"fa-gear", subsecciones:[
     { id:"config-organizacion", nombre:"Mi Organización" },
     { id:"config-unidades", nombre:"Mi Infraestructura" },
+    { id:"config-productos", nombre:"Catálogo de Productos" },
     { id:"config-dispositivos", nombre:"Dispositivos" },
     { id:"config-divisas", nombre:"Divisas" },
     { id:"config-proveedores", nombre:"Proveedores" },
@@ -2364,10 +2486,13 @@ function cfgGuardarLocal() {
 async function cfgCargarConfig() {
   if (cfgModulosConfig) return cfgModulosConfig;
   // 1) API del dev server de coe-suite (persistencia real que consume el prototipo)
-  try {
-    const res = await fetch(CFG_API_URL, { cache: "no-store" });
-    if (res.ok) { cfgModulosConfig = await res.json(); cfgServidorConectado = true; }
-  } catch (e) { /* sin servidor */ }
+  for (const url of CFG_API_URLS) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (res.ok) { cfgModulosConfig = await res.json(); cfgApiActiva = url; cfgServidorConectado = true; break; }
+    } catch (e) { /* siguiente candidato */ }
+  }
+  if (!cfgApiActiva) cfgServidorConectado = false;
   // 2) archivo estático servido junto al backoffice
   if (!cfgModulosConfig) {
     try {
@@ -2422,6 +2547,9 @@ function cfgEmpresaTieneOverride(id) {
 }
 
 function cfgBannerConexionHtml() {
+  if (!CFG_ES_LOCAL) {
+    return `<div id="cfg-modulos-conexion" style="display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#0876A3;background:#E0F4FC;border:1px solid #A9DCF2;border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:12px"><i class="fa-solid fa-circle-info" style="margin-top:2px"></i> <span>BackOffice desplegado: los cambios se guardan <strong>solo en este navegador</strong> y no se publican al prototipo. Descarga <strong>Exportar copia</strong> y reemplaza <code>config-modulos.json</code> en el despliegue para que surtan efecto.</span></div>`;
+  }
   if (cfgServidorConectado === true) {
     return `<div id="cfg-modulos-conexion" style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green-700);background:var(--green-50);border:1px solid var(--green-100);border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:12px"><i class="fa-solid fa-circle" style="font-size:7px"></i> Conectado — guardado automático activo y sincronización en vivo.</div>`;
   }
@@ -2482,8 +2610,12 @@ function cfgRenderModulosTipos() {
   }).join("");
 
   cont.innerHTML = `
-    <div class="config-section-card">
-      <h4><i class="fa-solid fa-puzzle-piece"></i> Plantilla de módulos por tipo de empresa</h4>
+    <div class="config-section-card collapsible ${cfgCardState["cfg-modulos-card"] === false ? 'collapsed' : ''}" id="cfg-modulos-card">
+      <div class="csc-header" onclick="cfgToggleCard('cfg-modulos-card')">
+        <h4><i class="fa-solid fa-puzzle-piece"></i> Plantilla de módulos por tipo de empresa</h4>
+        <i class="fa-solid fa-chevron-down csc-chevron"></i>
+      </div>
+      <div class="csc-body">
       <p style="font-size:12px;color:var(--ink-500);margin-bottom:14px">
         Define qué secciones y subsecciones <strong>puede</strong> ver cada tipo de empresa. El ajuste específico de cada
         empresa (habilitar/deshabilitar) se hace en <strong>Empresas › detalle del cliente › Módulos</strong>. Se guarda solo
@@ -2497,9 +2629,16 @@ function cfgRenderModulosTipos() {
       ${secciones}
 
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+        ${(() => {
+          const n = (typeof companies !== "undefined" ? companies : []).filter(c => c.tipo === cfgModulosTipoActivo && cfgEmpresaTieneOverride(c.id)).length;
+          return n > 0
+            ? `<button class="btn btn-secondary" onclick="cfgAplicarTipoAEmpresas()"><i class="fa-solid fa-rotate-left"></i> Aplicar a ${n} empresa(s) de ${tipoLabel}</button>`
+            : "";
+        })()}
         <button class="btn btn-secondary" onclick="cfgExportModulos()"><i class="fa-solid fa-download"></i> Exportar copia</button>
       </div>
       <p id="cfg-modulos-status" style="font-size:11px;color:var(--ink-400);margin-top:8px;text-align:right">Los cambios se guardan automáticamente y se reflejan en vivo en el prototipo.</p>
+      </div>
     </div>`;
 }
 
@@ -2586,29 +2725,52 @@ async function cfgSaveModulos() {
   const status = document.getElementById("cfg-modulos-status");
   cfgGuardarLocal();
   const payload = cfgModulosPayload();
+  auLogEvent({ tipo:"modulos-actualizados", modulo:"Empresas", accion:"Módulos actualizados", detalle:"Se actualizó la disponibilidad de módulos por tipo de empresa." });
   // Notifica en vivo primero: el prototipo se actualiza aunque falle el guardado en archivo.
   cfgNotificarPrototipo(payload);
-  try {
-    const res = await fetch(CFG_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: payload,
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    cfgServidorConectado = true;
+  // Prueba el API activo y, si no, el resto de candidatos (p. ej. file:// con el dev server en 5174).
+  const candidatos = cfgApiActiva ? [cfgApiActiva, ...CFG_API_URLS.filter(u => u !== cfgApiActiva)] : CFG_API_URLS;
+  let guardado = false;
+  for (const url of candidatos) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      cfgApiActiva = url;
+      cfgServidorConectado = true;
+      guardado = true;
+      break;
+    } catch (e) { /* siguiente candidato */ }
+  }
+  if (guardado) {
     if (status) { status.textContent = "Guardado automáticamente ✓ — el prototipo se actualiza en vivo"; status.style.color = "var(--green-700)"; }
-  } catch (e) {
+  } else {
     cfgServidorConectado = false;
-    if (status) { status.textContent = "Sin servidor: guardado local. El prototipo no lo verá hasta conectar el dev server."; status.style.color = "var(--amber)"; }
+    if (status) { status.textContent = "Sin servidor: guardado local. El prototipo no lo verá hasta conectar el dev server (npm run dev)."; status.style.color = "var(--amber)"; }
   }
   cfgActualizarBanner();
 }
 
-function cfgExportModulos() {
-  cfgDownloadJson(cfgModulosPayload(), "config-modulos.json");
+/* Quita la personalización de las empresas del tipo actual para que hereden la plantilla. */
+function cfgAplicarTipoAEmpresas() {
+  const tipo = cfgModulosTipoActivo;
+  const label = (TIPO_INFO[tipo] || {}).label || tipo;
+  const afectadas = (typeof companies !== "undefined" ? companies : []).filter(c => c.tipo === tipo && cfgEmpresaTieneOverride(c.id));
+  if (afectadas.length === 0) { showToast('Las empresas de este tipo ya heredan la plantilla', 'info'); return; }
+  if (!confirm(`Se quitará la personalización de ${afectadas.length} empresa(s) de tipo "${label}".\\n\\nPasarán a heredar la plantilla del tipo. ¿Continuar?`)) return;
+  afectadas.forEach(c => { delete cfgModulosConfig.empresasConfig[c.id]; });
+  cfgGuardarLocal();
+  cfgAutosaveModulos();
+  cfgRenderModulosTipos();
+  showToast(`${afectadas.length} empresa(s) ahora heredan la plantilla`, 'success');
 }
 
-function cfgDownloadJson(text, filename) {
+function cfgExportModulos() {
+  cfgDownloadJson(cfgModulosPayload(), "config-modulos.json");
+}function cfgDownloadJson(text, filename) {
   const blob = new Blob([text], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -2850,7 +3012,26 @@ function cfgSaveTickets() {
   cfgReadItemFields(document.getElementById("cfg-departamentos-list"));
   cfgReadItemFields(document.getElementById("cfg-prioridades-list"));
   syncTicketConfig();
+  auLogEvent({ tipo:"config-tickets", modulo:"Configuración", accion:"Configuración de tickets", detalle:"Se guardaron los catálogos, SLA y nomenclatura de COE Tickets." });
   showToast("Configuración de COE Tickets guardada", "success");
+}
+
+// Plegado de tarjetas de Configuración (nivel tarjeta, independiente de los acordeones internos).
+let cfgCardState = { "cfg-modulos-card": false, "cfg-tickets-card": false };
+
+function cfgToggleCard(id) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  const collapsed = card.classList.toggle("collapsed");
+  cfgCardState[id] = !collapsed;
+}
+
+function cfgRestoreCardState() {
+  Object.keys(cfgCardState).forEach(id => {
+    const card = document.getElementById(id);
+    if (!card) return;
+    card.classList.toggle("collapsed", cfgCardState[id] === false);
+  });
 }
 
 function cfgToggleCollapse(contentId, headerEl) {
@@ -2870,6 +3051,7 @@ function cfgRestoreDefaults() {
   appConfig.tickets = JSON.parse(JSON.stringify(CONFIG_DEFAULTS.tickets));
   renderConfig();
   syncTicketConfig();
+  auLogEvent({ tipo:"config-restaurada", modulo:"Configuración", accion:"Configuración restaurada", detalle:"Se restauraron los valores por defecto de COE Tickets." });
   showToast("Valores restaurados", "info");
 }
 
@@ -3182,6 +3364,13 @@ function init() {
   tkInit();
   syncTicketConfig();
   document.getElementById("ticket-count").textContent = tickets.length;
+  auSeed();
+  auLogEvent({
+    tipo: "sesion-inicio",
+    modulo: "Sesión",
+    accion: "Inicio de sesión",
+    detalle: `${AU_CURRENT_USER.nombre} inició sesión en el BackOffice.`,
+  });
   renderList();
   updateStats();
   setupLogoDropzone();
@@ -3220,6 +3409,9 @@ function showView(view, param) {
     document.querySelector('.sb-link[onclick*="config"]').classList.add('active');
     document.getElementById('topbar-title').textContent = 'Configuración';
     renderConfig();
+  } else if (view === 'audit') {
+    showAuditView();
+    return;
   } else if (view === 'detail') {
     document.getElementById('view-detail').classList.add('active');
     document.getElementById('topbar-title').textContent = 'Detalle de Empresa';
@@ -3894,11 +4086,13 @@ function saveCompany() {
     const idx = companies.findIndex(c => c.id === editId);
     if (idx !== -1) {
       companies[idx] = { ...companies[idx], ...data };
+      auLogEvent({ tipo:"empresa-editada", modulo:"Empresas", accion:"Empresa editada", detalle:`Se actualizó la empresa contratante "${data.razonSocial}" mediante el asistente.`, entidad:data.razonSocial });
       showToast(`Empresa "${data.razonSocial}" actualizada`, 'success');
     }
   } else {
     data.id = 'emp-' + (nextId++);
     companies.push(data);
+    auLogEvent({ tipo:"empresa-creada", modulo:"Empresas", accion:"Empresa creada", detalle:`Se registró la empresa contratante "${data.razonSocial}" (${(TIPO_INFO[data.tipo] || {}).label || data.tipo}).`, entidad:data.razonSocial });
     showToast(`Empresa "${data.razonSocial}" creada exitosamente`, 'success');
   }
 
@@ -4095,6 +4289,23 @@ function detailToggleSubseccion(subId) {
   renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
 }
 
+/* Quita la personalización de la empresa: vuelve a heredar la plantilla de su tipo. */
+function detailResetModulos() {
+  const c = companies.find(x => x.id === currentDetailId);
+  if (!c) return;
+  if (!cfgModulosConfig) { showToast('Cargando configuración…', 'info'); return; }
+  if (!cfgModulosConfig.empresasConfig || !cfgModulosConfig.empresasConfig[c.id]) {
+    showToast('Esta empresa ya hereda la plantilla del tipo', 'info');
+    return;
+  }
+  if (!confirm(`Se quitará la personalización de módulos de "${c.nombreComercial || c.razonSocial}".\\n\\nPasará a heredar la plantilla del tipo ${(TIPO_INFO[c.tipo] || {}).label || c.tipo}. ¿Continuar?`)) return;
+  delete cfgModulosConfig.empresasConfig[c.id];
+  cfgGuardarLocal();
+  cfgAutosaveModulos();
+  renderDetailBody(c, TIPO_INFO[c.tipo] || TIPO_INFO.banco);
+  showToast('Ahora hereda la plantilla del tipo', 'success');
+}
+
 function detailToggleMasterMfa() {
   const c = companies.find(x => x.id === currentDetailId);
   if (!c) return;
@@ -4177,6 +4388,7 @@ function detailSaveEdit() {
     c.modulos = baseMods.map(m => ({...m}));
   }
 
+  auLogEvent({ tipo:"empresa-editada", modulo:"Empresas", accion:"Empresa editada", detalle:`Se editaron los campos de "${c.razonSocial}": ${changed.join(", ")}.`, entidad:c.razonSocial });
   renderList();
   updateStats();
   detailOriginalSnapshot = JSON.parse(JSON.stringify(cleanSnapshot(c)));
@@ -4208,9 +4420,11 @@ function goBackFromDetail() {
 
 function deleteCompany(id) {
   if (!confirm('¿Estás seguro de eliminar esta empresa? Esta acción no se puede deshacer.')) return;
+  const c = companies.find(x => x.id === id);
   companies = companies.filter(c => c.id !== id);
   renderList();
   updateStats();
+  if (c) auLogEvent({ tipo:"empresa-eliminada", modulo:"Empresas", accion:"Empresa eliminada", detalle:`Se eliminó la empresa contratante "${c.razonSocial}" del registro.`, entidad:c.razonSocial });
   showToast('Empresa eliminada', 'info');
   if (currentDetailId === id) showView('list');
 }
@@ -4349,6 +4563,7 @@ function renderDetailBody(c, tipo) {
           ${edit ? `Aquí habilitas o deshabilitas para <strong>${escHtml(c.nombreComercial || c.razonSocial)}</strong>.` : `Estado habilitado para <strong>${escHtml(c.nombreComercial || c.razonSocial)}</strong>.`}
           ${cfgEmpresaTieneOverride(c.id) ? '<span class="config-badge done" style="margin-left:4px">Config propia</span>' : `<span class="config-badge pending" style="margin-left:4px">Hereda de ${tipo.label}</span>`}
         </p>
+        ${cfgEmpresaTieneOverride(c.id) ? `<button class="btn btn-secondary btn-sm" style="margin-bottom:10px" onclick="detailResetModulos()"><i class="fa-solid fa-rotate-left"></i> Volver a la plantilla del tipo ${tipo.label}</button>` : ''}
         ${SECCIONES_CATALOGO.map(sec => {
           const permitidas = sec.subsecciones.filter(s => subsPermitidas.includes(s.id));
           if (permitidas.length === 0) return "";
@@ -4421,6 +4636,366 @@ function showToast(msg, type = 'success') {
   toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i> ${msg}`;
   container.appendChild(toast);
   setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ─── AUDITORÍA ─────────────────────────────────────────
+
+const AU_CURRENT_USER = { nombre:"Fabián Dávila", perfil:"Administrador BackOffice" };
+
+const AU_NIVELES = {
+  info:        { label:"Info",        color:"#0876A3", bg:"#E0F4FC", icon:"fa-circle-info" },
+  advertencia: { label:"Advertencia", color:"#A76B00", bg:"#FFF4DC", icon:"fa-triangle-exclamation" },
+  seguridad:   { label:"Seguridad",   color:"#6B1EC6", bg:"#F2E6FE", icon:"fa-shield-halved" },
+  error:       { label:"Error",       color:"#DC2626", bg:"#FEF2F2", icon:"fa-circle-exclamation" },
+};
+
+const AU_TIPOS = {
+  "sesion-inicio":        { label:"Inicio de sesión",        nivel:"seguridad" },
+  "sesion-cierre":        { label:"Cierre de sesión",        nivel:"seguridad" },
+  "acceso-denegado":      { label:"Acceso denegado",         nivel:"seguridad" },
+  "empresa-creada":       { label:"Empresa creada",          nivel:"info" },
+  "empresa-editada":      { label:"Empresa editada",         nivel:"info" },
+  "empresa-eliminada":    { label:"Empresa eliminada",       nivel:"advertencia" },
+  "modulos-actualizados": { label:"Módulos actualizados",    nivel:"info" },
+  "coengine-actualizado": { label:"Configuración COENGINE",  nivel:"info" },
+  "config-tickets":       { label:"Configuración de tickets",nivel:"info" },
+  "config-restaurada":    { label:"Configuración restaurada",nivel:"advertencia" },
+  "ticket-creado":        { label:"Ticket creado",           nivel:"info" },
+  "ticket-estado":        { label:"Estado de ticket",        nivel:"info" },
+  "ticket-asignado":      { label:"Ticket asignado",         nivel:"info" },
+  "ticket-comentario":    { label:"Comentario en ticket",    nivel:"info" },
+  "ticket-eliminado":     { label:"Ticket eliminado",        nivel:"advertencia" },
+  "exportacion":          { label:"Exportación de datos",    nivel:"info" },
+  "excepcion":            { label:"Excepción del sistema",   nivel:"error" },
+};
+
+const AU_STAFF = [
+  { nombre:"Fabián Dávila",    perfil:"Administrador BackOffice" },
+  { nombre:"Carlos Mendoza",   perfil:"Soporte COE" },
+  { nombre:"Ana Sofía Torres", perfil:"Soporte COE" },
+  { nombre:"Ricardo Palma",    perfil:"Comercial" },
+  { nombre:"Laura Méndez",     perfil:"Operaciones" },
+];
+
+const AU_PAGE_SIZE = 20;
+const AU_MAX_EVENTS = 500;
+
+let auditLog = [];
+let auditPage = 1;
+let auditSort = { field:"timestamp", dir:"desc" };
+let auditNiveles = [];
+let auSeq = 0;
+
+function auFormat(iso) { return tkFormatDate(iso); }
+
+function auLogEvent(evt) {
+  const meta = AU_TIPOS[evt.tipo] || { label:evt.tipo, nivel:"info" };
+  const entry = {
+    id: "aud-" + (++auSeq) + "-" + Date.now().toString(36),
+    timestamp: evt.timestamp || new Date().toISOString(),
+    tipo: evt.tipo,
+    nivel: evt.nivel || meta.nivel,
+    usuario: evt.usuario || AU_CURRENT_USER.nombre,
+    perfil: evt.perfil || AU_CURRENT_USER.perfil,
+    modulo: evt.modulo || "Sistema",
+    accion: evt.accion || meta.label,
+    detalle: evt.detalle || "",
+    entidad: evt.entidad || "",
+    ip: evt.ip || "127.0.0.1",
+    userAgent: evt.userAgent || navigator.userAgent,
+  };
+  auditLog.unshift(entry);
+  if (auditLog.length > AU_MAX_EVENTS) auditLog.length = AU_MAX_EVENTS;
+  const badge = document.getElementById("audit-count");
+  if (badge) badge.textContent = auditLog.length;
+  if (currentView === "audit") auRender();
+  return entry;
+}
+
+function auSeed() {
+  const samples = [
+    ["sesion-inicio","Sesión","Inicio de sesión","Acceso exitoso al panel de administración"],
+    ["sesion-cierre","Sesión","Cierre de sesión","Cierre de sesión del panel de administración"],
+    ["empresa-creada","Empresas","Empresa creada","Se registró una nueva empresa contratante"],
+    ["empresa-editada","Empresas","Empresa editada","Se actualizó la ficha de una empresa contratante"],
+    ["empresa-eliminada","Empresas","Empresa eliminada","Se eliminó una empresa contratante del registro"],
+    ["modulos-actualizados","Empresas","Módulos actualizados","Se modificaron los módulos habilitados de una empresa"],
+    ["coengine-actualizado","Empresas","Configuración COENGINE","Se actualizó el plan y los modelos de COENGINE de una empresa"],
+    ["config-tickets","Configuración","Configuración de tickets","Se actualizaron los catálogos y SLA de COE Tickets"],
+    ["config-restaurada","Configuración","Configuración restaurada","Se restauraron los valores por defecto de COE Tickets"],
+    ["ticket-estado","COE Tickets","Cambio de estado","Se cambió el estado de un ticket de soporte"],
+    ["ticket-asignado","COE Tickets","Asignación de ticket","Se asignó un ticket a un especialista"],
+    ["ticket-comentario","COE Tickets","Comentario en ticket","Se agregó un comentario en la conversación del ticket"],
+    ["ticket-eliminado","COE Tickets","Ticket eliminado","Se eliminó un ticket de soporte"],
+    ["exportacion","COE Tickets","Exportación de datos","Se exportó un listado de tickets"],
+    ["acceso-denegado","Sesión","Acceso denegado","Intento de acceso a una sección sin permisos suficientes"],
+    ["excepcion","Configuración","Excepción del sistema","Error inesperado al guardar la configuración"],
+  ];
+  const entidades = {
+    "Empresas": ["Banco Ávila C.A.","Banco Mercantil del Centro C.A.","Banco Nacional de Desarrollo","Banco Central de Venezuela","Farmatodo C.A."],
+    "COE Tickets": ["TCK-BNC-0001","TCK-BNC-0002","TCK-BNC-0004","TCK-BNC-0006","TCK-BNC-0010"],
+    "Configuración": ["COE Tickets"],
+  };
+  const ips = ["190.74.12.45","190.74.12.88","200.44.98.12","181.40.55.7","10.0.0.24","186.167.20.101"];
+  const uas = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 Safari/17.5",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0",
+  ];
+  const now = Date.now();
+  const total = 78;
+  for (let i = 0; i < total; i++) {
+    const [tipo, modulo, accion, detalle] = samples[Math.floor(Math.random()*samples.length)];
+    const u = AU_STAFF[Math.floor(Math.random()*AU_STAFF.length)];
+    const ts = new Date(now - Math.floor(Math.random()*30*24*60*60*1000) - Math.floor(Math.random()*24*60*60*1000));
+    let entidad = "";
+    if (entidades[modulo]) entidad = entidades[modulo][Math.floor(Math.random()*entidades[modulo].length)];
+    auLogEvent({
+      tipo, modulo, accion,
+      detalle: entidad ? `${detalle} — ${entidad}.` : detalle + ".",
+      entidad,
+      usuario: u.nombre, perfil: u.perfil,
+      timestamp: ts.toISOString(),
+      ip: ips[Math.floor(Math.random()*ips.length)],
+      userAgent: uas[Math.floor(Math.random()*uas.length)],
+    });
+  }
+}
+
+function auNivelOrder(n) { return ["info","advertencia","seguridad","error"].indexOf(n); }
+
+function auFiltered(opts = {}) {
+  const q = (document.getElementById("au-search").value || "").trim().toLowerCase();
+  const desde = document.getElementById("au-desde").value;
+  const hasta = document.getElementById("au-hasta").value;
+  const tipo = document.getElementById("au-tipo").value;
+
+  const list = auditLog.filter(e => {
+    if (q) {
+      const blob = [e.usuario, e.perfil, e.accion, e.detalle, e.modulo, e.entidad, e.ip].join(" ").toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    if (tipo && e.tipo !== tipo) return false;
+    if (!opts.ignoreNiveles && auditNiveles.length && !auditNiveles.includes(e.nivel)) return false;
+    const t = new Date(e.timestamp).getTime();
+    if (desde && t < new Date(desde + "T00:00:00").getTime()) return false;
+    if (hasta && t > new Date(hasta + "T23:59:59").getTime()) return false;
+    return true;
+  });
+
+  const f = auditSort.field;
+  const dir = auditSort.dir === "asc" ? 1 : -1;
+  list.sort((a, b) => {
+    let va, vb;
+    if (f === "timestamp") { va = new Date(a.timestamp).getTime(); vb = new Date(b.timestamp).getTime(); }
+    else if (f === "nivel") { va = auNivelOrder(a.nivel); vb = auNivelOrder(b.nivel); }
+    else if (f === "tipo") { va = (AU_TIPOS[a.tipo]||{}).label || a.tipo; vb = (AU_TIPOS[b.tipo]||{}).label || b.tipo; }
+    else { va = a[f] || ""; vb = b[f] || ""; }
+    if (typeof va === "string") return va.localeCompare(vb, "es") * dir;
+    return (va - vb) * dir;
+  });
+  return list;
+}
+
+function auHasFilters() {
+  return (document.getElementById("au-search").value.trim() !== "") ||
+    document.getElementById("au-desde").value ||
+    document.getElementById("au-hasta").value ||
+    document.getElementById("au-tipo").value ||
+    auditNiveles.length > 0;
+}
+
+function auOnFilterChange() { auditPage = 1; auRender(); }
+
+function showAuditView() {
+  document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(el => el.classList.remove('active'));
+  const link = document.querySelector('.sb-link[data-view="audit"]');
+  if (link) link.classList.add('active');
+  document.getElementById('topbar-title').textContent = 'Log de Auditoría';
+  document.getElementById('view-audit').classList.add('active');
+  currentView = 'audit';
+  auPopulateTypes();
+  auditPage = 1;
+  auRender();
+}
+
+function auPopulateTypes() {
+  const sel = document.getElementById('au-tipo');
+  if (!sel || sel.dataset.done) return;
+  sel.innerHTML = '<option value="">Todos los tipos</option>' +
+    Object.entries(AU_TIPOS).map(([id, t]) => `<option value="${id}">${t.label}</option>`).join("");
+  sel.dataset.done = "1";
+}
+
+function auRender() {
+  auRenderStats();
+  auRenderTable();
+  const clear = document.getElementById('au-clear-btn');
+  if (clear) clear.style.display = auHasFilters() ? '' : 'none';
+  const badge = document.getElementById('audit-count');
+  if (badge) badge.textContent = auditLog.length;
+}
+
+function auRenderStats() {
+  const base = auFiltered({ ignoreNiveles:true });
+  const counts = { info:0, advertencia:0, seguridad:0, error:0 };
+  base.forEach(e => { counts[e.nivel] = (counts[e.nivel] || 0) + 1; });
+  const chips = Object.entries(AU_NIVELES).map(([id, n]) => {
+    const on = auditNiveles.includes(id);
+    return `<button class="au-chip ${on ? 'active' : ''}" style="${on ? `border-color:${n.color}` : ''}" onclick="auToggleNivel('${id}')">
+      <span class="dot" style="background:${n.color}"></span>${n.label}
+      <span class="c">${counts[id] || 0}</span>
+    </button>`;
+  }).join("");
+  document.getElementById('au-stats').innerHTML =
+    `<div class="au-stat-total"><div class="n">${base.length}</div><div class="l">Eventos</div></div>${chips}`;
+}
+
+function auRenderTable() {
+  const list = auFiltered();
+  const cont = document.getElementById('au-table-container');
+  const totalPages = Math.max(1, Math.ceil(list.length / AU_PAGE_SIZE));
+  if (auditPage > totalPages) auditPage = totalPages;
+  const start = (auditPage - 1) * AU_PAGE_SIZE;
+  const page = list.slice(start, start + AU_PAGE_SIZE);
+
+  if (list.length === 0) {
+    cont.innerHTML = `<div class="tk-empty"><i class="fa-regular fa-clipboard"></i><p>No se encontraron eventos de auditoría</p></div>`;
+    return;
+  }
+
+  const sortIcon = f => auditSort.field === f ? `<i class="fa-solid fa-caret-${auditSort.dir === 'asc' ? 'up' : 'down'} au-sort"></i>` : '';
+  const th = (f, label) => `<th class="sortable" onclick="auSetSort('${f}')">${label}${sortIcon(f)}</th>`;
+
+  const rows = page.map(e => {
+    const n = AU_NIVELES[e.nivel] || AU_NIVELES.info;
+    return `<tr onclick="auOpenDetail('${e.id}')">
+      <td><span class="au-mono">${auFormat(e.timestamp)}</span></td>
+      <td><span class="au-level" style="background:${n.bg};color:${n.color}"><i class="fa-solid ${n.icon}"></i> ${n.label}</span></td>
+      <td>${escHtml((AU_TIPOS[e.tipo] || {}).label || e.tipo)}</td>
+      <td><div class="au-user"><span class="au-avatar" style="background:${getTkColor(e.usuario)}">${getTkInitials(e.usuario)}</span><div class="au-user-meta"><strong>${escHtml(e.usuario)}</strong><span>${escHtml(e.perfil)}</span></div></div></td>
+      <td>${escHtml(e.modulo)}${e.entidad ? `<br><span class="au-mono">${escHtml(e.entidad)}</span>` : ''}</td>
+      <td>${escHtml(e.accion)}</td>
+    </tr>`;
+  }).join("");
+
+  cont.innerHTML = `
+    <table class="au-table">
+      <thead><tr>
+        ${th('timestamp','Fecha / Hora')}
+        ${th('nivel','Nivel')}
+        ${th('tipo','Tipo')}
+        ${th('usuario','Usuario')}
+        ${th('modulo','Módulo')}
+        ${th('accion','Acción')}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="au-pagination">
+      <span class="au-page-info">Mostrando ${start + 1}–${Math.min(start + AU_PAGE_SIZE, list.length)} de ${list.length} eventos</span>
+      <div class="au-page-btns">${auPaginationHtml(totalPages)}</div>
+    </div>`;
+}
+
+function auPaginationHtml(totalPages) {
+  if (totalPages <= 1) return "";
+  let btns = `<button class="au-page-btn" ${auditPage === 1 ? 'disabled' : ''} onclick="auGoPage(${auditPage - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
+  const pages = [];
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || Math.abs(p - auditPage) <= 1) pages.push(p);
+    else if (pages[pages.length - 1] !== "...") pages.push("...");
+  }
+  pages.forEach(p => {
+    if (p === "...") btns += `<span style="color:var(--ink-400);padding:0 2px">…</span>`;
+    else btns += `<button class="au-page-btn ${p === auditPage ? 'active' : ''}" onclick="auGoPage(${p})">${p}</button>`;
+  });
+  btns += `<button class="au-page-btn" ${auditPage === totalPages ? 'disabled' : ''} onclick="auGoPage(${auditPage + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
+  return btns;
+}
+
+function auToggleNivel(id) {
+  const i = auditNiveles.indexOf(id);
+  if (i === -1) auditNiveles.push(id); else auditNiveles.splice(i, 1);
+  auditPage = 1;
+  auRender();
+}
+
+function auSetSort(field) {
+  if (auditSort.field === field) auditSort.dir = auditSort.dir === 'asc' ? 'desc' : 'asc';
+  else auditSort = { field, dir: field === 'timestamp' ? 'desc' : 'asc' };
+  auRender();
+}
+
+function auGoPage(p) { auditPage = p; auRenderTable(); }
+
+function auClearFilters() {
+  document.getElementById('au-search').value = '';
+  document.getElementById('au-desde').value = '';
+  document.getElementById('au-hasta').value = '';
+  document.getElementById('au-tipo').value = '';
+  auditNiveles = [];
+  auditPage = 1;
+  auRender();
+}
+
+function auOpenDetail(id) {
+  const e = auditLog.find(x => x.id === id);
+  if (!e) return;
+  const n = AU_NIVELES[e.nivel] || AU_NIVELES.info;
+  document.getElementById('au-drawer').innerHTML = `
+    <div class="au-drawer-head">
+      <div style="flex:1">
+        <span class="au-level" style="background:${n.bg};color:${n.color}"><i class="fa-solid ${n.icon}"></i> ${n.label}</span>
+        <h3>${escHtml((AU_TIPOS[e.tipo] || {}).label || e.tipo)}</h3>
+        <span class="au-mono">${auFormat(e.timestamp)}</span>
+      </div>
+      <button class="au-close" onclick="auCloseDetail()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="au-drawer-body">
+      <div class="au-detail-block">
+        <h5>Descripción</h5>
+        <div class="au-detail-desc">${escHtml(e.detalle)}</div>
+      </div>
+      <div class="au-detail-block">
+        <h5>Evento</h5>
+        <div class="au-detail-row"><span class="k">Acción</span><span class="v">${escHtml(e.accion)}</span></div>
+        <div class="au-detail-row"><span class="k">Módulo</span><span class="v">${escHtml(e.modulo)}</span></div>
+        ${e.entidad ? `<div class="au-detail-row"><span class="k">Entidad</span><span class="v">${escHtml(e.entidad)}</span></div>` : ''}
+        <div class="au-detail-row"><span class="k">ID del evento</span><span class="v au-mono">${escHtml(e.id)}</span></div>
+      </div>
+      <div class="au-detail-block">
+        <h5>Usuario</h5>
+        <div class="au-detail-row"><span class="k">Nombre</span><span class="v">${escHtml(e.usuario)}</span></div>
+        <div class="au-detail-row"><span class="k">Perfil</span><span class="v">${escHtml(e.perfil)}</span></div>
+      </div>
+      <div class="au-detail-block">
+        <h5>Información técnica</h5>
+        <div class="au-tech"><span class="au-tech-k">IP:</span> ${escHtml(e.ip)}<br><span class="au-tech-k">User-Agent:</span> ${escHtml(e.userAgent)}</div>
+      </div>
+    </div>`;
+  document.getElementById('au-drawer').classList.add('open');
+  document.getElementById('au-drawer-overlay').classList.add('open');
+}
+
+function auCloseDetail() {
+  document.getElementById('au-drawer').classList.remove('open');
+  document.getElementById('au-drawer-overlay').classList.remove('open');
+}
+
+function auExportCSV() {
+  const list = auFiltered();
+  if (list.length === 0) { showToast("No hay eventos para exportar", "error"); return; }
+  const rows = [["Fecha / Hora","Nivel","Tipo","Usuario","Perfil","Módulo","Entidad","Acción","Detalle","IP","User-Agent"]];
+  list.forEach(e => {
+    rows.push([
+      auFormat(e.timestamp),
+      (AU_NIVELES[e.nivel] || {}).label || e.nivel,
+      (AU_TIPOS[e.tipo] || {}).label || e.tipo,
+      e.usuario, e.perfil, e.modulo, e.entidad || "", e.accion, e.detalle, e.ip, e.userAgent,
+    ]);
+  });
+  tkExportCSV(rows, "auditoria-" + Date.now());
 }
 
 // ─── BOOT ─────────────────────────────────────────────

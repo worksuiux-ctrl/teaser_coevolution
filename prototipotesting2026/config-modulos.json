@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-09-21",
+  "actualizado": "2026-09-24",
   "nota": "Fuente única de visibilidad. La edita el BackOffice; el prototipo (coe-suite) la consume por fetch. `subseccionesPorTipo` define cada tipo; `empresas[].subsecciones` (opcional) sobreescribe por empresa; si no, la empresa hereda de su tipo.",
   "subseccionesPorTipo": {
     "banco": [
@@ -72,7 +72,28 @@
       "estado-central",
       "war-room",
       "kpi-gerencial",
-      "kpi-operativo"
+      "kpi-operativo",
+      "reportes-main",
+      "coengine-config",
+      "coengine-activity",
+      "config-organizacion",
+      "config-unidades",
+      "config-dispositivos",
+      "config-divisas",
+      "config-proveedores",
+      "config-clientes",
+      "config-bancos-externos",
+      "config-grupos",
+      "config-motor-transacciones",
+      "config-calendario-financiero",
+      "config-parametros",
+      "coe-tickets",
+      "faq",
+      "audit",
+      "integrations",
+      "interfaces",
+      "roles-main",
+      "config-productos"
     ],
     "bcv": [
       "dashboard-main",
@@ -110,11 +131,38 @@
     "cit"
   ],
   "empresasConfig": {
-    "emp-9": {
+    "emp-1": {
       "subsecciones": [
+        "dashboard-main",
+        "estado-agencia",
+        "estado-central",
         "operaciones-main",
+        "operaciones-conteo",
         "inventario",
-        "georef"
+        "war-room",
+        "kpi-gerencial",
+        "kpi-operativo",
+        "coengine-config",
+        "coengine-activity",
+        "reportes-main",
+        "georef",
+        "config-organizacion",
+        "config-unidades",
+        "config-dispositivos",
+        "config-divisas",
+        "config-proveedores",
+        "config-clientes",
+        "config-bancos-externos",
+        "config-grupos",
+        "config-motor-transacciones",
+        "config-calendario-financiero",
+        "config-parametros",
+        "integrations",
+        "interfaces",
+        "coe-tickets",
+        "faq",
+        "audit",
+        "roles-main"
       ]
     }
   },
@@ -123,7 +171,39 @@
       "id": "emp-1",
       "nombre": "Banco Ávila",
       "razonSocial": "Banco Ávila C.A.",
-      "tipo": "banco"
+      "tipo": "banco",
+      "subsecciones": [
+        "dashboard-main",
+        "estado-agencia",
+        "estado-central",
+        "operaciones-main",
+        "operaciones-conteo",
+        "inventario",
+        "war-room",
+        "kpi-gerencial",
+        "kpi-operativo",
+        "coengine-config",
+        "coengine-activity",
+        "reportes-main",
+        "georef",
+        "config-organizacion",
+        "config-unidades",
+        "config-dispositivos",
+        "config-divisas",
+        "config-proveedores",
+        "config-clientes",
+        "config-bancos-externos",
+        "config-grupos",
+        "config-motor-transacciones",
+        "config-calendario-financiero",
+        "config-parametros",
+        "integrations",
+        "interfaces",
+        "coe-tickets",
+        "faq",
+        "audit",
+        "roles-main"
+      ]
     },
     {
       "id": "emp-2",
@@ -171,12 +251,7 @@
       "id": "emp-9",
       "nombre": "Farmatodo",
       "razonSocial": "Farmatodo C.A.",
-      "tipo": "corp",
-      "subsecciones": [
-        "operaciones-main",
-        "inventario",
-        "georef"
-      ]
+      "tipo": "corp"
     }
   ]
 }
